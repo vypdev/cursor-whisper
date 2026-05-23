@@ -46,20 +46,7 @@ Domain layer documentation:
 - Domain events
 - Error types
 
-### [`infrastructure/`](infrastructure/)
-Infrastructure layer documentation:
-- External service integrations (OpenAI, audio)
-- Adapters and implementations
-- Configuration management
-- Storage strategies
-
-### [`presentation/`](presentation/)
-Presentation layer documentation:
-- UI components
-- Commands and shortcuts
-- Webview implementation
-- State management
-- Visual design system
+Infrastructure and presentation layer implementations are documented in [`src/`](../src/) (TypeScript types and JSDoc). See also [`api/README.md`](api/README.md) and [`application/ports.md`](application/ports.md) for interface contracts.
 
 ### [`flows/`](flows/)
 Complete workflow documentation:
@@ -116,13 +103,7 @@ Technical research and investigations:
 - Audio processing techniques
 - Performance benchmarks
 
-### [`cursor-compatibility/`](cursor-compatibility/)
-Cursor-specific compatibility documentation:
-- Known limitations
-- Agents Window (Glass) issues
-- Fallback strategies
-- Tested configurations
-- Workarounds
+Cursor compatibility notes are covered in [`adr/0007-cursor-compatibility.md`](adr/0007-cursor-compatibility.md) and [`research/technical-investigation.md`](research/technical-investigation.md).
 
 ---
 
@@ -132,24 +113,24 @@ Cursor-specific compatibility documentation:
 1. Start with [`architecture/overview.md`](architecture/overview.md)
 2. Read [`architecture/clean-architecture.md`](architecture/clean-architecture.md)
 3. Review [`adr/`](adr/) for key decisions
-4. Check [`CONTRIBUTING.md`](../CONTRIBUTING.md)
+4. Check project status in [`PROGRESS.md`](../PROGRESS.md)
 
 ### For Implementers
-1. Read [`api/`](api/) for interface definitions
-2. Check [`application/use-cases/`](application/use-cases/) for business logic
-3. Review [`flows/`](flows/) for complete workflows
+1. Read [`api/README.md`](api/README.md) for interface definitions
+2. Check [`application/ports.md`](application/ports.md) for ports and DTOs
+3. Review [`flows/complete-flow.md`](flows/complete-flow.md) for workflows
 4. Consult [`testing/strategy.md`](testing/strategy.md) for testing approach
+5. Browse [`src/`](../src/) for layer implementations
 
 ### For Users
 1. Read the main [`README.md`](../README.md)
-2. Check [`ux/user-guide.md`](ux/user-guide.md)
-3. Review [`ux/troubleshooting.md`](ux/troubleshooting.md)
-4. See [`security/privacy-policy.md`](security/privacy-policy.md)
+2. Review [`ux/states.md`](ux/states.md) for UI states
+3. See [`security/privacy.md`](security/privacy.md) for privacy details
 
 ### For Maintainers
-1. Review [`roadmap/mvp.md`](roadmap/mvp.md) and [`roadmap/versions.md`](roadmap/versions.md)
+1. Review [`roadmap/versions.md`](roadmap/versions.md)
 2. Check [`deployment/release-process.md`](deployment/release-process.md)
-3. Monitor [`research/`](research/) for technical findings
+3. Monitor [`research/technical-investigation.md`](research/technical-investigation.md) for technical findings
 4. Update [`adr/`](adr/) when making architectural changes
 
 ---
@@ -195,8 +176,8 @@ Documentation provides:
 - **Architecture changes**: Update `architecture/` and create ADR in `adr/`
 - **New features**: Update `api/`, `flows/`, and `roadmap/`
 - **API changes**: Update `api/` and relevant layer docs
-- **Bug fixes**: Update `ux/troubleshooting.md` if user-facing
-- **Performance improvements**: Update `research/benchmarks.md`
+- **Bug fixes**: Update [`README.md`](../README.md) troubleshooting if user-facing
+- **Performance improvements**: Update [`research/technical-investigation.md`](research/technical-investigation.md)
 
 ### Documentation Review Process
 
@@ -216,7 +197,7 @@ We use **Mermaid** for all diagrams. Common diagram types:
 - **Flowcharts**: For decision trees and processes
 - **State Diagrams**: For UI states and transitions
 
-See [`architecture/diagrams.md`](architecture/diagrams.md) for examples.
+See [`architecture/overview.md`](architecture/overview.md) and [`flows/complete-flow.md`](flows/complete-flow.md) for diagram examples.
 
 ---
 

@@ -495,10 +495,10 @@ expect(mockRecorder.startRecording).toHaveBeenCalled();
 ## Support
 
 For detailed documentation on specific modules, see:
-- [Domain Entities](domain/entities.md)
-- [Application Use Cases](application/use-cases.md)
-- [Infrastructure Adapters](infrastructure/)
-- [Presentation Layer](presentation/commands.md)
+- [Domain Layer](../domain/README.md)
+- [Application Ports](../application/ports.md)
+- [Source: Infrastructure](../../src/infrastructure/)
+- [Source: Presentation](../../src/presentation/)
 
 ---
 

@@ -571,9 +571,9 @@ See [ADR-0001](../adr/0001-use-typescript.md) for technology decisions.
 For more detailed documentation, see:
 
 - [Domain Layer](../domain/README.md)
-- [Application Layer](../application/README.md)
-- [Infrastructure Layer](../infrastructure/README.md)
-- [Presentation Layer](../presentation/README.md)
+- [Application Layer](../application/ports.md)
+- [Infrastructure Layer (source)](../../src/infrastructure/)
+- [Presentation Layer (source)](../../src/presentation/)
 - [API Reference](../api/README.md)
 
 ---

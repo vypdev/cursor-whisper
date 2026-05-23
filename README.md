@@ -474,12 +474,7 @@ See [`docs/roadmap/`](docs/roadmap/) for detailed roadmap.
 
 ## 🤝 Contributing
 
-We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
-
-- Code of conduct
-- Development workflow
-- Pull request process
-- Coding standards
+We welcome contributions! See [`docs/standards/coding-conventions.md`](docs/standards/coding-conventions.md) for coding standards and development workflow.
 
 ### Development Philosophy
 
@@ -582,8 +577,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - [Documentation](docs/)
 - [Architecture Docs](docs/architecture/)
 - [API Reference](docs/api/)
-- [Contributing Guide](CONTRIBUTING.md)
-- [Changelog](CHANGELOG.md)
+- [Project Progress](PROGRESS.md)
+- [Roadmap](docs/roadmap/versions.md)
 
 ---
 

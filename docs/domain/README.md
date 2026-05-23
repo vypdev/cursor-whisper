@@ -767,4 +767,4 @@ The Domain Layer:
 
 ---
 
-**Next**: See [Application Layer](../application/README.md) for use cases and ports.
+**Next**: See [Application Layer](../application/ports.md) for use cases and ports.

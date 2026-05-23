@@ -457,4 +457,4 @@ All ports are:
 - ✅ Clear single responsibility
 - ✅ Versioned for future changes
 
-**Implementation**: See [Infrastructure Layer](../infrastructure/README.md) for adapter implementations.
+**Implementation**: See [`src/infrastructure/`](../../src/infrastructure/) for adapter implementations and [`api/README.md`](../api/README.md) for the API overview.
