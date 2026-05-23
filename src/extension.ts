@@ -30,9 +30,17 @@ import { registerConfigureApiKeyCommand } from './presentation/commands/Configur
 import { registerConfigureModelCommand } from './presentation/commands/ConfigureModelCommand';
 import { registerConfigureTransformationProviderCommand } from './presentation/commands/ConfigureTransformationProviderCommand';
 import { registerTestTransformationCommand } from './presentation/commands/TestTransformationCommand';
+import {
+  getSetupChecklist,
+  isSetupCompleted,
+  registerFirstTimeSetupCommand,
+} from './presentation/commands/FirstTimeSetupCommand';
 import { RecordingStatusBarItem } from './presentation/ui/RecordingStatusBarItem';
 import { validateConfigurationOnStartup } from './application/services/ConfigurationValidationService';
-import { PROVIDER_METADATA } from './domain/value-objects/TransformationProvider';
+import {
+  PROVIDER_METADATA,
+  TransformationProvider,
+} from './domain/value-objects/TransformationProvider';
 
 let activeAudioRecorder: NativeAudioRecorder | null = null;
 
@@ -113,6 +121,19 @@ export function activate(context: vscode.ExtensionContext): void {
     const config = await configRepository.getConfig();
     const metadata = PROVIDER_METADATA[config.transformationProvider];
     statusBar.setTransformationProviderLabel(metadata.displayName);
+
+    const checklist = await getSetupChecklist(context, configRepository);
+    const openAiKey = await configRepository.getProviderApiKey(TransformationProvider.OpenAI);
+    const setupIncomplete =
+      !openAiKey ||
+      !isSetupCompleted(context) ||
+      checklist.some(item => !item.complete && item.label !== 'Extension installed');
+
+    statusBar.setSetupState({
+      optimizationEnabled: config.enablePromptTransformation,
+      setupIncomplete,
+      setupChecklist: checklist,
+    });
   };
 
   void syncTransformationProviderLabel();
@@ -153,6 +174,15 @@ export function activate(context: vscode.ExtensionContext): void {
     context,
     promptTransformer,
     configRepository,
+    modelService,
+    logger
+  );
+  const firstTimeSetupCommand = registerFirstTimeSetupCommand(
+    context,
+    configRepository,
+    transformerFactory,
+    modelService,
+    promptTransformer,
     logger
   );
 
@@ -163,23 +193,43 @@ export function activate(context: vscode.ExtensionContext): void {
     configureCommand,
     configureModelCommand,
     configureProviderCommand,
-    testTransformationCommand
+    testTransformationCommand,
+    firstTimeSetupCommand
   );
 
   // ========================================
   // STARTUP CHECKS
   // ========================================
 
-  void validateConfigurationOnStartup(configRepository, transformerFactory).then(issue => {
+  void validateConfigurationOnStartup(configRepository, transformerFactory).then(async issue => {
+    const setupCompleted = isSetupCompleted(context);
+
+    if (!setupCompleted) {
+      logger.info('First-time setup not completed');
+      const selection = await vscode.window.showInformationMessage(
+        'Welcome to Cursor Whisper. Run the setup wizard to configure Whisper transcription and optional prompt optimization.',
+        'Run Setup Wizard',
+        'Later'
+      );
+      if (selection === 'Run Setup Wizard') {
+        await vscode.commands.executeCommand('cursor-whisper.firstTimeSetup');
+      }
+      return;
+    }
+
     if (issue) {
       logger.warn(issue.message);
-      void vscode.window
-        .showWarningMessage(issue.message, 'Configure Now', 'Later')
-        .then(selection => {
-          if (selection === 'Configure Now') {
-            void vscode.commands.executeCommand(issue.configureCommand);
-          }
-        });
+      const selection = await vscode.window.showWarningMessage(
+        issue.message,
+        'Configure Now',
+        'Run Setup Wizard',
+        'Later'
+      );
+      if (selection === 'Configure Now') {
+        await vscode.commands.executeCommand(issue.configureCommand);
+      } else if (selection === 'Run Setup Wizard') {
+        await vscode.commands.executeCommand('cursor-whisper.firstTimeSetup');
+      }
       return;
     }
 

@@ -58,7 +58,8 @@ describe('ConfigurationValidationService', () => {
       const issue = await validateConfigurationForRecording(configRepo, validator);
 
       expect(issue).toEqual({
-        message: 'OpenAI API Key is required for Whisper transcription.',
+        message:
+          'OpenAI API key is required for voice-to-text transcription (Whisper). Prompt optimization uses a separate provider you can configure later.',
         configureCommand: 'cursor-whisper.configureApiKey',
       });
     });
@@ -101,8 +102,8 @@ describe('ConfigurationValidationService', () => {
 
       const issue = await validateConfigurationOnStartup(configRepo, validator);
 
-      expect(issue?.message).toContain('OpenAI API Key is required for Whisper transcription');
-      expect(issue?.configureCommand).toBe('cursor-whisper.configureApiKey');
+      expect(issue?.message).toContain('OpenAI API key is required for voice-to-text transcription');
+      expect(issue?.configureCommand).toBe('cursor-whisper.firstTimeSetup');
     });
 
     it('does not warn about transformation provider keys when transformation is disabled', async () => {
@@ -132,8 +133,7 @@ describe('ConfigurationValidationService', () => {
       const issue = await validateConfigurationOnStartup(configRepo, validator);
 
       expect(issue).toEqual({
-        message:
-          'Cursor Whisper: Anthropic API Key is not configured for prompt optimization.',
+        message: 'Cursor Whisper: Anthropic credentials are not configured for prompt optimization.',
         configureCommand: 'cursor-whisper.configureTransformationProvider',
       });
     });

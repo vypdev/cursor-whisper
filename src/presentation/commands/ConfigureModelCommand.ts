@@ -26,7 +26,7 @@ export function registerConfigureModelCommand(
 
     if (provider !== TransformationProvider.OpenAI) {
       const switchProvider = await vscode.window.showInformationMessage(
-        `Current transformation provider is ${providerMeta.displayName}. Use "Configure Transformation Provider" to switch providers, or configure the model in settings.`,
+        `Current optimization provider is ${providerMeta.displayName}. This command configures OpenAI models only. Whisper transcription always uses OpenAI separately.`,
         'Configure Provider',
         'Open Settings'
       );
@@ -44,7 +44,7 @@ export function registerConfigureModelCommand(
 
     if (!config.apiKey) {
       const configureKey = await vscode.window.showWarningMessage(
-        'Cursor Whisper: Configure your OpenAI API key before selecting a model.',
+        'Configure your OpenAI API key first. It is required for Whisper transcription and OpenAI optimization.',
         'Configure API Key'
       );
 
@@ -107,7 +107,7 @@ export function registerConfigureModelCommand(
           }
 
           await vscode.window.showInformationMessage(
-            `Prompt transformation model set to ${selection.label}`
+            `Prompt transformation model set to ${selection.label} (OpenAI optimization; Whisper transcription unchanged).`
           );
         } catch (error) {
           const message =

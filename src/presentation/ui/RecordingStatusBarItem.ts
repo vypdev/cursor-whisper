@@ -1,16 +1,37 @@
 import * as vscode from 'vscode';
 import { RecordingState } from '../../domain/value-objects/RecordingState';
+import {
+  SETUP_CHECKLIST_TOOLTIP,
+  STATUS_BAR_SERVICES_TOOLTIP,
+} from '../../shared/constants/uxMessages';
+
+export interface StatusBarSetupState {
+  optimizationEnabled: boolean;
+  setupIncomplete: boolean;
+  setupChecklist?: Array<{ label: string; complete: boolean }>;
+}
 
 export class RecordingStatusBarItem {
   private statusBarItem: vscode.StatusBarItem;
+  private settingsStatusBarItem: vscode.StatusBarItem;
   private currentState: RecordingState = RecordingState.IDLE;
-  private transformationProviderLabel = 'AI provider';
+  private transformationProviderLabel = 'OpenAI';
+  private optimizationEnabled = true;
+  private setupIncomplete = false;
+  private setupChecklist: Array<{ label: string; complete: boolean }> = [];
 
   constructor() {
     this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    this.statusBarItem.command = 'cursor-whisper.startRecording';
+    this.settingsStatusBarItem = vscode.window.createStatusBarItem(
+      vscode.StatusBarAlignment.Right,
+      99
+    );
+    this.settingsStatusBarItem.text = '$(gear)';
+    this.settingsStatusBarItem.command = 'cursor-whisper.firstTimeSetup';
+    this.settingsStatusBarItem.tooltip = 'Cursor Whisper setup and configuration';
     this.updateUI();
     this.statusBarItem.show();
+    this.settingsStatusBarItem.show();
   }
 
   setState(state: RecordingState): void {
@@ -23,13 +44,38 @@ export class RecordingStatusBarItem {
     this.updateUI();
   }
 
+  setSetupState(state: StatusBarSetupState): void {
+    this.optimizationEnabled = state.optimizationEnabled;
+    this.setupIncomplete = state.setupIncomplete;
+    this.setupChecklist = state.setupChecklist ?? [];
+    this.updateUI();
+  }
+
+  private getServicesTooltip(): string {
+    if (this.setupIncomplete && this.setupChecklist.length > 0) {
+      return SETUP_CHECKLIST_TOOLTIP(this.setupChecklist);
+    }
+
+    return STATUS_BAR_SERVICES_TOOLTIP(this.transformationProviderLabel, this.optimizationEnabled);
+  }
+
   private updateUI(): void {
+    this.settingsStatusBarItem.tooltip = this.setupIncomplete
+      ? SETUP_CHECKLIST_TOOLTIP(this.setupChecklist)
+      : 'Open Cursor Whisper setup wizard';
+
     switch (this.currentState) {
       case RecordingState.IDLE:
-        this.statusBarItem.text = '$(mic) Voice';
-        this.statusBarItem.tooltip = 'Start recording (Cmd/Ctrl+Alt+V)';
-        this.statusBarItem.command = 'cursor-whisper.startRecording';
-        this.statusBarItem.backgroundColor = undefined;
+        this.statusBarItem.text = this.setupIncomplete
+          ? '$(warning) Setup Whisper'
+          : '$(mic) Voice';
+        this.statusBarItem.tooltip = this.getServicesTooltip();
+        this.statusBarItem.command = this.setupIncomplete
+          ? 'cursor-whisper.firstTimeSetup'
+          : 'cursor-whisper.startRecording';
+        this.statusBarItem.backgroundColor = this.setupIncomplete
+          ? new vscode.ThemeColor('statusBarItem.warningBackground')
+          : undefined;
         break;
 
       case RecordingState.RECORDING:
@@ -41,20 +87,20 @@ export class RecordingStatusBarItem {
 
       case RecordingState.PROCESSING:
         this.statusBarItem.text = '$(sync~spin) Processing...';
-        this.statusBarItem.tooltip = 'Processing audio';
+        this.statusBarItem.tooltip = 'Processing audio with OpenAI Whisper';
         this.statusBarItem.command = undefined;
         this.statusBarItem.backgroundColor = undefined;
         break;
 
       case RecordingState.TRANSCRIBING:
         this.statusBarItem.text = '$(sync~spin) Transcribing...';
-        this.statusBarItem.tooltip = 'Transcribing with Whisper';
+        this.statusBarItem.tooltip = 'Transcribing with OpenAI Whisper';
         this.statusBarItem.command = undefined;
         break;
 
       case RecordingState.TRANSFORMING:
         this.statusBarItem.text = '$(sync~spin) Optimizing...';
-        this.statusBarItem.tooltip = `Optimizing prompt with ${this.transformationProviderLabel}`;
+        this.statusBarItem.tooltip = `Optimizing prompt with ${this.transformationProviderLabel} (Whisper transcription already complete)`;
         this.statusBarItem.command = undefined;
         break;
 
@@ -71,7 +117,6 @@ export class RecordingStatusBarItem {
         this.statusBarItem.backgroundColor = new vscode.ThemeColor(
           'statusBarItem.warningBackground'
         );
-        // Auto-reset after 2 seconds
         setTimeout(() => {
           if (this.currentState === RecordingState.COMPLETED) {
             this.setState(RecordingState.IDLE);
@@ -84,7 +129,6 @@ export class RecordingStatusBarItem {
         this.statusBarItem.tooltip = 'Click to retry';
         this.statusBarItem.command = 'cursor-whisper.startRecording';
         this.statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
-        // Auto-reset after 3 seconds
         setTimeout(() => {
           if (this.currentState === RecordingState.ERROR) {
             this.setState(RecordingState.IDLE);
@@ -96,7 +140,6 @@ export class RecordingStatusBarItem {
         this.statusBarItem.text = '$(circle-slash) Cancelled';
         this.statusBarItem.tooltip = 'Recording cancelled';
         this.statusBarItem.command = 'cursor-whisper.startRecording';
-        // Auto-reset after 2 seconds
         setTimeout(() => {
           if (this.currentState === RecordingState.CANCELLED) {
             this.setState(RecordingState.IDLE);
@@ -108,5 +151,6 @@ export class RecordingStatusBarItem {
 
   dispose(): void {
     this.statusBarItem.dispose();
+    this.settingsStatusBarItem.dispose();
   }
 }

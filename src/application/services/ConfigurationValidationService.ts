@@ -4,10 +4,18 @@ import {
   PROVIDER_METADATA,
   TransformationProvider,
 } from '../../domain/value-objects/TransformationProvider';
+import {
+  OPENAI_API_KEY_REQUIRED_RECORDING,
+  OPENAI_API_KEY_REQUIRED_STARTUP,
+  OPTIMIZATION_PROVIDER_MISSING_KEY,
+} from '../../shared/constants/uxMessages';
 
 export interface ConfigurationValidationIssue {
   message: string;
-  configureCommand: 'cursor-whisper.configureApiKey' | 'cursor-whisper.configureTransformationProvider';
+  configureCommand:
+    | 'cursor-whisper.configureApiKey'
+    | 'cursor-whisper.configureTransformationProvider'
+    | 'cursor-whisper.firstTimeSetup';
 }
 
 /**
@@ -24,7 +32,7 @@ export async function validateConfigurationForRecording(
 
   if (!openAiKey) {
     return {
-      message: 'OpenAI API Key is required for Whisper transcription.',
+      message: OPENAI_API_KEY_REQUIRED_RECORDING,
       configureCommand: 'cursor-whisper.configureApiKey',
     };
   }
@@ -57,8 +65,8 @@ export async function validateConfigurationOnStartup(
 
   if (!openAiKey) {
     return {
-      message: 'Cursor Whisper: OpenAI API Key is required for Whisper transcription.',
-      configureCommand: 'cursor-whisper.configureApiKey',
+      message: OPENAI_API_KEY_REQUIRED_STARTUP,
+      configureCommand: 'cursor-whisper.firstTimeSetup',
     };
   }
 
@@ -83,7 +91,7 @@ export async function validateConfigurationOnStartup(
   const providerApiKey = await configRepo.getProviderApiKey(provider);
   if (!providerApiKey) {
     return {
-      message: `Cursor Whisper: ${metadata.displayName} API Key is not configured for prompt optimization.`,
+      message: OPTIMIZATION_PROVIDER_MISSING_KEY(metadata.displayName),
       configureCommand: 'cursor-whisper.configureTransformationProvider',
     };
   }

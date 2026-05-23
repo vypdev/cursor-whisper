@@ -123,9 +123,11 @@ Cursor compatibility notes are covered in [`adr/0007-cursor-compatibility.md`](a
 5. Browse [`src/`](../src/) for layer implementations
 
 ### For Users
-1. Read the main [`README.md`](../README.md)
-2. Review [`ux/states.md`](ux/states.md) for UI states
-3. See [`security/privacy.md`](security/privacy.md) for privacy details
+1. Read the [Quick Start Guide](docs/quickstart.md)
+2. Review the [Configuration Guide](docs/configuration/README.md)
+3. Read the main [`README.md`](../README.md)
+4. Review [`ux/states.md`](ux/states.md) for UI states
+5. See [`security/privacy.md`](security/privacy.md) for privacy details
 
 ### For Maintainers
 1. Review [`roadmap/versions.md`](roadmap/versions.md)

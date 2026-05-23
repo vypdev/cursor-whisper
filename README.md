@@ -11,6 +11,36 @@ A professional VSCode/Cursor extension that captures audio from your microphone,
 
 ---
 
+## Quick Start
+
+1. **Install** the extension (VSIX or Marketplace when available)
+2. **Run Setup Wizard** — Command Palette → `Cursor Whisper: Setup Wizard`
+3. **Configure OpenAI API key** — Required for Whisper voice-to-text
+4. **Optionally choose optimization provider** — OpenAI, Anthropic, Google, Azure, or Ollama
+5. **Press `Cmd+Alt+V`** and speak
+
+See the full [Quick Start Guide](docs/quickstart.md).
+
+### Two Services, Clear Roles
+
+| Service | Provider | Required | Credentials |
+|---------|----------|----------|-------------|
+| **Transcription** | OpenAI Whisper | Yes | OpenAI API key |
+| **Prompt optimization** | Your choice | No | Provider-specific API key |
+
+```mermaid
+graph LR
+    Voice[Your Voice] --> Whisper[OpenAI Whisper<br/>Transcription]
+    Whisper --> RawText[Raw Text]
+    RawText --> Choice{Optimization<br/>Enabled?}
+    Choice -->|No| Editor[Insert to Editor]
+    Choice -->|Yes| Provider[Your Chosen Provider]
+    Provider --> OptimizedText[Optimized Prompt]
+    OptimizedText --> Editor
+```
+
+---
+
 ## 🎯 Vision
 
 **Eliminate the friction between thinking and coding.**
@@ -142,10 +172,13 @@ See [`docs/architecture/`](docs/architecture/) for detailed architecture documen
 
 ### First-Time Setup
 
-1. After installation, you'll be prompted to configure your OpenAI API Key
-2. Click "Configure API Key"
-3. Enter your API key (starts with `sk-`)
-4. The extension will verify the key and save it securely
+1. After installation, run **Cursor Whisper: Setup Wizard** (opens automatically on first launch)
+2. Enter your **OpenAI API key** — required for Whisper transcription
+3. Choose whether to enable **prompt optimization** and select a provider
+4. Provide provider credentials when prompted (Anthropic, Google, Azure, etc.)
+5. Test your configuration with **Cursor Whisper: Test Configuration**
+
+**Note:** Whisper transcription always uses OpenAI. Prompt optimization is optional and can use a different provider with its own API key.
 
 ### Manual Configuration
 
@@ -163,12 +196,22 @@ Open Settings (`Cmd+,` / `Ctrl+,`) and search for "Cursor Whisper":
 }
 ```
 
-### Transformation Providers
-
-Prompt transformation supports multiple LLM providers. Transcription always uses OpenAI Whisper.
+### Transcription (Required — OpenAI Whisper)
 
 | Setting | Description |
 |---------|-------------|
+| OpenAI API key | Required for voice-to-text. Configure via **Setup Wizard** or **Configure OpenAI API Key (Whisper)** |
+| `transcriptionLanguage` | Language for transcription (`en`, `es`, `auto`, etc.) |
+
+**Cost:** ~$0.006/minute of audio
+
+### Prompt Optimization (Optional)
+
+Prompt optimization converts transcribed speech into structured prompts. Choose a provider and supply credentials when required.
+
+| Setting | Description |
+|---------|-------------|
+| `enablePromptTransformation` | Enable/disable optimization |
 | `transformationProvider` | `openai`, `anthropic`, `google`, `azure`, or `ollama` |
 | `transformationModel` | OpenAI model (when provider is `openai`) |
 | `anthropicModel` | Claude model (when provider is `anthropic`) |
@@ -176,7 +219,7 @@ Prompt transformation supports multiple LLM providers. Transcription always uses
 | `azureEndpoint` / `azureDeployment` | Azure OpenAI resource settings |
 | `ollamaBaseUrl` / `ollamaModel` | Local Ollama server settings |
 
-Use **Cursor Whisper: Configure Transformation Provider** to set up a provider interactively. See [`docs/providers/`](docs/providers/) for provider-specific setup.
+Use **Cursor Whisper: Configure Prompt Optimization Provider** to set up interactively. See [`docs/providers/`](docs/providers/) and [`docs/configuration/`](docs/configuration/) for provider-specific setup.
 
 ### Configuration Options
 
@@ -373,10 +416,11 @@ The extension provides clear visual feedback through the status bar:
 | `Cmd+Alt+V` / `Ctrl+Alt+V` | Toggle recording |
 | `Cmd+Shift+P` → "Cursor Whisper: Start Recording" | Start recording |
 | `Cmd+Shift+P` → "Cursor Whisper: Stop Recording" | Stop recording |
-| `Cmd+Shift+P` → "Cursor Whisper: Configure API Key" | Configure OpenAI API key (Whisper + OpenAI transformation) |
-| `Cmd+Shift+P` → "Cursor Whisper: Configure Transformation Provider" | Select and configure transformation provider |
-| `Cmd+Shift+P` → "Cursor Whisper: Configure Model" | Configure OpenAI transformation model |
-| `Cmd+Shift+P` → "Cursor Whisper: Test Transformation" | Test transformation with sample text |
+| `Cmd+Shift+P` → "Cursor Whisper: Configure OpenAI API Key (Whisper)" | Configure OpenAI API key for Whisper transcription |
+| `Cmd+Shift+P` → "Cursor Whisper: Configure Prompt Optimization Provider" | Select optimization provider and credentials |
+| `Cmd+Shift+P` → "Cursor Whisper: Configure OpenAI Optimization Model" | Configure OpenAI model for optimization |
+| `Cmd+Shift+P` → "Cursor Whisper: Setup Wizard" | Guided first-time or full reconfiguration |
+| `Cmd+Shift+P` → "Cursor Whisper: Test Configuration" | Test Whisper + optimization setup |
 
 ---
 

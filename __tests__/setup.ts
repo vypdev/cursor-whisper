@@ -39,6 +39,10 @@ jest.mock('vscode', () => ({
     Left: 1,
     Right: 2,
   },
+  ThemeColor: jest.fn((id: string) => ({ id })),
+  ProgressLocation: {
+    Notification: 15,
+  },
   ViewColumn: {
     One: 1,
     Two: 2,

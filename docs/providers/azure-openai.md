@@ -1,6 +1,18 @@
 # Azure OpenAI
 
-Use GPT models deployed on Azure OpenAI Service.
+> **Important:** Voice-to-text transcription **always** uses OpenAI Whisper (public OpenAI API). Azure OpenAI is only used for **prompt optimization**, not transcription.
+
+Use GPT models deployed on Azure OpenAI Service for enterprise prompt optimization.
+
+## How the services connect
+
+```mermaid
+graph LR
+    Voice[Your Voice] --> Whisper[OpenAI Whisper<br/>Public API]
+    Whisper --> Text[Raw Text]
+    Text --> Azure[Azure OpenAI<br/>Optimization]
+    Azure --> Output[Optimized Prompt]
+```
 
 ## Configuration
 
@@ -14,13 +26,26 @@ Use GPT models deployed on Azure OpenAI Service.
 
 ## Setup
 
-1. Create an Azure OpenAI resource and deploy a chat model
-2. Run **Cursor Whisper: Configure Transformation Provider**
-3. Select **Azure OpenAI**
-4. Enter your Azure API key, endpoint URL, and deployment name
+1. Configure OpenAI API key for Whisper transcription (required)
+2. Create an Azure OpenAI resource and deploy a chat model
+3. Run **Cursor Whisper: Configure Prompt Optimization Provider**
+4. Select **Azure OpenAI**
+5. Enter your Azure API key, endpoint URL, and deployment name
+
+## Cost estimate
+
+| Service | Typical cost |
+|---------|--------------|
+| Whisper transcription (OpenAI public) | ~$0.006/min |
+| Azure OpenAI optimization | Varies by deployment and region |
 
 ## Notes
 
 - The **deployment name** (not the model name) is used for API calls
 - Endpoint should be the resource URL without trailing slash
-- API key is stored separately from your OpenAI key
+- Azure API key is stored separately from your OpenAI Whisper key
+
+## Common pitfalls
+
+- **Using Azure for Whisper** — Not supported; Whisper uses public OpenAI API only
+- **Wrong deployment name** — Use the deployment name from Azure portal, not the model ID

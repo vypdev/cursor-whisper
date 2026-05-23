@@ -53,19 +53,23 @@
       },
       {
         "command": "cursor-whisper.configureApiKey",
-        "title": "Cursor Whisper: Configure API Key"
+        "title": "Cursor Whisper: Configure OpenAI API Key (Whisper)"
       },
       {
         "command": "cursor-whisper.configureModel",
-        "title": "Cursor Whisper: Configure Model"
+        "title": "Cursor Whisper: Configure OpenAI Optimization Model"
       },
       {
         "command": "cursor-whisper.configureTransformationProvider",
-        "title": "Cursor Whisper: Configure Transformation Provider"
+        "title": "Cursor Whisper: Configure Prompt Optimization Provider"
       },
       {
         "command": "cursor-whisper.testTransformation",
-        "title": "Cursor Whisper: Test Transformation"
+        "title": "Cursor Whisper: Test Configuration"
+      },
+      {
+        "command": "cursor-whisper.firstTimeSetup",
+        "title": "Cursor Whisper: Setup Wizard"
       }
     ],
     "keybindings": [
@@ -98,12 +102,12 @@
             "ko",
             "zh"
           ],
-          "description": "Language for transcription (ISO 639-1 code or 'auto')"
+          "markdownDescription": "**Transcription language** for OpenAI Whisper.\n\nWhisper transcription always uses your OpenAI API key. [Setup guide](https://github.com/vypdev/cursor-whisper/blob/main/docs/quickstart.md)"
         },
         "cursorWhisper.enablePromptTransformation": {
           "type": "boolean",
           "default": true,
-          "description": "Enable AI-powered prompt transformation (cost varies by provider)"
+          "markdownDescription": "**Enable prompt optimization** after Whisper transcription.\n\nWhen disabled, raw transcription is inserted. When enabled, configure a provider below. [Compare providers](https://github.com/vypdev/cursor-whisper/blob/main/docs/configuration/README.md)"
         },
         "cursorWhisper.transformationProvider": {
           "type": "string",
@@ -116,13 +120,13 @@
             "ollama"
           ],
           "enumDescriptions": [
-            "OpenAI GPT models (requires OpenAI API key)",
+            "OpenAI GPT models (requires OpenAI API key; can reuse Whisper key)",
             "Anthropic Claude models (requires Anthropic API key)",
             "Google Gemini models (requires Google AI API key)",
             "Azure OpenAI deployments (requires Azure API key and endpoint)",
             "Local Ollama models (no API key required)"
           ],
-          "description": "AI provider used for prompt transformation after transcription."
+          "markdownDescription": "**Prompt optimization provider** (separate from Whisper transcription).\n\nWhisper always uses OpenAI. This setting chooses which AI service optimizes transcribed speech into structured prompts. [Provider guide](https://github.com/vypdev/cursor-whisper/blob/main/docs/providers/README.md)"
         },
         "cursorWhisper.transformationModel": {
           "type": "string",
@@ -141,7 +145,7 @@
             "GPT-4 — original GPT-4 model",
             "GPT-3.5 Turbo — cheapest option, lower quality"
           ],
-          "description": "OpenAI model used for prompt transformation. Use 'Cursor Whisper: Configure Model' to pick from models available on your API key."
+          "markdownDescription": "**OpenAI model for prompt optimization** when `transformationProvider` is `openai`.\n\nRun **Cursor Whisper: Configure OpenAI Optimization Model** to pick from models available on your API key."
         },
         "cursorWhisper.anthropicModel": {
           "type": "string",
@@ -153,7 +157,7 @@
             "claude-3-sonnet-20240229",
             "claude-3-haiku-20240307"
           ],
-          "description": "Anthropic Claude model used for prompt transformation."
+          "markdownDescription": "**Anthropic model** for prompt optimization when `transformationProvider` is `anthropic`. Requires an Anthropic API key."
         },
         "cursorWhisper.googleModel": {
           "type": "string",
@@ -163,27 +167,27 @@
             "gemini-1.5-flash",
             "gemini-2.0-flash"
           ],
-          "description": "Google Gemini model used for prompt transformation."
+          "markdownDescription": "**Google Gemini model** for prompt optimization when `transformationProvider` is `google`. Requires a Google AI API key."
         },
         "cursorWhisper.azureEndpoint": {
           "type": "string",
           "default": "",
-          "description": "Azure OpenAI resource endpoint (e.g. https://my-resource.openai.azure.com)."
+          "markdownDescription": "**Azure OpenAI endpoint** for prompt optimization when `transformationProvider` is `azure` (e.g. `https://my-resource.openai.azure.com`)."
         },
         "cursorWhisper.azureDeployment": {
           "type": "string",
           "default": "",
-          "description": "Azure OpenAI deployment name for the chat model."
+          "markdownDescription": "**Azure OpenAI deployment name** for the chat model used in prompt optimization."
         },
         "cursorWhisper.ollamaBaseUrl": {
           "type": "string",
           "default": "http://localhost:11434",
-          "description": "Ollama server base URL for local prompt transformation."
+          "markdownDescription": "**Ollama server URL** for local prompt optimization when `transformationProvider` is `ollama`."
         },
         "cursorWhisper.ollamaModel": {
           "type": "string",
           "default": "llama3.1:8b",
-          "description": "Ollama model name/tag for prompt transformation."
+          "markdownDescription": "**Ollama model name/tag** for local prompt optimization."
         },
         "cursorWhisper.audioQuality": {
           "type": "string",
@@ -193,19 +197,19 @@
             "high"
           ],
           "default": "high",
-          "description": "Audio recording quality"
+          "markdownDescription": "**Audio recording quality** sent to OpenAI Whisper for transcription."
         },
         "cursorWhisper.maxRecordingDuration": {
           "type": "number",
           "default": 120,
           "minimum": 10,
           "maximum": 300,
-          "description": "Maximum recording duration in seconds"
+          "markdownDescription": "**Maximum recording duration** in seconds before auto-stop."
         },
         "cursorWhisper.showNotifications": {
           "type": "boolean",
           "default": true,
-          "description": "Show status notifications"
+          "markdownDescription": "Show progress and status notifications during recording, transcription, and optimization."
         }
       }
     }
