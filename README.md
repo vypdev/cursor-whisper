@@ -243,9 +243,39 @@ npm run lint
 # Run tests (when available)
 npm test
 
-# Package extension
+# Package extension (includes all platform native binaries)
+npm run package
+
+# Verify VSIX contains all platform binaries
+npm run package:verify
+```
+
+### Packaging for Distribution
+
+To create a VSIX that works across all platforms (macOS, Linux, Windows):
+
+```bash
 npm run package
 ```
+
+This will:
+
+1. Install all platform-specific native binaries (`darwin-arm64`, `darwin-x64`, `linux-x64-gnu`, `win32-x64-msvc`)
+2. Bundle them into the VSIX (~2.5MB total)
+3. Create `cursor-whisper-X.X.X.vsix`
+
+To verify all binaries are included:
+
+```bash
+npm run package:verify
+```
+
+Expected output:
+
+- `audio-capture-darwin-arm64`
+- `audio-capture-darwin-x64`
+- `audio-capture-linux-x64-gnu`
+- `audio-capture-win32-x64-msvc`
 
 **Current Build**: ✅ SUCCESS (577 KB bundle)
 
