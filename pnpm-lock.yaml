@@ -8,12 +8,18 @@ importers:
 
   .:
     dependencies:
+      '@anthropic-ai/sdk':
+        specifier: ^0.30.1
+        version: 0.30.1
+      '@google/generative-ai':
+        specifier: ^0.21.0
+        version: 0.21.0
       '@kstonekuan/audio-capture':
         specifier: ^0.0.3
         version: 0.0.3
-      copilot:
-        specifier: ^0.0.2
-        version: 0.0.2
+      axios:
+        specifier: ^1.7.9
+        version: 1.16.1
       openai:
         specifier: ^4.20.0
         version: 4.104.0
@@ -74,6 +80,9 @@ importers:
         version: 5.1.4(webpack@5.107.1)
 
 packages:
+
+  '@anthropic-ai/sdk@0.30.1':
+    resolution: {integrity: sha512-nuKvp7wOIz6BFei8WrTdhmSsx5mwnArYyJgh4+vYu3V4J0Ltb8Xm3odPm51n1aSI0XxNCrDl7O88cxCtUdAkaw==}
 
   '@babel/code-frame@7.29.0':
     resolution: {integrity: sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw==}
@@ -262,57 +271,9 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@github/copilot-darwin-arm64@1.0.51':
-    resolution: {integrity: sha512-i713sW3GzbeLKowGVY6/A97lGkUMJNVdUD0oaUWTWmXX08u+hWsnVKbqL4EQlw7x8xU511X5vkgFMi31DWyCuQ==}
-    cpu: [arm64]
-    os: [darwin]
-    hasBin: true
-
-  '@github/copilot-darwin-x64@1.0.51':
-    resolution: {integrity: sha512-c67SbMznclcHqlJINXBCwudhqRgE5HNaY9fqMQqu954+ezVa6Q/2hwhCU51PNbYLWtZTGgXsgWnrxOg77hh0ug==}
-    cpu: [x64]
-    os: [darwin]
-    hasBin: true
-
-  '@github/copilot-linux-arm64@1.0.51':
-    resolution: {integrity: sha512-MlQeTB4CSPnG2BZTxsPSV5a7rjsqFOzhTCVCNjLeht3ODObWjrIYhtzVF7h/nue9ii96u9RBB0gIAfoBReryTw==}
-    cpu: [arm64]
-    os: [linux]
-    hasBin: true
-
-  '@github/copilot-linux-x64@1.0.51':
-    resolution: {integrity: sha512-fniGTwR5KLFfNDjSFbWvZ3Bno+2bXsMdNM0l3dFHwVTHyBqQSXZ3xvEEDadGimCxgKfRDRt1M1FYnUpqhLYf/Q==}
-    cpu: [x64]
-    os: [linux]
-    hasBin: true
-
-  '@github/copilot-linuxmusl-arm64@1.0.51':
-    resolution: {integrity: sha512-vg9sWZw4u/bqHa7ylF/GZeuznt+k4/Em899C++CTBU4CKhtAaxd2TZDsEV0Ap2DXzP2UFxCn77vZoHyxByMI5A==}
-    cpu: [arm64]
-    os: [linux]
-    hasBin: true
-
-  '@github/copilot-linuxmusl-x64@1.0.51':
-    resolution: {integrity: sha512-zxXRdzjshHTQd/LDWmOIDXt0T8nvw66ue6cneAXHhLXWzuiv5mqPKnxuHQyvQDt+IBEyq9utuetlKxcAVo+gYw==}
-    cpu: [x64]
-    os: [linux]
-    hasBin: true
-
-  '@github/copilot-win32-arm64@1.0.51':
-    resolution: {integrity: sha512-/SP8DfOukjllCXavgBNI0qwJa+8hCFRNK7Q3/Q3qzAOvaWUZZkabKSVZfXaGxerTGpGq009Zg3nyIPR0jfm60w==}
-    cpu: [arm64]
-    os: [win32]
-    hasBin: true
-
-  '@github/copilot-win32-x64@1.0.51':
-    resolution: {integrity: sha512-ZB5Jr9m4ZR8gFOwXnYGNfdU+bMFeUgj1OCU3x64Tx5GC6Uln/pf8Ue5LHlsBkBq/NuKvkp/g4GARDIHBCKXEnQ==}
-    cpu: [x64]
-    os: [win32]
-    hasBin: true
-
-  '@github/copilot@1.0.51':
-    resolution: {integrity: sha512-yKXbMeApxO8P68/BeSS/lmIRsCprcMdY8MRRp+Vp/QymCv59o4lxDcAIVq2h/CD8vJHoiG4OijdWydd76yoqLw==}
-    hasBin: true
+  '@google/generative-ai@0.21.0':
+    resolution: {integrity: sha512-7XhUbtnlkSEZK15kN3t+tzIMxsbKm/dSkKBFalj+20NvPKe1kBY7mR2P7vuijEn+f06z5+A8bVGKO0v39cr6Wg==}
+    engines: {node: '>=18.0.0'}
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -686,6 +647,10 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  agent-base@6.0.2:
+    resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
+    engines: {node: '>= 6.0.0'}
+
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
@@ -753,6 +718,9 @@ packages:
 
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
+
+  axios@1.16.1:
+    resolution: {integrity: sha512-caYkukvroVPO8KrzuJEb50Hm07KwfBZPEC3VeFHTsqWHvKTsy54hjJz9BS/cdaypROE2rH6xvm9mHX4fgWkr3A==}
 
   azure-devops-node-api@11.2.0:
     resolution: {integrity: sha512-XdiGPhrpaT5J8wdERRKs5g8E0Zy1pvOYTli7z9E8nmOn3YGp4FhtjhrOyFmX/8veWCwdI69mCHKJw6l+4J/bHA==}
@@ -949,10 +917,6 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
-
-  copilot@0.0.2:
-    resolution: {integrity: sha512-nedf34AaYj9JnFhRmiJEZemAno2WDXMypq6FW5aCVR0N+QdpQ6viukP1JpvJDChpaMEVvbUkMjmjMifJbO/AgQ==}
-    hasBin: true
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -1277,6 +1241,15 @@ packages:
   flatted@3.4.2:
     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
 
+  follow-redirects@1.16.0:
+    resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
   form-data-encoder@1.7.2:
     resolution: {integrity: sha512-qfqtYan3rxrnCk1VYaA4H+Ms9xdpPqvLZa6xmMgFvhO32x7/3J/ExcTd6qpxM0vH2GdMI+poehyBZvqfMTto8A==}
 
@@ -1404,6 +1377,10 @@ packages:
   http-proxy-agent@7.0.2:
     resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
     engines: {node: '>= 14'}
+
+  https-proxy-agent@5.0.1:
+    resolution: {integrity: sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==}
+    engines: {node: '>= 6'}
 
   https-proxy-agent@7.0.6:
     resolution: {integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==}
@@ -2052,6 +2029,10 @@ packages:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
     engines: {node: '>= 6'}
 
+  proxy-from-env@2.1.0:
+    resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
+    engines: {node: '>=10'}
+
   pump@3.0.4:
     resolution: {integrity: sha512-VS7sjc6KR7e1ukRFhQSY5LM2uBWAUPiOPa/A3mkKmiMwSmRFUITt0xuj+/lesgnCv+dPIEYlkzrcyXgquIHMcA==}
 
@@ -2630,6 +2611,18 @@ packages:
 
 snapshots:
 
+  '@anthropic-ai/sdk@0.30.1':
+    dependencies:
+      '@types/node': 18.19.130
+      '@types/node-fetch': 2.6.13
+      abort-controller: 3.0.0
+      agentkeepalive: 4.6.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
+
   '@babel/code-frame@7.29.0':
     dependencies:
       '@babel/helper-validator-identifier': 7.28.5
@@ -2844,42 +2837,7 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@github/copilot-darwin-arm64@1.0.51':
-    optional: true
-
-  '@github/copilot-darwin-x64@1.0.51':
-    optional: true
-
-  '@github/copilot-linux-arm64@1.0.51':
-    optional: true
-
-  '@github/copilot-linux-x64@1.0.51':
-    optional: true
-
-  '@github/copilot-linuxmusl-arm64@1.0.51':
-    optional: true
-
-  '@github/copilot-linuxmusl-x64@1.0.51':
-    optional: true
-
-  '@github/copilot-win32-arm64@1.0.51':
-    optional: true
-
-  '@github/copilot-win32-x64@1.0.51':
-    optional: true
-
-  '@github/copilot@1.0.51':
-    dependencies:
-      detect-libc: 2.1.2
-    optionalDependencies:
-      '@github/copilot-darwin-arm64': 1.0.51
-      '@github/copilot-darwin-x64': 1.0.51
-      '@github/copilot-linux-arm64': 1.0.51
-      '@github/copilot-linux-x64': 1.0.51
-      '@github/copilot-linuxmusl-arm64': 1.0.51
-      '@github/copilot-linuxmusl-x64': 1.0.51
-      '@github/copilot-win32-arm64': 1.0.51
-      '@github/copilot-win32-x64': 1.0.51
+  '@google/generative-ai@0.21.0': {}
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -3408,6 +3366,12 @@ snapshots:
 
   acorn@8.16.0: {}
 
+  agent-base@6.0.2:
+    dependencies:
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
   agent-base@7.1.4: {}
 
   agentkeepalive@4.6.0:
@@ -3469,6 +3433,16 @@ snapshots:
   array-union@2.1.0: {}
 
   asynckit@0.4.0: {}
+
+  axios@1.16.1:
+    dependencies:
+      follow-redirects: 1.16.0
+      form-data: 4.0.5
+      https-proxy-agent: 5.0.1
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - debug
+      - supports-color
 
   azure-devops-node-api@11.2.0:
     dependencies:
@@ -3695,10 +3669,6 @@ snapshots:
   concat-map@0.0.1: {}
 
   convert-source-map@2.0.0: {}
-
-  copilot@0.0.2:
-    dependencies:
-      '@github/copilot': 1.0.51
 
   core-util-is@1.0.3: {}
 
@@ -4028,6 +3998,8 @@ snapshots:
 
   flatted@3.4.2: {}
 
+  follow-redirects@1.16.0: {}
+
   form-data-encoder@1.7.2: {}
 
   form-data@4.0.5:
@@ -4159,6 +4131,13 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.4
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  https-proxy-agent@5.0.1:
+    dependencies:
+      agent-base: 6.0.2
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
@@ -4940,6 +4919,8 @@ snapshots:
     dependencies:
       kleur: 3.0.3
       sisteransi: 1.0.5
+
+  proxy-from-env@2.1.0: {}
 
   pump@3.0.4:
     dependencies:

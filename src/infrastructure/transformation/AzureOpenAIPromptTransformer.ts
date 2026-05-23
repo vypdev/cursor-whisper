@@ -2,7 +2,6 @@ import OpenAI from 'openai';
 import { IPromptTransformer, PromptContext } from '../../application/ports/IPromptTransformer';
 import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { ILogger } from '../../application/ports/ILogger';
-import { ApiKey } from '../../domain/value-objects/ApiKey';
 import {
   TransformationError,
   TRANSFORMATION_SYSTEM_PROMPT,
@@ -10,62 +9,76 @@ import {
   calculateImprovements,
 } from './transformationUtils';
 
-export class OpenAIPromptTransformer implements IPromptTransformer {
+export interface AzureOpenAIConfig {
+  endpoint: string;
+  deployment: string;
+}
+
+export class AzureOpenAIPromptTransformer implements IPromptTransformer {
   private client: OpenAI | null = null;
-  private cachedApiKey: string | null = null;
-  static readonly DEFAULT_MODEL = 'gpt-4o';
+  private cachedKey: string | null = null;
 
   constructor(
     private readonly getApiKey: () => Promise<string | undefined>,
-    private readonly getModel: () => Promise<string | undefined>,
+    private readonly getAzureConfig: () => Promise<AzureOpenAIConfig>,
     private readonly logger: ILogger
   ) {}
 
-  private async ensureClient(): Promise<OpenAI> {
-    const apiKeyStr = await this.getApiKey();
-    if (!apiKeyStr) {
-      throw new TransformationError('OpenAI API key not configured');
-    }
-
-    if (this.client && this.cachedApiKey === apiKeyStr) {
-      return this.client;
-    }
-
-    const apiKey = new ApiKey(apiKeyStr);
-    this.client = new OpenAI({
-      apiKey: apiKey.toString(),
-    });
-    this.cachedApiKey = apiKeyStr;
-
-    return this.client;
+  private normalizeEndpoint(endpoint: string): string {
+    return endpoint.replace(/\/+$/, '');
   }
 
-  private async resolveModel(): Promise<string> {
-    const model = await this.getModel();
-    return model || OpenAIPromptTransformer.DEFAULT_MODEL;
+  private async ensureClient(): Promise<{ client: OpenAI; deployment: string }> {
+    const apiKeyStr = await this.getApiKey();
+    if (!apiKeyStr) {
+      throw new TransformationError('Azure OpenAI API key not configured');
+    }
+
+    const azureConfig = await this.getAzureConfig();
+    if (!azureConfig.endpoint.trim()) {
+      throw new TransformationError('Azure OpenAI endpoint is not configured');
+    }
+    if (!azureConfig.deployment.trim()) {
+      throw new TransformationError('Azure OpenAI deployment name is not configured');
+    }
+
+    const endpoint = this.normalizeEndpoint(azureConfig.endpoint);
+    const cacheKey = `${apiKeyStr}:${endpoint}`;
+
+    if (this.client && this.cachedKey === cacheKey) {
+      return { client: this.client, deployment: azureConfig.deployment };
+    }
+
+    this.client = new OpenAI({
+      apiKey: apiKeyStr,
+      baseURL: `${endpoint}/openai`,
+      defaultQuery: { 'api-version': '2024-02-15-preview' },
+      defaultHeaders: { 'api-key': apiKeyStr },
+    });
+    this.cachedKey = cacheKey;
+
+    return { client: this.client, deployment: azureConfig.deployment };
   }
 
   async transform(transcription: string, context?: PromptContext): Promise<TransformedPrompt> {
-    this.logger.info('Starting OpenAI prompt transformation', {
+    this.logger.info('Starting Azure OpenAI prompt transformation', {
       textLength: transcription.length,
       hasContext: !!context,
     });
 
-    const client = await this.ensureClient();
-    const model = await this.resolveModel();
+    const { client, deployment } = await this.ensureClient();
     const userPrompt = buildUserPrompt(transcription, context);
 
     try {
       const startTime = Date.now();
 
-      this.logger.debug('OpenAI transformation request', {
-        model,
-        temperature: 0.3,
+      this.logger.debug('Azure OpenAI transformation request', {
+        deployment,
         promptLength: userPrompt.length,
       });
 
       const response = await client.chat.completions.create({
-        model,
+        model: deployment,
         messages: [
           { role: 'system', content: TRANSFORMATION_SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
@@ -78,8 +91,8 @@ export class OpenAIPromptTransformer implements IPromptTransformer {
       const transformedText = response.choices[0]?.message?.content || transcription;
       const improvements = calculateImprovements(transcription, transformedText);
 
-      this.logger.info('OpenAI prompt transformation completed', {
-        model,
+      this.logger.info('Azure OpenAI prompt transformation completed', {
+        deployment,
         duration: duration.toFixed(2) + 's',
         originalLength: transcription.length,
         transformedLength: transformedText.length,
@@ -92,24 +105,20 @@ export class OpenAIPromptTransformer implements IPromptTransformer {
         improvements,
       };
     } catch (error) {
-      this.logger.error('OpenAI prompt transformation failed', error as Error);
+      this.logger.error('Azure OpenAI prompt transformation failed', error as Error);
 
       if (error instanceof OpenAI.APIError) {
-        if (error.status === 404 || error.code === 'model_not_found') {
+        if (error.status === 401) {
+          throw new TransformationError('Invalid Azure OpenAI API key', error);
+        }
+        if (error.status === 404) {
           throw new TransformationError(
-            `Model '${model}' is not available for your API key. Use "Cursor Whisper: Configure Model" to choose another model.`,
+            `Deployment '${deployment}' was not found. Check your Azure OpenAI configuration.`,
             error
           );
         }
-      }
-
-      if (error instanceof Error) {
-        if (error.message.includes('rate_limit')) {
+        if (error.status === 429) {
           throw new TransformationError('Rate limit exceeded. Please try again later.', error);
-        }
-
-        if (error.message.includes('invalid_api_key')) {
-          throw new TransformationError('Invalid API key', error);
         }
       }
 

@@ -22,14 +22,14 @@ jest.mock('vscode', () => ({
     createWebviewPanel: jest.fn(),
   },
   commands: {
-    registerCommand: jest.fn((_, handler) => ({
+    registerCommand: jest.fn((_, _handler) => ({
       dispose: jest.fn(),
     })),
     executeCommand: jest.fn(),
   },
   workspace: {
     getConfiguration: jest.fn(() => ({
-      get: jest.fn((key, defaultValue) => defaultValue),
+      get: jest.fn((_key, defaultValue) => defaultValue),
       update: jest.fn(),
       has: jest.fn(() => true),
     })),

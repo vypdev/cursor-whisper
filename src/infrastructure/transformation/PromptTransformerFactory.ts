@@ -1,0 +1,125 @@
+import { IPromptTransformer } from '../../application/ports/IPromptTransformer';
+import { IConfigRepository } from '../../application/ports/IConfigRepository';
+import { ILogger } from '../../application/ports/ILogger';
+import {
+  TransformationProvider,
+  PROVIDER_METADATA,
+} from '../../domain/value-objects/TransformationProvider';
+import { OpenAIPromptTransformer } from './OpenAIPromptTransformer';
+import { AnthropicPromptTransformer } from './AnthropicPromptTransformer';
+import { GooglePromptTransformer } from './GooglePromptTransformer';
+import { AzureOpenAIPromptTransformer } from './AzureOpenAIPromptTransformer';
+import { OllamaPromptTransformer } from './OllamaPromptTransformer';
+import { TransformationError } from './transformationUtils';
+
+export class PromptTransformerFactory {
+  constructor(
+    private readonly configRepo: IConfigRepository,
+    private readonly logger: ILogger
+  ) {}
+
+  async create(): Promise<IPromptTransformer> {
+    const config = await this.configRepo.getConfig();
+    return this.createForProvider(config.transformationProvider);
+  }
+
+  async createForProvider(provider: TransformationProvider): Promise<IPromptTransformer> {
+    switch (provider) {
+      case TransformationProvider.OpenAI:
+        return new OpenAIPromptTransformer(
+          () => this.configRepo.getProviderApiKey(TransformationProvider.OpenAI),
+          () => this.configRepo.getConfig().then(c => c.transformationModel),
+          this.logger
+        );
+
+      case TransformationProvider.Anthropic:
+        return new AnthropicPromptTransformer(
+          () => this.configRepo.getProviderApiKey(TransformationProvider.Anthropic),
+          () => this.configRepo.getConfig().then(c => c.anthropicModel),
+          this.logger
+        );
+
+      case TransformationProvider.Google:
+        return new GooglePromptTransformer(
+          () => this.configRepo.getProviderApiKey(TransformationProvider.Google),
+          () => this.configRepo.getConfig().then(c => c.googleModel),
+          this.logger
+        );
+
+      case TransformationProvider.Azure:
+        return new AzureOpenAIPromptTransformer(
+          () => this.configRepo.getProviderApiKey(TransformationProvider.Azure),
+          async () => {
+            const config = await this.configRepo.getConfig();
+            return {
+              endpoint: config.azureEndpoint,
+              deployment: config.azureDeployment,
+            };
+          },
+          this.logger
+        );
+
+      case TransformationProvider.Ollama:
+        return new OllamaPromptTransformer(
+          async () => {
+            const config = await this.configRepo.getConfig();
+            return {
+              baseUrl: config.ollamaBaseUrl,
+              model: config.ollamaModel,
+            };
+          },
+          this.logger
+        );
+
+      default:
+        throw new TransformationError(`Unsupported transformation provider: ${provider}`);
+    }
+  }
+
+  async validateProvider(provider: TransformationProvider): Promise<string | undefined> {
+    const metadata = PROVIDER_METADATA[provider];
+
+    if (metadata.requiresApiKey) {
+      const apiKey = await this.configRepo.getProviderApiKey(provider);
+      if (!apiKey) {
+        return `${metadata.displayName} API key is not configured.`;
+      }
+    }
+
+    if (provider === TransformationProvider.Azure) {
+      const config = await this.configRepo.getConfig();
+      if (!config.azureEndpoint.trim()) {
+        return 'Azure OpenAI endpoint is not configured.';
+      }
+      if (!config.azureDeployment.trim()) {
+        return 'Azure OpenAI deployment name is not configured.';
+      }
+    }
+
+    if (provider === TransformationProvider.Ollama) {
+      const available = await OllamaPromptTransformer.isAvailable(
+        (await this.configRepo.getConfig()).ollamaBaseUrl
+      );
+      if (!available) {
+        return 'Ollama server is not reachable. Ensure Ollama is running locally.';
+      }
+    }
+
+    return undefined;
+  }
+}
+
+/**
+ * Resolves the active prompt transformer from configuration on each call.
+ */
+export class ConfigurablePromptTransformer implements IPromptTransformer {
+  constructor(private readonly factory: PromptTransformerFactory) {}
+
+  async transform(
+    transcription: string,
+    context?: import('../../application/ports/IPromptTransformer').PromptContext
+  ) {
+    const transformer = await this.factory.create();
+    return transformer.transform(transcription, context);
+  }
+}

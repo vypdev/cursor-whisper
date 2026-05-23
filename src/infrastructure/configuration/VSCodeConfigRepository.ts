@@ -1,6 +1,12 @@
 import * as vscode from 'vscode';
 import { IConfigRepository, Config } from '../../application/ports/IConfigRepository';
 import { ConfigError } from '../../domain/errors/ConfigError';
+import {
+  TransformationProvider,
+  getProviderSecretKey,
+  parseTransformationProvider,
+  PROVIDER_METADATA,
+} from '../../domain/value-objects/TransformationProvider';
 
 export class VSCodeConfigRepository implements IConfigRepository {
   private static readonly SECTION = 'cursorWhisper';
@@ -13,7 +19,6 @@ export class VSCodeConfigRepository implements IConfigRepository {
     _context: vscode.ExtensionContext,
     private readonly secretStorage: vscode.SecretStorage
   ) {
-    // Watch for configuration changes
     vscode.workspace.onDidChangeConfiguration(event => {
       if (event.affectsConfiguration(VSCodeConfigRepository.SECTION)) {
         void this.getConfig().then(config => {
@@ -26,24 +31,34 @@ export class VSCodeConfigRepository implements IConfigRepository {
   async getConfig(): Promise<Config> {
     const config = vscode.workspace.getConfiguration(VSCodeConfigRepository.SECTION);
 
-    // Get API key from secure storage (migrate legacy key if present)
-    let apiKey = await this.secretStorage.get(VSCodeConfigRepository.SECRET_KEY);
-    if (!apiKey) {
-      const legacyKey = await this.secretStorage.get(VSCodeConfigRepository.LEGACY_SECRET_KEY);
-      if (legacyKey) {
-        apiKey = legacyKey;
-        await this.secretStorage.store(VSCodeConfigRepository.SECRET_KEY, legacyKey);
-        await this.secretStorage.delete(VSCodeConfigRepository.LEGACY_SECRET_KEY);
-      }
-    }
+    const apiKey = await this.getProviderApiKey(TransformationProvider.OpenAI);
 
     return {
       apiKey,
+      transformationProvider: parseTransformationProvider(
+        config.get<string>('transformationProvider'),
+        TransformationProvider.OpenAI
+      ),
       transcriptionLanguage: config.get<string>('transcriptionLanguage', 'auto'),
       enablePromptTransformation: config.get<boolean>('enablePromptTransformation', false),
       transformationModel: config.get<string>(
         'transformationModel',
         VSCodeConfigRepository.DEFAULT_TRANSFORMATION_MODEL
+      ),
+      anthropicModel: config.get<string>(
+        'anthropicModel',
+        PROVIDER_METADATA[TransformationProvider.Anthropic].defaultModel
+      ),
+      googleModel: config.get<string>(
+        'googleModel',
+        PROVIDER_METADATA[TransformationProvider.Google].defaultModel
+      ),
+      azureEndpoint: config.get<string>('azureEndpoint', ''),
+      azureDeployment: config.get<string>('azureDeployment', ''),
+      ollamaBaseUrl: config.get<string>('ollamaBaseUrl', 'http://localhost:11434'),
+      ollamaModel: config.get<string>(
+        'ollamaModel',
+        PROVIDER_METADATA[TransformationProvider.Ollama].defaultModel
       ),
       audioQuality: config.get<'low' | 'medium' | 'high'>('audioQuality', 'high'),
       maxRecordingDuration: config.get<number>('maxRecordingDuration', 120),
@@ -52,40 +67,80 @@ export class VSCodeConfigRepository implements IConfigRepository {
     };
   }
 
-  async updateConfig(partialConfig: Partial<Config>): Promise<void> {
-    const config = vscode.workspace.getConfiguration(VSCodeConfigRepository.SECTION);
-
-    // Handle API key separately (secure storage)
-    if (partialConfig.apiKey !== undefined) {
-      try {
-        if (partialConfig.apiKey) {
-          await this.secretStorage.store(
-            VSCodeConfigRepository.SECRET_KEY,
-            partialConfig.apiKey
-          );
+  async getProviderApiKey(provider: TransformationProvider): Promise<string | undefined> {
+    if (provider === TransformationProvider.OpenAI) {
+      let apiKey = await this.secretStorage.get(getProviderSecretKey(provider));
+      if (!apiKey) {
+        apiKey = await this.secretStorage.get(VSCodeConfigRepository.SECRET_KEY);
+      }
+      if (!apiKey) {
+        const legacyKey = await this.secretStorage.get(VSCodeConfigRepository.LEGACY_SECRET_KEY);
+        if (legacyKey) {
+          apiKey = legacyKey;
+          await this.secretStorage.store(getProviderSecretKey(provider), legacyKey);
+          await this.secretStorage.store(VSCodeConfigRepository.SECRET_KEY, legacyKey);
           await this.secretStorage.delete(VSCodeConfigRepository.LEGACY_SECRET_KEY);
-        } else {
+        }
+      }
+      return apiKey;
+    }
+
+    return this.secretStorage.get(getProviderSecretKey(provider));
+  }
+
+  async setProviderApiKey(
+    provider: TransformationProvider,
+    apiKey: string | undefined
+  ): Promise<void> {
+    try {
+      const secretKey = getProviderSecretKey(provider);
+
+      if (apiKey) {
+        await this.secretStorage.store(secretKey, apiKey);
+        if (provider === TransformationProvider.OpenAI) {
+          await this.secretStorage.store(VSCodeConfigRepository.SECRET_KEY, apiKey);
+          await this.secretStorage.delete(VSCodeConfigRepository.LEGACY_SECRET_KEY);
+        }
+      } else {
+        await this.secretStorage.delete(secretKey);
+        if (provider === TransformationProvider.OpenAI) {
           await this.secretStorage.delete(VSCodeConfigRepository.SECRET_KEY);
           await this.secretStorage.delete(VSCodeConfigRepository.LEGACY_SECRET_KEY);
         }
-      } catch (error) {
-        throw new ConfigError(
-          'Failed to save API key securely. Check your system keychain settings.'
-        );
       }
+    } catch {
+      throw new ConfigError(
+        'Failed to save API key securely. Check your system keychain settings.'
+      );
+    }
+  }
+
+  async updateConfig(partialConfig: Partial<Config>): Promise<void> {
+    const config = vscode.workspace.getConfiguration(VSCodeConfigRepository.SECTION);
+
+    if (partialConfig.apiKey !== undefined) {
+      await this.setProviderApiKey(TransformationProvider.OpenAI, partialConfig.apiKey);
     }
 
-    // Update other settings
     const updates: Array<Thenable<void>> = [];
 
-    if (partialConfig.transcriptionLanguage !== undefined) {
-      updates.push(
-        config.update(
-          'transcriptionLanguage',
-          partialConfig.transcriptionLanguage,
-          vscode.ConfigurationTarget.Global
-        )
-      );
+    const stringFields: Array<keyof Config> = [
+      'transformationProvider',
+      'transcriptionLanguage',
+      'transformationModel',
+      'anthropicModel',
+      'googleModel',
+      'azureEndpoint',
+      'azureDeployment',
+      'ollamaBaseUrl',
+      'ollamaModel',
+    ];
+
+    for (const field of stringFields) {
+      const value = partialConfig[field];
+      if (value !== undefined && typeof value === 'string') {
+        updates.push(config.update(field, value, vscode.ConfigurationTarget.Global));
+      }
     }
 
     if (partialConfig.enablePromptTransformation !== undefined) {
@@ -93,16 +148,6 @@ export class VSCodeConfigRepository implements IConfigRepository {
         config.update(
           'enablePromptTransformation',
           partialConfig.enablePromptTransformation,
-          vscode.ConfigurationTarget.Global
-        )
-      );
-    }
-
-    if (partialConfig.transformationModel !== undefined) {
-      updates.push(
-        config.update(
-          'transformationModel',
-          partialConfig.transformationModel,
           vscode.ConfigurationTarget.Global
         )
       );

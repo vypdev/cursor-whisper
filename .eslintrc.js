@@ -29,5 +29,5 @@ module.exports = {
     'eqeqeq': ['error', 'always'],
     'prettier/prettier': 'error'
   },
-  ignorePatterns: ['out', 'node_modules', '**/*.d.ts', 'webpack.config.js', '.eslintrc.js']
+  ignorePatterns: ['out', 'node_modules', 'coverage', '**/*.d.ts', 'webpack.config.js', '.eslintrc.js', '__tests__/**']
 };

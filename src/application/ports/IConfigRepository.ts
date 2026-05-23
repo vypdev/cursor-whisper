@@ -1,8 +1,16 @@
+import { TransformationProvider } from '../../domain/value-objects/TransformationProvider';
+
 export interface Config {
   /**
    * OpenAI API key (stored separately in SecretStorage).
+   * Used for Whisper transcription and OpenAI prompt transformation.
    */
   apiKey?: string;
+
+  /**
+   * Active provider for prompt transformation.
+   */
+  transformationProvider: TransformationProvider;
 
   /**
    * Language for transcription (ISO 639-1 code or 'auto').
@@ -18,6 +26,36 @@ export interface Config {
    * OpenAI model ID used for prompt transformation (default: gpt-4o).
    */
   transformationModel: string;
+
+  /**
+   * Anthropic model ID for Claude-based transformation.
+   */
+  anthropicModel: string;
+
+  /**
+   * Google Gemini model ID for transformation.
+   */
+  googleModel: string;
+
+  /**
+   * Azure OpenAI endpoint URL.
+   */
+  azureEndpoint: string;
+
+  /**
+   * Azure OpenAI deployment name for the chat model.
+   */
+  azureDeployment: string;
+
+  /**
+   * Ollama server base URL.
+   */
+  ollamaBaseUrl: string;
+
+  /**
+   * Ollama model name/tag.
+   */
+  ollamaModel: string;
 
   /**
    * Audio recording quality ('low' | 'medium' | 'high').
@@ -60,6 +98,16 @@ export interface IConfigRepository {
    * @param config Partial config to update
    */
   updateConfig(config: Partial<Config>): Promise<void>;
+
+  /**
+   * Get API key for a specific transformation provider.
+   */
+  getProviderApiKey(provider: TransformationProvider): Promise<string | undefined>;
+
+  /**
+   * Store API key for a specific transformation provider.
+   */
+  setProviderApiKey(provider: TransformationProvider, apiKey: string | undefined): Promise<void>;
 
   /**
    * Watch for configuration changes.

@@ -1,13 +1,14 @@
-import { IPromptTransformer, PromptContext } from '../ports/IPromptTransformer';
+import { PromptContext } from '../ports/IPromptTransformer';
 import { IConfigRepository } from '../ports/IConfigRepository';
 import { ILogger } from '../ports/ILogger';
 import { Prompt } from '../../domain/entities/Prompt';
 import { Transcription } from '../../domain/entities/Transcription';
 import { generateId } from '../../shared/utils/generateId';
+import { PromptTransformerFactory } from '../../infrastructure/transformation/PromptTransformerFactory';
 
 export class TransformPromptUseCase {
   constructor(
-    private readonly promptTransformer: IPromptTransformer,
+    private readonly transformerFactory: PromptTransformerFactory,
     private readonly configRepo: IConfigRepository,
     private readonly logger: ILogger
   ) {}
@@ -15,7 +16,6 @@ export class TransformPromptUseCase {
   async execute(transcription: Transcription, context?: PromptContext): Promise<Prompt> {
     this.logger.info('Starting prompt transformation');
 
-    // Check if transformation is enabled
     const config = await this.configRepo.getConfig();
     if (!config.enablePromptTransformation) {
       this.logger.info('Prompt transformation disabled, returning original text');
@@ -30,7 +30,15 @@ export class TransformPromptUseCase {
     }
 
     try {
-      const transformed = await this.promptTransformer.transform(transcription.text, context);
+      const validationError = await this.transformerFactory.validateProvider(
+        config.transformationProvider
+      );
+      if (validationError) {
+        throw new Error(validationError);
+      }
+
+      const promptTransformer = await this.transformerFactory.create();
+      const transformed = await promptTransformer.transform(transcription.text, context);
 
       this.logger.info('Prompt transformation completed', {
         originalLength: transformed.originalText.length,

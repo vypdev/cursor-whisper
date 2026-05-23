@@ -4,7 +4,10 @@ import * as vscode from 'vscode';
 import { VSCodeOutputChannelLogger } from './infrastructure/logging/VSCodeOutputChannelLogger';
 import { VSCodeConfigRepository } from './infrastructure/configuration/VSCodeConfigRepository';
 import { OpenAIWhisperService } from './infrastructure/transcription/OpenAIWhisperService';
-import { OpenAIPromptTransformer } from './infrastructure/transformation/OpenAIPromptTransformer';
+import {
+  PromptTransformerFactory,
+  ConfigurablePromptTransformer,
+} from './infrastructure/transformation/PromptTransformerFactory';
 import { OpenAIModelService } from './infrastructure/openai/OpenAIModelService';
 import { ChatParticipantInserter } from './infrastructure/insertion/ChatParticipantInserter';
 import { EditorTextInserter } from './infrastructure/insertion/EditorTextInserter';
@@ -25,6 +28,8 @@ import { registerStopRecordingCommand } from './presentation/commands/StopRecord
 import { registerCancelRecordingCommand } from './presentation/commands/CancelRecordingCommand';
 import { registerConfigureApiKeyCommand } from './presentation/commands/ConfigureApiKeyCommand';
 import { registerConfigureModelCommand } from './presentation/commands/ConfigureModelCommand';
+import { registerConfigureTransformationProviderCommand } from './presentation/commands/ConfigureTransformationProviderCommand';
+import { registerTestTransformationCommand } from './presentation/commands/TestTransformationCommand';
 import { RecordingStatusBarItem } from './presentation/ui/RecordingStatusBarItem';
 
 let activeAudioRecorder: NativeAudioRecorder | null = null;
@@ -58,13 +63,9 @@ export function activate(context: vscode.ExtensionContext): void {
     return config.apiKey;
   };
 
-  const getModel = async (): Promise<string | undefined> => {
-    const config = await configRepository.getConfig();
-    return config.transformationModel;
-  };
-
   const whisperService = new OpenAIWhisperService(getApiKey, logger);
-  const promptTransformer = new OpenAIPromptTransformer(getApiKey, getModel, logger);
+  const transformerFactory = new PromptTransformerFactory(configRepository, logger);
+  const promptTransformer = new ConfigurablePromptTransformer(transformerFactory);
   const modelService = new OpenAIModelService(getApiKey, logger);
 
   // Text Insertion (Chain of Responsibility)
@@ -95,7 +96,7 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   const transformUseCase = new TransformPromptUseCase(
-    promptTransformer,
+    transformerFactory,
     configRepository,
     logger
   );
@@ -129,6 +130,20 @@ export function activate(context: vscode.ExtensionContext): void {
     context,
     configRepository,
     modelService,
+    transformerFactory,
+    logger
+  );
+  const configureProviderCommand = registerConfigureTransformationProviderCommand(
+    context,
+    configRepository,
+    transformerFactory,
+    modelService,
+    logger
+  );
+  const testTransformationCommand = registerTestTransformationCommand(
+    context,
+    promptTransformer,
+    configRepository,
     logger
   );
 
@@ -137,7 +152,9 @@ export function activate(context: vscode.ExtensionContext): void {
     stopCommand,
     cancelCommand,
     configureCommand,
-    configureModelCommand
+    configureModelCommand,
+    configureProviderCommand,
+    testTransformationCommand
   );
 
   // ========================================

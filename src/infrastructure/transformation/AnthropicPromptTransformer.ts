@@ -1,8 +1,7 @@
-import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 import { IPromptTransformer, PromptContext } from '../../application/ports/IPromptTransformer';
 import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { ILogger } from '../../application/ports/ILogger';
-import { ApiKey } from '../../domain/value-objects/ApiKey';
 import {
   TransformationError,
   TRANSFORMATION_SYSTEM_PROMPT,
@@ -10,10 +9,10 @@ import {
   calculateImprovements,
 } from './transformationUtils';
 
-export class OpenAIPromptTransformer implements IPromptTransformer {
-  private client: OpenAI | null = null;
+export class AnthropicPromptTransformer implements IPromptTransformer {
+  private client: Anthropic | null = null;
   private cachedApiKey: string | null = null;
-  static readonly DEFAULT_MODEL = 'gpt-4o';
+  static readonly DEFAULT_MODEL = 'claude-3-5-sonnet-20241022';
 
   constructor(
     private readonly getApiKey: () => Promise<string | undefined>,
@@ -21,20 +20,17 @@ export class OpenAIPromptTransformer implements IPromptTransformer {
     private readonly logger: ILogger
   ) {}
 
-  private async ensureClient(): Promise<OpenAI> {
+  private async ensureClient(): Promise<Anthropic> {
     const apiKeyStr = await this.getApiKey();
     if (!apiKeyStr) {
-      throw new TransformationError('OpenAI API key not configured');
+      throw new TransformationError('Anthropic API key not configured');
     }
 
     if (this.client && this.cachedApiKey === apiKeyStr) {
       return this.client;
     }
 
-    const apiKey = new ApiKey(apiKeyStr);
-    this.client = new OpenAI({
-      apiKey: apiKey.toString(),
-    });
+    this.client = new Anthropic({ apiKey: apiKeyStr });
     this.cachedApiKey = apiKeyStr;
 
     return this.client;
@@ -42,11 +38,11 @@ export class OpenAIPromptTransformer implements IPromptTransformer {
 
   private async resolveModel(): Promise<string> {
     const model = await this.getModel();
-    return model || OpenAIPromptTransformer.DEFAULT_MODEL;
+    return model || AnthropicPromptTransformer.DEFAULT_MODEL;
   }
 
   async transform(transcription: string, context?: PromptContext): Promise<TransformedPrompt> {
-    this.logger.info('Starting OpenAI prompt transformation', {
+    this.logger.info('Starting Anthropic prompt transformation', {
       textLength: transcription.length,
       hasContext: !!context,
     });
@@ -58,27 +54,26 @@ export class OpenAIPromptTransformer implements IPromptTransformer {
     try {
       const startTime = Date.now();
 
-      this.logger.debug('OpenAI transformation request', {
+      this.logger.debug('Anthropic transformation request', {
         model,
-        temperature: 0.3,
         promptLength: userPrompt.length,
       });
 
-      const response = await client.chat.completions.create({
+      const response = await client.messages.create({
         model,
-        messages: [
-          { role: 'system', content: TRANSFORMATION_SYSTEM_PROMPT },
-          { role: 'user', content: userPrompt },
-        ],
-        temperature: 0.3,
         max_tokens: 2000,
+        system: TRANSFORMATION_SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userPrompt }],
+        temperature: 0.3,
       });
 
       const duration = (Date.now() - startTime) / 1000;
-      const transformedText = response.choices[0]?.message?.content || transcription;
+      const textBlock = response.content.find(block => block.type === 'text');
+      const transformedText =
+        textBlock && textBlock.type === 'text' ? textBlock.text : transcription;
       const improvements = calculateImprovements(transcription, transformedText);
 
-      this.logger.info('OpenAI prompt transformation completed', {
+      this.logger.info('Anthropic prompt transformation completed', {
         model,
         duration: duration.toFixed(2) + 's',
         originalLength: transcription.length,
@@ -92,24 +87,20 @@ export class OpenAIPromptTransformer implements IPromptTransformer {
         improvements,
       };
     } catch (error) {
-      this.logger.error('OpenAI prompt transformation failed', error as Error);
+      this.logger.error('Anthropic prompt transformation failed', error as Error);
 
-      if (error instanceof OpenAI.APIError) {
-        if (error.status === 404 || error.code === 'model_not_found') {
+      if (error instanceof Anthropic.APIError) {
+        if (error.status === 401) {
+          throw new TransformationError('Invalid Anthropic API key', error);
+        }
+        if (error.status === 404) {
           throw new TransformationError(
-            `Model '${model}' is not available for your API key. Use "Cursor Whisper: Configure Model" to choose another model.`,
+            `Model '${model}' is not available. Choose another Anthropic model in settings.`,
             error
           );
         }
-      }
-
-      if (error instanceof Error) {
-        if (error.message.includes('rate_limit')) {
+        if (error.status === 429) {
           throw new TransformationError('Rate limit exceeded. Please try again later.', error);
-        }
-
-        if (error.message.includes('invalid_api_key')) {
-          throw new TransformationError('Invalid API key', error);
         }
       }
 

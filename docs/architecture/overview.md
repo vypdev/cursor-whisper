@@ -52,6 +52,7 @@ flowchart TB
         AudioAdapter[Audio Recorder]
         WhisperAdapter[Whisper Service]
         GPTAdapter[GPT-4 Service]
+        ProviderFactory[Prompt Transformer Factory]
         InsertionAdapters[Text Inserters]
         ConfigAdapter[Config Repository]
         StorageAdapter[Secret Storage]
@@ -310,7 +311,12 @@ graph TB
     subgraph Infrastructure["⚙️ Infrastructure Layer"]
         AUDIO[NativeAudioRecorder]
         WHISPER[OpenAIWhisperService]
+        FACTORY[PromptTransformerFactory]
         GPT[OpenAIPromptTransformer]
+        CLAUDE[AnthropicPromptTransformer]
+        GEMINI[GooglePromptTransformer]
+        AZURE[AzureOpenAIPromptTransformer]
+        OLLAMA[OllamaPromptTransformer]
         INSERT1[ChatParticipantInserter]
         INSERT2[EditorTextInserter]
         INSERT3[FallbackTextInserter]
@@ -336,7 +342,16 @@ graph TB
 
     AUDIO -->|implements| PORT1
     WHISPER -->|implements| PORT2
+    FACTORY -->|creates| GPT
+    FACTORY -->|creates| CLAUDE
+    FACTORY -->|creates| GEMINI
+    FACTORY -->|creates| AZURE
+    FACTORY -->|creates| OLLAMA
     GPT -->|implements| PORT3
+    CLAUDE -->|implements| PORT3
+    GEMINI -->|implements| PORT3
+    AZURE -->|implements| PORT3
+    OLLAMA -->|implements| PORT3
     INSERT1 -->|implements| PORT4
     INSERT2 -->|implements| PORT4
     INSERT3 -->|implements| PORT4

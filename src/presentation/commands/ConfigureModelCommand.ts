@@ -5,16 +5,42 @@ import {
   OpenAIModelService,
   OpenAIModelServiceError,
 } from '../../infrastructure/openai/OpenAIModelService';
+import { PromptTransformerFactory } from '../../infrastructure/transformation/PromptTransformerFactory';
 import { ILogger } from '../../application/ports/ILogger';
+import {
+  TransformationProvider,
+  PROVIDER_METADATA,
+} from '../../domain/value-objects/TransformationProvider';
 
 export function registerConfigureModelCommand(
   _context: vscode.ExtensionContext,
   configRepo: IConfigRepository,
   modelService: OpenAIModelService,
+  transformerFactory: PromptTransformerFactory,
   logger: ILogger
 ): vscode.Disposable {
   return vscode.commands.registerCommand('cursor-whisper.configureModel', async () => {
     const config = await configRepo.getConfig();
+    const provider = config.transformationProvider;
+    const providerMeta = PROVIDER_METADATA[provider];
+
+    if (provider !== TransformationProvider.OpenAI) {
+      const switchProvider = await vscode.window.showInformationMessage(
+        `Current transformation provider is ${providerMeta.displayName}. Use "Configure Transformation Provider" to switch providers, or configure the model in settings.`,
+        'Configure Provider',
+        'Open Settings'
+      );
+
+      if (switchProvider === 'Configure Provider') {
+        await vscode.commands.executeCommand('cursor-whisper.configureTransformationProvider');
+      } else if (switchProvider === 'Open Settings') {
+        await vscode.commands.executeCommand(
+          'workbench.action.openSettings',
+          'cursorWhisper.transformationProvider'
+        );
+      }
+      return;
+    }
 
     if (!config.apiKey) {
       const configureKey = await vscode.window.showWarningMessage(
@@ -71,6 +97,14 @@ export function registerConfigureModelCommand(
 
           await configRepo.updateConfig({ transformationModel: selection.label });
           logger.info('Transformation model updated', { model: selection.label });
+
+          const validationError = await transformerFactory.validateProvider(
+            TransformationProvider.OpenAI
+          );
+          if (validationError) {
+            await vscode.window.showWarningMessage(validationError);
+            return;
+          }
 
           await vscode.window.showInformationMessage(
             `Prompt transformation model set to ${selection.label}`

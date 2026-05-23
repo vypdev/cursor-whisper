@@ -60,6 +60,7 @@ Developers often have complex architectural ideas, detailed requirements, or int
 ### Coming Soon
 
 - 🔄 **Prompt Transformation** - AI-powered optimization of transcribed text
+- 🔄 **Multiple AI Providers** - OpenAI, Anthropic, Google Gemini, Azure OpenAI, and Ollama for prompt transformation
 - 🔄 **Chat Integration** - Direct insertion into Cursor chat input
 - 🔄 **Real-time Streaming** - See transcription as you speak
 - 🔄 **Multi-language Support** - Auto-detect or manually configure language
@@ -154,11 +155,28 @@ Open Settings (`Cmd+,` / `Ctrl+,`) and search for "Cursor Whisper":
 {
   "cursorWhisper.transcriptionLanguage": "en",
   "cursorWhisper.enablePromptTransformation": true,
+  "cursorWhisper.transformationProvider": "openai",
+  "cursorWhisper.transformationModel": "gpt-4o",
   "cursorWhisper.audioQuality": "high",
   "cursorWhisper.maxRecordingDuration": 120,
   "cursorWhisper.showNotifications": true
 }
 ```
+
+### Transformation Providers
+
+Prompt transformation supports multiple LLM providers. Transcription always uses OpenAI Whisper.
+
+| Setting | Description |
+|---------|-------------|
+| `transformationProvider` | `openai`, `anthropic`, `google`, `azure`, or `ollama` |
+| `transformationModel` | OpenAI model (when provider is `openai`) |
+| `anthropicModel` | Claude model (when provider is `anthropic`) |
+| `googleModel` | Gemini model (when provider is `google`) |
+| `azureEndpoint` / `azureDeployment` | Azure OpenAI resource settings |
+| `ollamaBaseUrl` / `ollamaModel` | Local Ollama server settings |
+
+Use **Cursor Whisper: Configure Transformation Provider** to set up a provider interactively. See [`docs/providers/`](docs/providers/) for provider-specific setup.
 
 ### Configuration Options
 
@@ -166,6 +184,8 @@ Open Settings (`Cmd+,` / `Ctrl+,`) and search for "Cursor Whisper":
 |---------|------|---------|-------------|
 | `transcriptionLanguage` | string | `"en"` | Language for transcription (`en`, `es`, `fr`, `de`, `auto`) |
 | `enablePromptTransformation` | boolean | `true` | Transform transcription into optimized prompts |
+| `transformationProvider` | string | `"openai"` | LLM provider for transformation (`openai`, `anthropic`, `google`, `azure`, `ollama`) |
+| `transformationModel` | string | `"gpt-4o"` | OpenAI model for transformation |
 | `audioQuality` | string | `"high"` | Audio recording quality (`low`, `medium`, `high`) |
 | `maxRecordingDuration` | number | `120` | Maximum recording duration in seconds |
 | `showNotifications` | boolean | `true` | Show status notifications |
@@ -353,7 +373,10 @@ The extension provides clear visual feedback through the status bar:
 | `Cmd+Alt+V` / `Ctrl+Alt+V` | Toggle recording |
 | `Cmd+Shift+P` → "Cursor Whisper: Start Recording" | Start recording |
 | `Cmd+Shift+P` → "Cursor Whisper: Stop Recording" | Stop recording |
-| `Cmd+Shift+P` → "Cursor Whisper: Configure API Key" | Configure API key |
+| `Cmd+Shift+P` → "Cursor Whisper: Configure API Key" | Configure OpenAI API key (Whisper + OpenAI transformation) |
+| `Cmd+Shift+P` → "Cursor Whisper: Configure Transformation Provider" | Select and configure transformation provider |
+| `Cmd+Shift+P` → "Cursor Whisper: Configure Model" | Configure OpenAI transformation model |
+| `Cmd+Shift+P` → "Cursor Whisper: Test Transformation" | Test transformation with sample text |
 
 ---
 
