@@ -8,7 +8,7 @@ export function registerCancelRecordingCommand(
 ): vscode.Disposable {
   return vscode.commands.registerCommand('cursor-whisper.cancelRecording', async () => {
     try {
-      await useCase.execute();
+      useCase.execute();
       await vscode.window.showInformationMessage('Recording cancelled');
     } catch (error) {
       const message =

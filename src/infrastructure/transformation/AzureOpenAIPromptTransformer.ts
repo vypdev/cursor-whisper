@@ -43,21 +43,22 @@ export class AzureOpenAIPromptTransformer implements IPromptTransformer {
     }
 
     const endpoint = this.normalizeEndpoint(azureConfig.endpoint);
-    const cacheKey = `${apiKeyStr}:${endpoint}`;
+    const deployment = azureConfig.deployment.trim();
+    const cacheKey = `${apiKeyStr}:${endpoint}:${deployment}`;
 
     if (this.client && this.cachedKey === cacheKey) {
-      return { client: this.client, deployment: azureConfig.deployment };
+      return { client: this.client, deployment };
     }
 
     this.client = new OpenAI({
       apiKey: apiKeyStr,
-      baseURL: `${endpoint}/openai`,
+      baseURL: `${endpoint}/openai/deployments/${deployment}`,
       defaultQuery: { 'api-version': '2024-02-15-preview' },
       defaultHeaders: { 'api-key': apiKeyStr },
     });
     this.cachedKey = cacheKey;
 
-    return { client: this.client, deployment: azureConfig.deployment };
+    return { client: this.client, deployment };
   }
 
   async transform(transcription: string, context?: PromptContext): Promise<TransformedPrompt> {

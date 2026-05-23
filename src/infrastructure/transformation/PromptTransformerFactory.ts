@@ -1,4 +1,6 @@
+import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { IPromptTransformer } from '../../application/ports/IPromptTransformer';
+import { ITransformationProviderValidator } from '../../application/ports/ITransformationProviderValidator';
 import { IConfigRepository } from '../../application/ports/IConfigRepository';
 import { ILogger } from '../../application/ports/ILogger';
 import {
@@ -12,7 +14,7 @@ import { AzureOpenAIPromptTransformer } from './AzureOpenAIPromptTransformer';
 import { OllamaPromptTransformer } from './OllamaPromptTransformer';
 import { TransformationError } from './transformationUtils';
 
-export class PromptTransformerFactory {
+export class PromptTransformerFactory implements ITransformationProviderValidator {
   constructor(
     private readonly configRepo: IConfigRepository,
     private readonly logger: ILogger
@@ -23,7 +25,7 @@ export class PromptTransformerFactory {
     return this.createForProvider(config.transformationProvider);
   }
 
-  async createForProvider(provider: TransformationProvider): Promise<IPromptTransformer> {
+  createForProvider(provider: TransformationProvider): IPromptTransformer {
     switch (provider) {
       case TransformationProvider.OpenAI:
         return new OpenAIPromptTransformer(
@@ -60,19 +62,20 @@ export class PromptTransformerFactory {
         );
 
       case TransformationProvider.Ollama:
-        return new OllamaPromptTransformer(
-          async () => {
-            const config = await this.configRepo.getConfig();
-            return {
-              baseUrl: config.ollamaBaseUrl,
-              model: config.ollamaModel,
-            };
-          },
-          this.logger
-        );
+        return new OllamaPromptTransformer(async () => {
+          const config = await this.configRepo.getConfig();
+          return {
+            baseUrl: config.ollamaBaseUrl,
+            model: config.ollamaModel,
+          };
+        }, this.logger);
 
-      default:
-        throw new TransformationError(`Unsupported transformation provider: ${provider}`);
+      default: {
+        const exhaustiveCheck: never = provider;
+        throw new TransformationError(
+          `Unsupported transformation provider: ${String(exhaustiveCheck)}`
+        );
+      }
     }
   }
 
@@ -118,7 +121,7 @@ export class ConfigurablePromptTransformer implements IPromptTransformer {
   async transform(
     transcription: string,
     context?: import('../../application/ports/IPromptTransformer').PromptContext
-  ) {
+  ): Promise<TransformedPrompt> {
     const transformer = await this.factory.create();
     return transformer.transform(transcription, context);
   }

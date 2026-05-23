@@ -33,7 +33,6 @@ describe('OllamaPromptTransformer', () => {
   });
 
   it('transforms transcription using Ollama API', async () => {
-    mockedAxios.get.mockResolvedValueOnce({ status: 200, data: { models: [] } });
     mockedAxios.post.mockResolvedValueOnce({
       status: 200,
       data: { response: 'Refactor auth service to JWT with backward compatibility.' },

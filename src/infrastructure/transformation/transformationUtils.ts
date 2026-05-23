@@ -1,7 +1,10 @@
 import { PromptContext } from '../../application/ports/IPromptTransformer';
 
 export class TransformationError extends Error {
-  constructor(message: string, public readonly cause?: Error) {
+  constructor(
+    message: string,
+    public readonly cause?: Error
+  ) {
     super(message);
     this.name = 'TransformationError';
   }

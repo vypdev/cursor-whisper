@@ -61,16 +61,11 @@ export class OllamaPromptTransformer implements IPromptTransformer {
     });
 
     const config = await this.getOllamaConfig();
-    const baseUrl = this.normalizeBaseUrl(config.baseUrl || OllamaPromptTransformer.DEFAULT_BASE_URL);
+    const baseUrl = this.normalizeBaseUrl(
+      config.baseUrl || OllamaPromptTransformer.DEFAULT_BASE_URL
+    );
     const model = config.model || OllamaPromptTransformer.DEFAULT_MODEL;
     const userPrompt = buildUserPrompt(transcription, context);
-
-    const available = await OllamaPromptTransformer.isAvailable(baseUrl);
-    if (!available) {
-      throw new TransformationError(
-        `Ollama server is not reachable at ${baseUrl}. Start Ollama and try again.`
-      );
-    }
 
     try {
       const startTime = Date.now();

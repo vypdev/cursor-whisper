@@ -11,7 +11,7 @@ export function registerConfigureApiKeyCommand(
       prompt: 'Enter your OpenAI API Key',
       password: true,
       placeHolder: 'sk-...',
-      validateInput: (value) => {
+      validateInput: value => {
         try {
           new ApiKey(value);
           return null;

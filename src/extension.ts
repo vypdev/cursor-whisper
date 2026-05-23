@@ -39,15 +39,13 @@ let activeAudioRecorder: NativeAudioRecorder | null = null;
  * Composition root - all dependencies are wired here.
  */
 export function activate(context: vscode.ExtensionContext): void {
-  console.log('Cursor Whisper extension is activating...');
-
   // ========================================
   // INFRASTRUCTURE LAYER
   // ========================================
 
   // Logging
   const logger = new VSCodeOutputChannelLogger('Cursor Whisper');
-  logger.info('Extension activated');
+  logger.info('Cursor Whisper extension is activating...');
 
   // Configuration
   const configRepository = new VSCodeConfigRepository(context, context.secrets);
@@ -79,23 +77,16 @@ export function activate(context: vscode.ExtensionContext): void {
   // APPLICATION LAYER (Use Cases)
   // ========================================
 
-  const startRecordingUseCase = new StartRecordingUseCase(
-    audioRecorder,
-    configRepository,
-    logger
-  );
+  const startRecordingUseCase = new StartRecordingUseCase(audioRecorder, configRepository, logger);
 
   const stopRecordingUseCase = new StopRecordingUseCase(audioRecorder, logger);
 
   const cancelRecordingUseCase = new CancelRecordingUseCase(audioRecorder, logger);
 
-  const transcribeUseCase = new TranscribeAudioUseCase(
-    whisperService,
-    configRepository,
-    logger
-  );
+  const transcribeUseCase = new TranscribeAudioUseCase(whisperService, configRepository, logger);
 
   const transformUseCase = new TransformPromptUseCase(
+    promptTransformer,
     transformerFactory,
     configRepository,
     logger
@@ -182,7 +173,7 @@ export function activate(context: vscode.ExtensionContext): void {
   });
 
   logger.info('Cursor Whisper extension fully activated');
-  console.log('✨ Cursor Whisper is ready!');
+  logger.info('Cursor Whisper is ready');
 }
 
 /**
@@ -192,5 +183,4 @@ export function activate(context: vscode.ExtensionContext): void {
 export function deactivate(): void {
   activeAudioRecorder?.dispose();
   activeAudioRecorder = null;
-  console.log('Cursor Whisper extension is now deactivated');
 }

@@ -69,8 +69,7 @@ export class AnthropicPromptTransformer implements IPromptTransformer {
 
       const duration = (Date.now() - startTime) / 1000;
       const textBlock = response.content.find(block => block.type === 'text');
-      const transformedText =
-        textBlock && textBlock.type === 'text' ? textBlock.text : transcription;
+      const transformedText = textBlock ? textBlock.text : transcription;
       const improvements = calculateImprovements(transcription, transformedText);
 
       this.logger.info('Anthropic prompt transformation completed', {

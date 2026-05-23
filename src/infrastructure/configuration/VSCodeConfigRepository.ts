@@ -40,7 +40,7 @@ export class VSCodeConfigRepository implements IConfigRepository {
         TransformationProvider.OpenAI
       ),
       transcriptionLanguage: config.get<string>('transcriptionLanguage', 'auto'),
-      enablePromptTransformation: config.get<boolean>('enablePromptTransformation', false),
+      enablePromptTransformation: config.get<boolean>('enablePromptTransformation', true),
       transformationModel: config.get<string>(
         'transformationModel',
         VSCodeConfigRepository.DEFAULT_TRANSFORMATION_MODEL

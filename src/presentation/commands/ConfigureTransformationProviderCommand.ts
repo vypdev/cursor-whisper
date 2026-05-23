@@ -195,8 +195,7 @@ export function registerConfigureTransformationProviderCommand(
         Object.values(PROVIDER_METADATA).map(metadata => ({
           label: metadata.displayName,
           description: metadata.description,
-          detail:
-            metadata.id === config.transformationProvider ? 'Current provider' : undefined,
+          detail: metadata.id === config.transformationProvider ? 'Current provider' : undefined,
           provider: metadata.id,
         })),
         {
@@ -225,15 +224,15 @@ export function registerConfigureTransformationProviderCommand(
             return;
           }
           await configRepo.setProviderApiKey(provider, apiKey);
-          if (provider === TransformationProvider.OpenAI) {
-            await configRepo.updateConfig({ apiKey });
-          }
         }
       }
 
       let selectedModel: string | undefined;
       try {
-        if (provider === TransformationProvider.OpenAI && !(await configRepo.getProviderApiKey(provider))) {
+        if (
+          provider === TransformationProvider.OpenAI &&
+          !(await configRepo.getProviderApiKey(provider))
+        ) {
           await vscode.window.showWarningMessage('Configure your OpenAI API key first.');
           return;
         }

@@ -43,7 +43,10 @@ export class TranscribeAudioUseCase {
 
     try {
       // Transcribe
-      const result: TranscriptionResult = await this.transcriptionService.transcribe(audio, options);
+      const result: TranscriptionResult = await this.transcriptionService.transcribe(
+        audio,
+        options
+      );
 
       this.logger.info('Transcription completed', {
         language: result.language,

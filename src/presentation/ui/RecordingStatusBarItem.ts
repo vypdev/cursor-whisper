@@ -6,10 +6,7 @@ export class RecordingStatusBarItem {
   private currentState: RecordingState = RecordingState.IDLE;
 
   constructor() {
-    this.statusBarItem = vscode.window.createStatusBarItem(
-      vscode.StatusBarAlignment.Right,
-      100
-    );
+    this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     this.statusBarItem.command = 'cursor-whisper.startRecording';
     this.updateUI();
     this.statusBarItem.show();
@@ -33,9 +30,7 @@ export class RecordingStatusBarItem {
         this.statusBarItem.text = '$(record) Recording...';
         this.statusBarItem.tooltip = 'Click to stop recording';
         this.statusBarItem.command = 'cursor-whisper.stopRecording';
-        this.statusBarItem.backgroundColor = new vscode.ThemeColor(
-          'statusBarItem.errorBackground'
-        );
+        this.statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
         break;
 
       case RecordingState.PROCESSING:
@@ -82,9 +77,7 @@ export class RecordingStatusBarItem {
         this.statusBarItem.text = '$(x) Error';
         this.statusBarItem.tooltip = 'Click to retry';
         this.statusBarItem.command = 'cursor-whisper.startRecording';
-        this.statusBarItem.backgroundColor = new vscode.ThemeColor(
-          'statusBarItem.errorBackground'
-        );
+        this.statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
         // Auto-reset after 3 seconds
         setTimeout(() => {
           if (this.currentState === RecordingState.ERROR) {

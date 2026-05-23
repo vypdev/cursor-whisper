@@ -55,16 +55,16 @@ export class NativeAudioRecorder implements IAudioRecorder {
 
   constructor(private readonly logger: ILogger) {}
 
-  async startRecording(): Promise<void> {
-    if (this.state !== RecordingState.IDLE) {
-      throw new RecordingError('Already recording or processing');
-    }
-
-    this.logger.info('Starting native audio recorder');
-    this.sampleChunks = [];
-    this.captureError = null;
-
+  startRecording(): Promise<void> {
     try {
+      if (this.state !== RecordingState.IDLE) {
+        throw new RecordingError('Already recording or processing');
+      }
+
+      this.logger.info('Starting native audio recorder');
+      this.sampleChunks = [];
+      this.captureError = null;
+
       this.recorder = new Recorder();
       this.recorder.start((error, samples) => {
         if (error) {
@@ -82,22 +82,22 @@ export class NativeAudioRecorder implements IAudioRecorder {
 
       this.setState(RecordingState.RECORDING);
       this.logger.info('Native recording started successfully');
+      return Promise.resolve();
     } catch (error) {
       this.cleanupRecorder();
       this.logger.error('Failed to start native recording', error as Error);
 
       if (error instanceof Error && isPermissionError(error)) {
-        throw new PermissionError('Microphone permission denied');
+        return Promise.reject(new PermissionError('Microphone permission denied'));
       }
 
-      throw new RecordingError(
-        'Failed to start recording',
-        error instanceof Error ? error : undefined
+      return Promise.reject(
+        new RecordingError('Failed to start recording', error instanceof Error ? error : undefined)
       );
     }
   }
 
-  async stopRecording(): Promise<AudioData> {
+  stopRecording(): Promise<AudioData> {
     if (this.state !== RecordingState.RECORDING) {
       throw new RecordingError('No active recording to stop');
     }
@@ -113,10 +113,7 @@ export class NativeAudioRecorder implements IAudioRecorder {
           throw new PermissionError('Microphone permission denied');
         }
 
-        throw new RecordingError(
-          'Failed to capture audio',
-          this.captureError
-        );
+        throw new RecordingError('Failed to capture audio', this.captureError);
       }
 
       const pcmBuffer = this.combineSampleChunks();
@@ -135,11 +132,11 @@ export class NativeAudioRecorder implements IAudioRecorder {
 
       this.sampleChunks = [];
       this.setState(RecordingState.IDLE);
-      return audioData;
+      return Promise.resolve(audioData);
     } catch (error) {
       this.sampleChunks = [];
       this.setState(RecordingState.ERROR);
-      throw error;
+      return Promise.reject(error);
     }
   }
 

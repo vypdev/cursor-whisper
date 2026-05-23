@@ -27,6 +27,11 @@ describe('AzureOpenAIPromptTransformer', () => {
 
     const result = await transformer.transform('refactor auth to jwt');
 
+    expect(OpenAI).toHaveBeenCalledWith(
+      expect.objectContaining({
+        baseURL: 'https://example.openai.azure.com/openai/deployments/gpt-4o',
+      })
+    );
     expect(result.transformedText).toContain('JWT');
     expect(create).toHaveBeenCalledWith(
       expect.objectContaining({ model: 'gpt-4o' })
