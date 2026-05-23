@@ -75,7 +75,7 @@ Cursor Whisper follows **Clean/Hexagonal Architecture** for maximum maintainabil
 ```
 ┌─────────────────────────────────────────────────────┐
 │                  Presentation Layer                  │
-│  (Commands, Webview UI, Status Bar, React Components)│
+│  (Commands, Status Bar)                              │
 └────────────┬────────────────────────────────────────┘
              │
 ┌────────────▼────────────────────────────────────────┐
@@ -90,7 +90,7 @@ Cursor Whisper follows **Clean/Hexagonal Architecture** for maximum maintainabil
              │
 ┌────────────▼────────────────────────────────────────┐
 │                Infrastructure Layer                  │
-│  (OpenAI Whisper, Audio Recording, Config, Storage) │
+│  (OpenAI Whisper, Native Audio Capture, Config, Storage) │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -104,12 +104,11 @@ See [`docs/architecture/`](docs/architecture/) for detailed architecture documen
 - **TypeScript 5.4+** - Type-safe development
 - **VSCode Extension API 1.120+** - Extension foundation
 - **Node.js 20 LTS** - Runtime environment
-- **React 18** - UI components
 - **Webpack 5** - Bundling and optimization
 
 ### Integrations
 - **OpenAI API** - Whisper for transcription, GPT-4 for prompt transformation
-- **MediaRecorder API** - Browser-based audio recording
+- **@kstonekuan/audio-capture** - Native cross-platform microphone capture
 - **VSCode SecretStorage** - Secure credential management
 
 ### Quality
@@ -214,19 +213,21 @@ npm run compile
 
 1. **Start Recording**:
    - Press `Cmd/Ctrl+Alt+V` (or click "Voice" in the status bar)
-   - A webview will open with recording controls
+   - Recording starts immediately in the background
 
 2. **Record Audio**:
-   - Click "Start Recording"
    - Speak clearly into your microphone
-   - Click "Stop Recording" when done
+   - Ensure Cursor has microphone access in System Settings (macOS) or Privacy settings (Windows)
 
-3. **Wait for Processing**:
+3. **Stop Recording**:
+   - Press the stop command or status bar action when done
+
+4. **Wait for Processing**:
    - Audio is transcribed (~5-10 seconds)
    - Text is optimized with GPT-4 (optional)
    - Text is automatically inserted into the active editor
 
-4. **Check Status**:
+5. **Check Status**:
    - Status bar shows current state
    - Notifications show progress and errors
 

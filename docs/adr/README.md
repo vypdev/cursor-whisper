@@ -31,7 +31,7 @@ Each ADR follows this structure:
 - [ADR-0002](0002-clean-architecture.md) - Adopt Clean/Hexagonal Architecture
 - [ADR-0003](0003-openai-whisper.md) - Use OpenAI Whisper for Transcription
 - [ADR-0004](0004-dependency-injection.md) - Implement Dependency Injection Pattern
-- [ADR-0005](0005-webview-audio-recording.md) - Use Webview with MediaRecorder for Audio Capture
+- [ADR-0005](0005-webview-audio-recording.md) - Use Webview with MediaRecorder for Audio Capture (Superseded)
 - [ADR-0006](0006-text-insertion-strategy.md) - Chain of Responsibility for Text Insertion
 - [ADR-0007](0007-cursor-compatibility.md) - Prioritize Classic Mode Compatibility
 - [ADR-0008](0008-secret-storage.md) - Use VSCode SecretStorage for API Keys
@@ -39,6 +39,7 @@ Each ADR follows this structure:
 - [ADR-0010](0010-react-for-ui.md) - Use React for Webview UI
 - [ADR-0011](0011-gpt4-transformation.md) - Use GPT-4 for Prompt Transformation
 - [ADR-0012](0012-mono-audio-16khz.md) - Use Mono Audio at 16kHz Sample Rate
+- [ADR-0013](0013-native-audio-capture.md) - Use Native Audio Capture with @kstonekuan/audio-capture
 
 ### Proposed ADRs
 
@@ -46,7 +47,7 @@ Each ADR follows this structure:
 
 ### Superseded ADRs
 
-- None yet
+- [ADR-0005](0005-webview-audio-recording.md) - Superseded by [ADR-0013](0013-native-audio-capture.md)
 
 ---
 

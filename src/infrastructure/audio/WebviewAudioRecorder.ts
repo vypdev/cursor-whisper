@@ -38,7 +38,7 @@ export class WebviewAudioRecorder implements IAudioRecorder {
             enableScripts: true,
             retainContextWhenHidden: true,
             localResourceRoots: [
-              vscode.Uri.file(path.join(this.context.extensionPath, 'src', 'infrastructure', 'audio', 'webview'))
+              vscode.Uri.file(path.join(this.context.extensionPath, 'out', 'infrastructure', 'audio', 'webview'))
             ]
           }
         );
@@ -68,7 +68,15 @@ export class WebviewAudioRecorder implements IAudioRecorder {
         // Wait for webview to be ready
         await this.waitForWebviewReady();
       } else {
-        this.panel.reveal(vscode.ViewColumn.One);
+        // Try to reveal existing panel, but it might be disposed
+        try {
+          this.panel.reveal(vscode.ViewColumn.One);
+        } catch (error) {
+          // Panel was disposed, reset and create new one
+          this.logger.warn('Panel was disposed, creating new one', error as Error);
+          this.panel = null;
+          return this.startRecording();
+        }
       }
 
       // Send start command to webview
@@ -271,7 +279,7 @@ export class WebviewAudioRecorder implements IAudioRecorder {
     // Read the HTML file
     const htmlPath = path.join(
       this.context.extensionPath,
-      'src',
+      'out',
       'infrastructure',
       'audio',
       'webview',

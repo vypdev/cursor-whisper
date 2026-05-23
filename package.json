@@ -135,6 +135,7 @@
     "format:check": "prettier --check \"src/**/*.ts\""
   },
   "dependencies": {
+    "@kstonekuan/audio-capture": "^0.0.3",
     "openai": "^4.20.0"
   },
   "devDependencies": {

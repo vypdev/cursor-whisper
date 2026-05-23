@@ -1,12 +1,25 @@
 # ADR-0005: Use Webview with MediaRecorder for Audio Capture
 
-**Status**: Accepted
+**Status**: Superseded by [ADR-0013](0013-native-audio-capture.md)
 
 **Date**: 2026-05-23
 
 **Deciders**: Core Team
 
-**Related**: [ADR-0003](0003-openai-whisper.md), [ADR-0010](0010-react-for-ui.md)
+**Related**: [ADR-0003](0003-openai-whisper.md), [ADR-0010](0010-react-for-ui.md), [ADR-0013](0013-native-audio-capture.md)
+
+---
+
+## Supersession Notice
+
+This ADR was superseded on 2026-05-23 by [ADR-0013](0013-native-audio-capture.md).
+
+The webview-based approach was replaced because:
+- Browser microphone permissions were unreliable inside Cursor webviews
+- The recorder panel added unnecessary UX friction
+- Native capture via `@kstonekuan/audio-capture` provides simpler, more reliable OS-level access
+
+The original decision is preserved below for historical context.
 
 ---
 

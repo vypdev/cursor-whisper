@@ -7,7 +7,7 @@ import { OpenAIWhisperService } from './infrastructure/transcription/OpenAIWhisp
 import { OpenAIPromptTransformer } from './infrastructure/transformation/OpenAIPromptTransformer';
 import { EditorTextInserter } from './infrastructure/insertion/EditorTextInserter';
 import { FallbackTextInserter } from './infrastructure/insertion/FallbackTextInserter';
-import { WebviewAudioRecorder } from './infrastructure/audio/WebviewAudioRecorder';
+import { NativeAudioRecorder } from './infrastructure/audio/NativeAudioRecorder';
 
 // Use Cases
 import { StartRecordingUseCase } from './application/use-cases/StartRecordingUseCase';
@@ -42,9 +42,9 @@ export function activate(context: vscode.ExtensionContext): void {
   // Configuration
   const configRepository = new VSCodeConfigRepository(context, context.secrets);
 
-  // Audio Recording (WebviewAudioRecorder)
-  const audioRecorder = new WebviewAudioRecorder(context, logger);
-  logger.info('WebviewAudioRecorder initialized');
+  // Audio Recording (NativeAudioRecorder)
+  const audioRecorder = new NativeAudioRecorder(logger);
+  logger.info('NativeAudioRecorder initialized');
 
   // OpenAI Services
   const getApiKey = async (): Promise<string | undefined> => {

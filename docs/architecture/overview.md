@@ -21,7 +21,7 @@
 
 Cursor Whisper is a VSCode/Cursor extension that transforms voice into optimized prompts through:
 
-1. **Audio Capture** - Record user speech via webview MediaRecorder
+1. **Audio Capture** - Record user speech via native `@kstonekuan/audio-capture`
 2. **Transcription** - Convert audio to text using OpenAI Whisper
 3. **Transformation** - Optimize text into structured prompts using GPT-4
 4. **Insertion** - Insert result into editor or chat intelligently
@@ -35,7 +35,6 @@ flowchart TB
     subgraph Presentation["Presentation Layer"]
         StatusBar[Status Bar UI]
         Commands[VSCode Commands]
-        Webview[React Webview]
     end
     
     subgraph Application["Application Layer"]
@@ -61,7 +60,7 @@ flowchart TB
     subgraph External["External Services"]
         OpenAI[OpenAI API]
         VSCodeAPI[VSCode API]
-        BrowserAPI[Browser APIs]
+        NativeAudio[Native Audio APIs]
     end
     
     User -->|Interact| Presentation
@@ -103,7 +102,7 @@ See [ADR-0002](../adr/0002-clean-architecture.md) for detailed rationale.
 ```
 ┌─────────────────────────────────────────────┐
 │          Presentation Layer                 │
-│  Commands, UI, Status Bar, Webview          │
+│  Commands, UI, Status Bar                   │
 └────────────┬────────────────────────────────┘
              │ depends on
              ▼
@@ -241,7 +240,6 @@ export class OpenAIWhisperService implements ITranscriptionService {
 
 **Contains**:
 - **Commands**: VSCode command handlers
-- **UI Components**: React components for webview
 - **Status Bar**: Status bar item and updates
 - **State Management**: UI state coordination
 
@@ -249,7 +247,7 @@ export class OpenAIWhisperService implements ITranscriptionService {
 - Can import from Application and Domain
 - Orchestrates use case execution
 - Handles VSCode-specific APIs
-- Contains React and UI code
+- Contains VSCode-specific APIs
 
 **Example**:
 ```typescript
@@ -283,7 +281,6 @@ graph TB
     subgraph Presentation["🎨 Presentation Layer"]
         CMD[Commands]
         SB[StatusBarItem]
-        WV[Webview React UI]
         STATE[StateManager]
     end
 
@@ -311,7 +308,7 @@ graph TB
     end
 
     subgraph Infrastructure["⚙️ Infrastructure Layer"]
-        AUDIO[WebviewAudioRecorder]
+        AUDIO[NativeAudioRecorder]
         WHISPER[OpenAIWhisperService]
         GPT[OpenAIPromptTransformer]
         INSERT1[ChatParticipantInserter]
@@ -491,8 +488,8 @@ sequenceDiagram
 | Language | TypeScript | 5.4+ | Type-safe development |
 | Runtime | Node.js | 20 LTS | Extension host |
 | Framework | VSCode Extension API | 1.120+ | Extension foundation |
-| UI Library | React | 18.2+ | Webview UI |
 | Bundler | Webpack | 5.x | Module bundling |
+| Audio Capture | @kstonekuan/audio-capture | 0.0.3+ | Native microphone capture |
 
 ### External Services
 

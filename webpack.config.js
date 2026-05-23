@@ -11,7 +11,8 @@ module.exports = {
     devtoolModuleFilenameTemplate: '../[resource-path]'
   },
   externals: {
-    vscode: 'commonjs vscode'
+    vscode: 'commonjs vscode',
+    '@kstonekuan/audio-capture': 'commonjs @kstonekuan/audio-capture'
   },
   resolve: {
     extensions: ['.ts', '.js']
