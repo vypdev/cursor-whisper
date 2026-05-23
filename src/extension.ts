@@ -58,8 +58,8 @@ export function activate(context: vscode.ExtensionContext): void {
   // Text Insertion (Chain of Responsibility)
   const inserters = [
     // TODO: Add ChatParticipantInserter when implemented
-    new EditorTextInserter(),
-    new FallbackTextInserter(),
+    new EditorTextInserter(logger),
+    new FallbackTextInserter(logger),
   ];
 
   // ========================================

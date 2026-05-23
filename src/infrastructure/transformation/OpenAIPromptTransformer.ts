@@ -58,6 +58,7 @@ Output ONLY the transformed prompt, no explanations.`;
     this.logger.info('Starting prompt transformation', {
       textLength: transcription.length,
       hasContext: !!context,
+      originalText: transcription,
     });
 
     const client = await this.ensureClient();
@@ -75,6 +76,12 @@ Output ONLY the transformed prompt, no explanations.`;
       }
 
       const startTime = Date.now();
+
+      this.logger.debug('GPT-4 transformation request', {
+        model: 'gpt-4o',
+        temperature: 0.3,
+        userPrompt,
+      });
 
       const response = await client.chat.completions.create({
         model: 'gpt-4o',
@@ -104,6 +111,7 @@ Output ONLY the transformed prompt, no explanations.`;
         originalLength: transcription.length,
         transformedLength: transformedText.length,
         improvements: improvements.length,
+        transformedText,
       });
 
       return {

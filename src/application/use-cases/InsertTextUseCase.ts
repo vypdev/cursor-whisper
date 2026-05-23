@@ -21,17 +21,24 @@ export class InsertTextUseCase {
     this.logger.info('Starting text insertion', {
       textLength: text.length,
       insertersCount: this.inserters.length,
+      textPreview: text.substring(0, 100),
     });
 
     // Try each inserter in priority order
     for (const inserter of this.inserters) {
       if (inserter.canInsert()) {
         try {
-          this.logger.debug(`Trying inserter: ${inserter.constructor.name}`);
+          this.logger.debug(`Trying inserter: ${inserter.constructor.name}`, {
+            canInsert: inserter.canInsert(),
+            priority: inserter.getPriority(),
+          });
           const success = await inserter.insert(text);
 
           if (success) {
-            this.logger.info(`Text inserted successfully using ${inserter.constructor.name}`);
+            this.logger.info(`Text inserted successfully using ${inserter.constructor.name}`, {
+              textLength: text.length,
+              inserterType: inserter.constructor.name,
+            });
             return;
           }
         } catch (error) {

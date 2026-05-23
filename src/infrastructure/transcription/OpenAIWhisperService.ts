@@ -39,6 +39,8 @@ export class OpenAIWhisperService implements ITranscriptionService {
       size: audio.getSizeInMB().toFixed(2) + 'MB',
       format: audio.format,
       language: options?.language || 'auto',
+      sampleRate: audio.sampleRate,
+      channels: audio.channels,
     });
 
     // Validate audio
@@ -57,6 +59,12 @@ export class OpenAIWhisperService implements ITranscriptionService {
 
       // Call Whisper API
       const startTime = Date.now();
+      this.logger.debug('Whisper API request', {
+        model: 'whisper-1',
+        language: options?.language,
+        temperature: options?.temperature ?? 0,
+      });
+
       const response = await client.audio.transcriptions.create({
         file,
         model: 'whisper-1',
@@ -71,6 +79,7 @@ export class OpenAIWhisperService implements ITranscriptionService {
       this.logger.info('Whisper transcription completed', {
         duration: duration.toFixed(2) + 's',
         textLength: response.text.length,
+        text: response.text,
       });
 
       return {
