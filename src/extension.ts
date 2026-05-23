@@ -5,6 +5,7 @@ import { VSCodeOutputChannelLogger } from './infrastructure/logging/VSCodeOutput
 import { VSCodeConfigRepository } from './infrastructure/configuration/VSCodeConfigRepository';
 import { OpenAIWhisperService } from './infrastructure/transcription/OpenAIWhisperService';
 import { OpenAIPromptTransformer } from './infrastructure/transformation/OpenAIPromptTransformer';
+import { ChatParticipantInserter } from './infrastructure/insertion/ChatParticipantInserter';
 import { EditorTextInserter } from './infrastructure/insertion/EditorTextInserter';
 import { FallbackTextInserter } from './infrastructure/insertion/FallbackTextInserter';
 import { NativeAudioRecorder } from './infrastructure/audio/NativeAudioRecorder';
@@ -57,7 +58,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // Text Insertion (Chain of Responsibility)
   const inserters = [
-    // TODO: Add ChatParticipantInserter when implemented
+    new ChatParticipantInserter(logger),
     new EditorTextInserter(logger),
     new FallbackTextInserter(logger),
   ];

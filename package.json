@@ -90,7 +90,7 @@
         },
         "cursorWhisper.enablePromptTransformation": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Enable AI-powered prompt transformation (requires GPT-4 API access, costs ~$0.01 per transformation)"
         },
         "cursorWhisper.audioQuality": {
