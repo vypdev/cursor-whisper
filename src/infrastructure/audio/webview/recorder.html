@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline';">
+    <title>Audio Recorder</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--vscode-font-family);
+            color: var(--vscode-foreground);
+            background-color: var(--vscode-editor-background);
+        }
+        
+        .container {
+            display: none; /* Hidden by default, controlled by extension */
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .status {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--vscode-descriptionForeground);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 2px;
+        }
+        
+        button:hover {
+            background-color: var(--vscode-button-hoverBackground);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .error {
+            color: var(--vscode-errorForeground);
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .duration {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        
+        .waveform {
+            height: 60px;
+            background: var(--vscode-input-background);
+            border: 1px solid var(--vscode-input-border);
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--vscode-descriptionForeground);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="status" id="status">Ready to record</div>
+        <div class="duration" id="duration">00:00</div>
+        <div class="waveform" id="waveform">Audio visualization</div>
+        <div class="controls">
+            <button id="startBtn">Start Recording</button>
+            <button id="stopBtn" disabled>Stop Recording</button>
+            <button id="cancelBtn" disabled>Cancel</button>
+        </div>
+        <div class="error" id="error"></div>
+    </div>
+
+    <script>
+        (function() {
+            const vscode = acquireVsCodeApi();
+            
+            let mediaRecorder = null;
+            let audioChunks = [];
+            let stream = null;
+            let startTime = 0;
+            let timerInterval = null;
+            
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const statusEl = document.getElementById('status');
+            const durationEl = document.getElementById('duration');
+            const errorEl = document.getElementById('error');
+            
+            // Update UI based on state
+            function updateUI(state) {
+                switch(state) {
+                    case 'idle':
+                        startBtn.disabled = false;
+                        stopBtn.disabled = true;
+                        cancelBtn.disabled = true;
+                        statusEl.textContent = 'Ready to record';
+                        errorEl.textContent = '';
+                        break;
+                    case 'recording':
+                        startBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        cancelBtn.disabled = false;
+                        statusEl.textContent = 'Recording...';
+                        break;
+                    case 'processing':
+                        startBtn.disabled = true;
+                        stopBtn.disabled = true;
+                        cancelBtn.disabled = true;
+                        statusEl.textContent = 'Processing audio...';
+                        break;
+                }
+            }
+            
+            // Update duration display
+            function updateDuration() {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                durationEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            // Start recording
+            startBtn.addEventListener('click', async () => {
+                try {
+                    errorEl.textContent = '';
+                    
+                    // Request microphone access
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        audio: {
+                            channelCount: 1,
+                            sampleRate: 16000,
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            autoGainControl: true
+                        }
+                    });
+                    
+                    // Determine supported MIME type
+                    const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                        ? 'audio/webm;codecs=opus'
+                        : MediaRecorder.isTypeSupported('audio/webm')
+                        ? 'audio/webm'
+                        : 'audio/ogg';
+                    
+                    mediaRecorder = new MediaRecorder(stream, {
+                        mimeType,
+                        audioBitsPerSecond: 128000
+                    });
+                    
+                    audioChunks = [];
+                    
+                    mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            audioChunks.push(event.data);
+                        }
+                    };
+                    
+                    mediaRecorder.onstop = async () => {
+                        clearInterval(timerInterval);
+                        updateUI('processing');
+                        
+                        try {
+                            const audioBlob = new Blob(audioChunks, { type: mimeType });
+                            const arrayBuffer = await audioBlob.arrayBuffer();
+                            const uint8Array = new Uint8Array(arrayBuffer);
+                            
+                            // Send audio data to extension
+                            vscode.postMessage({
+                                type: 'audioData',
+                                data: Array.from(uint8Array),
+                                mimeType: mimeType,
+                                duration: Math.floor((Date.now() - startTime) / 1000)
+                            });
+                            
+                            cleanup();
+                        } catch (error) {
+                            errorEl.textContent = 'Error processing audio: ' + error.message;
+                            cleanup();
+                        }
+                    };
+                    
+                    mediaRecorder.onerror = (event) => {
+                        errorEl.textContent = 'Recording error: ' + event.error.message;
+                        cleanup();
+                    };
+                    
+                    // Start recording
+                    mediaRecorder.start(100); // Collect data every 100ms
+                    startTime = Date.now();
+                    timerInterval = setInterval(updateDuration, 1000);
+                    updateUI('recording');
+                    
+                    vscode.postMessage({ type: 'recordingStarted' });
+                    
+                } catch (error) {
+                    errorEl.textContent = 'Failed to start recording: ' + error.message;
+                    cleanup();
+                    vscode.postMessage({
+                        type: 'error',
+                        error: error.message
+                    });
+                }
+            });
+            
+            // Stop recording
+            stopBtn.addEventListener('click', () => {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                }
+            });
+            
+            // Cancel recording
+            cancelBtn.addEventListener('click', () => {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                    audioChunks = [];
+                    vscode.postMessage({ type: 'cancelled' });
+                }
+                cleanup();
+            });
+            
+            // Cleanup resources
+            function cleanup() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                mediaRecorder = null;
+                audioChunks = [];
+                durationEl.textContent = '00:00';
+                updateUI('idle');
+            }
+            
+            // Handle messages from extension
+            window.addEventListener('message', event => {
+                const message = event.data;
+                switch (message.type) {
+                    case 'start':
+                        startBtn.click();
+                        break;
+                    case 'stop':
+                        stopBtn.click();
+                        break;
+                    case 'cancel':
+                        cancelBtn.click();
+                        break;
+                }
+            });
+            
+            // Initial state
+            updateUI('idle');
+            vscode.postMessage({ type: 'ready' });
+        })();
+    </script>
+</body>
+</html>

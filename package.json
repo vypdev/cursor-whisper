@@ -1,0 +1,160 @@
+{
+  "name": "cursor-whisper",
+  "displayName": "Cursor Whisper - Voice to Optimized Prompt",
+  "description": "Transform voice into optimized prompts using OpenAI Whisper and GPT-4",
+  "version": "0.1.0",
+  "publisher": "cursor-whisper",
+  "author": {
+    "name": "Cursor Whisper Team"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cursor-whisper/extension"
+  },
+  "bugs": {
+    "url": "https://github.com/cursor-whisper/extension/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=20.0.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning"
+  ],
+  "keywords": [
+    "voice",
+    "speech-to-text",
+    "whisper",
+    "ai",
+    "cursor",
+    "productivity",
+    "gpt-4",
+    "openai"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cursor-whisper.startRecording",
+        "title": "Cursor Whisper: Start Recording"
+      },
+      {
+        "command": "cursor-whisper.stopRecording",
+        "title": "Cursor Whisper: Stop Recording"
+      },
+      {
+        "command": "cursor-whisper.cancelRecording",
+        "title": "Cursor Whisper: Cancel Recording"
+      },
+      {
+        "command": "cursor-whisper.configureApiKey",
+        "title": "Cursor Whisper: Configure API Key"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "cursor-whisper.startRecording",
+        "key": "ctrl+alt+v",
+        "mac": "cmd+alt+v"
+      },
+      {
+        "command": "cursor-whisper.cancelRecording",
+        "key": "escape",
+        "when": "cursorWhisper.isRecording"
+      }
+    ],
+    "configuration": {
+      "title": "Cursor Whisper",
+      "properties": {
+        "cursorWhisper.transcriptionLanguage": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "en",
+            "es",
+            "fr",
+            "de",
+            "it",
+            "pt",
+            "ja",
+            "ko",
+            "zh"
+          ],
+          "description": "Language for transcription (ISO 639-1 code or 'auto')"
+        },
+        "cursorWhisper.enablePromptTransformation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable AI-powered prompt transformation (requires GPT-4 API access, costs ~$0.01 per transformation)"
+        },
+        "cursorWhisper.audioQuality": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "default": "high",
+          "description": "Audio recording quality"
+        },
+        "cursorWhisper.maxRecordingDuration": {
+          "type": "number",
+          "default": 120,
+          "minimum": 10,
+          "maximum": 300,
+          "description": "Maximum recording duration in seconds"
+        },
+        "cursorWhisper.showNotifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show status notifications"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "webpack --mode production",
+    "compile:dev": "webpack --mode development",
+    "watch": "webpack --mode development --watch",
+    "lint": "eslint src --ext ts",
+    "lint:fix": "eslint src --ext ts --fix",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:integration": "node ./out/test/runTest.js",
+    "package": "vsce package",
+    "publish": "vsce publish",
+    "publish:ovsx": "ovsx publish",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "openai": "^4.20.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.6",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.16.0",
+    "@typescript-eslint/parser": "^6.16.0",
+    "@vscode/test-electron": "^2.3.8",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "prettier": "^3.1.1",
+    "ts-jest": "^29.1.1",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "vsce": "^2.15.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
