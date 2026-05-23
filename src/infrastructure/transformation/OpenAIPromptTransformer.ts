@@ -14,6 +14,7 @@ export class TransformationError extends Error {
 export class OpenAIPromptTransformer implements IPromptTransformer {
   private client: OpenAI | null = null;
   private cachedApiKey: string | null = null;
+  static readonly DEFAULT_MODEL = 'gpt-4o';
 
   private static readonly SYSTEM_PROMPT = `You are an expert at transforming natural speech into structured, optimized prompts for AI coding assistants.
 
@@ -36,6 +37,7 @@ Output ONLY the transformed prompt, no explanations.`;
 
   constructor(
     private readonly getApiKey: () => Promise<string | undefined>,
+    private readonly getModel: () => Promise<string | undefined>,
     private readonly logger: ILogger
   ) {}
 
@@ -58,6 +60,11 @@ Output ONLY the transformed prompt, no explanations.`;
     return this.client;
   }
 
+  private async resolveModel(): Promise<string> {
+    const model = await this.getModel();
+    return model || OpenAIPromptTransformer.DEFAULT_MODEL;
+  }
+
   async transform(transcription: string, context?: PromptContext): Promise<TransformedPrompt> {
     this.logger.info('Starting prompt transformation', {
       textLength: transcription.length,
@@ -65,6 +72,7 @@ Output ONLY the transformed prompt, no explanations.`;
     });
 
     const client = await this.ensureClient();
+    const model = await this.resolveModel();
 
     try {
       // Build user prompt with context
@@ -80,14 +88,14 @@ Output ONLY the transformed prompt, no explanations.`;
 
       const startTime = Date.now();
 
-      this.logger.debug('GPT-4 transformation request', {
-        model: 'gpt-4o',
+      this.logger.debug('GPT transformation request', {
+        model,
         temperature: 0.3,
         promptLength: userPrompt.length,
       });
 
       const response = await client.chat.completions.create({
-        model: 'gpt-4o',
+        model,
         messages: [
           {
             role: 'system',
@@ -110,6 +118,7 @@ Output ONLY the transformed prompt, no explanations.`;
       const improvements = this.calculateImprovements(transcription, transformedText);
 
       this.logger.info('Prompt transformation completed', {
+        model,
         duration: duration.toFixed(2) + 's',
         originalLength: transcription.length,
         transformedLength: transformedText.length,
@@ -123,6 +132,15 @@ Output ONLY the transformed prompt, no explanations.`;
       };
     } catch (error) {
       this.logger.error('Prompt transformation failed', error as Error);
+
+      if (error instanceof OpenAI.APIError) {
+        if (error.status === 404 || error.code === 'model_not_found') {
+          throw new TransformationError(
+            `Model '${model}' is not available for your API key. Use "Cursor Whisper: Configure Model" to choose another model.`,
+            error
+          );
+        }
+      }
 
       if (error instanceof Error) {
         if (error.message.includes('rate_limit')) {

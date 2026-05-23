@@ -54,6 +54,10 @@
       {
         "command": "cursor-whisper.configureApiKey",
         "title": "Cursor Whisper: Configure API Key"
+      },
+      {
+        "command": "cursor-whisper.configureModel",
+        "title": "Cursor Whisper: Configure Model"
       }
     ],
     "keybindings": [
@@ -92,6 +96,25 @@
           "type": "boolean",
           "default": true,
           "description": "Enable AI-powered prompt transformation (requires GPT-4 API access, costs ~$0.01 per transformation)"
+        },
+        "cursorWhisper.transformationModel": {
+          "type": "string",
+          "default": "gpt-4o",
+          "enum": [
+            "gpt-4o",
+            "gpt-4o-mini",
+            "gpt-4-turbo",
+            "gpt-4",
+            "gpt-3.5-turbo"
+          ],
+          "enumDescriptions": [
+            "GPT-4o — fast, cost-effective (recommended default)",
+            "GPT-4o mini — lower cost, slightly reduced quality",
+            "GPT-4 Turbo — high intelligence with large context",
+            "GPT-4 — original GPT-4 model",
+            "GPT-3.5 Turbo — cheapest option, lower quality"
+          ],
+          "description": "OpenAI model used for prompt transformation. Use 'Cursor Whisper: Configure Model' to pick from models available on your API key."
         },
         "cursorWhisper.audioQuality": {
           "type": "string",

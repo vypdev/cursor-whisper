@@ -15,6 +15,11 @@ export interface Config {
   enablePromptTransformation: boolean;
 
   /**
+   * OpenAI model ID used for prompt transformation (default: gpt-4o).
+   */
+  transformationModel: string;
+
+  /**
    * Audio recording quality ('low' | 'medium' | 'high').
    */
   audioQuality: 'low' | 'medium' | 'high';

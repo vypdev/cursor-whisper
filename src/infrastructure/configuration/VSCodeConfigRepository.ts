@@ -6,6 +6,7 @@ export class VSCodeConfigRepository implements IConfigRepository {
   private static readonly SECTION = 'cursorWhisper';
   private static readonly SECRET_KEY = 'cursor-whisper.openai.apiKey';
   private static readonly LEGACY_SECRET_KEY = 'openai-api-key';
+  static readonly DEFAULT_TRANSFORMATION_MODEL = 'gpt-4o';
   private callbacks: Array<(config: Config) => void> = [];
 
   constructor(
@@ -40,6 +41,10 @@ export class VSCodeConfigRepository implements IConfigRepository {
       apiKey,
       transcriptionLanguage: config.get<string>('transcriptionLanguage', 'auto'),
       enablePromptTransformation: config.get<boolean>('enablePromptTransformation', false),
+      transformationModel: config.get<string>(
+        'transformationModel',
+        VSCodeConfigRepository.DEFAULT_TRANSFORMATION_MODEL
+      ),
       audioQuality: config.get<'low' | 'medium' | 'high'>('audioQuality', 'high'),
       maxRecordingDuration: config.get<number>('maxRecordingDuration', 120),
       showNotifications: config.get<boolean>('showNotifications', true),
@@ -88,6 +93,16 @@ export class VSCodeConfigRepository implements IConfigRepository {
         config.update(
           'enablePromptTransformation',
           partialConfig.enablePromptTransformation,
+          vscode.ConfigurationTarget.Global
+        )
+      );
+    }
+
+    if (partialConfig.transformationModel !== undefined) {
+      updates.push(
+        config.update(
+          'transformationModel',
+          partialConfig.transformationModel,
           vscode.ConfigurationTarget.Global
         )
       );

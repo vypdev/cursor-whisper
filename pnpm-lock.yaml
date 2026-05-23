@@ -11,6 +11,9 @@ importers:
       '@kstonekuan/audio-capture':
         specifier: ^0.0.3
         version: 0.0.3
+      copilot:
+        specifier: ^0.0.2
+        version: 0.0.2
       openai:
         specifier: ^4.20.0
         version: 4.104.0
@@ -258,6 +261,58 @@ packages:
   '@eslint/js@8.57.1':
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  '@github/copilot-darwin-arm64@1.0.51':
+    resolution: {integrity: sha512-i713sW3GzbeLKowGVY6/A97lGkUMJNVdUD0oaUWTWmXX08u+hWsnVKbqL4EQlw7x8xU511X5vkgFMi31DWyCuQ==}
+    cpu: [arm64]
+    os: [darwin]
+    hasBin: true
+
+  '@github/copilot-darwin-x64@1.0.51':
+    resolution: {integrity: sha512-c67SbMznclcHqlJINXBCwudhqRgE5HNaY9fqMQqu954+ezVa6Q/2hwhCU51PNbYLWtZTGgXsgWnrxOg77hh0ug==}
+    cpu: [x64]
+    os: [darwin]
+    hasBin: true
+
+  '@github/copilot-linux-arm64@1.0.51':
+    resolution: {integrity: sha512-MlQeTB4CSPnG2BZTxsPSV5a7rjsqFOzhTCVCNjLeht3ODObWjrIYhtzVF7h/nue9ii96u9RBB0gIAfoBReryTw==}
+    cpu: [arm64]
+    os: [linux]
+    hasBin: true
+
+  '@github/copilot-linux-x64@1.0.51':
+    resolution: {integrity: sha512-fniGTwR5KLFfNDjSFbWvZ3Bno+2bXsMdNM0l3dFHwVTHyBqQSXZ3xvEEDadGimCxgKfRDRt1M1FYnUpqhLYf/Q==}
+    cpu: [x64]
+    os: [linux]
+    hasBin: true
+
+  '@github/copilot-linuxmusl-arm64@1.0.51':
+    resolution: {integrity: sha512-vg9sWZw4u/bqHa7ylF/GZeuznt+k4/Em899C++CTBU4CKhtAaxd2TZDsEV0Ap2DXzP2UFxCn77vZoHyxByMI5A==}
+    cpu: [arm64]
+    os: [linux]
+    hasBin: true
+
+  '@github/copilot-linuxmusl-x64@1.0.51':
+    resolution: {integrity: sha512-zxXRdzjshHTQd/LDWmOIDXt0T8nvw66ue6cneAXHhLXWzuiv5mqPKnxuHQyvQDt+IBEyq9utuetlKxcAVo+gYw==}
+    cpu: [x64]
+    os: [linux]
+    hasBin: true
+
+  '@github/copilot-win32-arm64@1.0.51':
+    resolution: {integrity: sha512-/SP8DfOukjllCXavgBNI0qwJa+8hCFRNK7Q3/Q3qzAOvaWUZZkabKSVZfXaGxerTGpGq009Zg3nyIPR0jfm60w==}
+    cpu: [arm64]
+    os: [win32]
+    hasBin: true
+
+  '@github/copilot-win32-x64@1.0.51':
+    resolution: {integrity: sha512-ZB5Jr9m4ZR8gFOwXnYGNfdU+bMFeUgj1OCU3x64Tx5GC6Uln/pf8Ue5LHlsBkBq/NuKvkp/g4GARDIHBCKXEnQ==}
+    cpu: [x64]
+    os: [win32]
+    hasBin: true
+
+  '@github/copilot@1.0.51':
+    resolution: {integrity: sha512-yKXbMeApxO8P68/BeSS/lmIRsCprcMdY8MRRp+Vp/QymCv59o4lxDcAIVq2h/CD8vJHoiG4OijdWydd76yoqLw==}
+    hasBin: true
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -894,6 +949,10 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
+
+  copilot@0.0.2:
+    resolution: {integrity: sha512-nedf34AaYj9JnFhRmiJEZemAno2WDXMypq6FW5aCVR0N+QdpQ6viukP1JpvJDChpaMEVvbUkMjmjMifJbO/AgQ==}
+    hasBin: true
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -2785,6 +2844,43 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
+  '@github/copilot-darwin-arm64@1.0.51':
+    optional: true
+
+  '@github/copilot-darwin-x64@1.0.51':
+    optional: true
+
+  '@github/copilot-linux-arm64@1.0.51':
+    optional: true
+
+  '@github/copilot-linux-x64@1.0.51':
+    optional: true
+
+  '@github/copilot-linuxmusl-arm64@1.0.51':
+    optional: true
+
+  '@github/copilot-linuxmusl-x64@1.0.51':
+    optional: true
+
+  '@github/copilot-win32-arm64@1.0.51':
+    optional: true
+
+  '@github/copilot-win32-x64@1.0.51':
+    optional: true
+
+  '@github/copilot@1.0.51':
+    dependencies:
+      detect-libc: 2.1.2
+    optionalDependencies:
+      '@github/copilot-darwin-arm64': 1.0.51
+      '@github/copilot-darwin-x64': 1.0.51
+      '@github/copilot-linux-arm64': 1.0.51
+      '@github/copilot-linux-x64': 1.0.51
+      '@github/copilot-linuxmusl-arm64': 1.0.51
+      '@github/copilot-linuxmusl-x64': 1.0.51
+      '@github/copilot-win32-arm64': 1.0.51
+      '@github/copilot-win32-x64': 1.0.51
+
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
       '@humanwhocodes/object-schema': 2.0.3
@@ -3599,6 +3695,10 @@ snapshots:
   concat-map@0.0.1: {}
 
   convert-source-map@2.0.0: {}
+
+  copilot@0.0.2:
+    dependencies:
+      '@github/copilot': 1.0.51
 
   core-util-is@1.0.3: {}
 

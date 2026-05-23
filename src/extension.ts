@@ -5,6 +5,7 @@ import { VSCodeOutputChannelLogger } from './infrastructure/logging/VSCodeOutput
 import { VSCodeConfigRepository } from './infrastructure/configuration/VSCodeConfigRepository';
 import { OpenAIWhisperService } from './infrastructure/transcription/OpenAIWhisperService';
 import { OpenAIPromptTransformer } from './infrastructure/transformation/OpenAIPromptTransformer';
+import { OpenAIModelService } from './infrastructure/openai/OpenAIModelService';
 import { ChatParticipantInserter } from './infrastructure/insertion/ChatParticipantInserter';
 import { EditorTextInserter } from './infrastructure/insertion/EditorTextInserter';
 import { FallbackTextInserter } from './infrastructure/insertion/FallbackTextInserter';
@@ -23,6 +24,7 @@ import { registerStartRecordingCommand } from './presentation/commands/StartReco
 import { registerStopRecordingCommand } from './presentation/commands/StopRecordingCommand';
 import { registerCancelRecordingCommand } from './presentation/commands/CancelRecordingCommand';
 import { registerConfigureApiKeyCommand } from './presentation/commands/ConfigureApiKeyCommand';
+import { registerConfigureModelCommand } from './presentation/commands/ConfigureModelCommand';
 import { RecordingStatusBarItem } from './presentation/ui/RecordingStatusBarItem';
 
 let activeAudioRecorder: NativeAudioRecorder | null = null;
@@ -56,8 +58,14 @@ export function activate(context: vscode.ExtensionContext): void {
     return config.apiKey;
   };
 
+  const getModel = async (): Promise<string | undefined> => {
+    const config = await configRepository.getConfig();
+    return config.transformationModel;
+  };
+
   const whisperService = new OpenAIWhisperService(getApiKey, logger);
-  const promptTransformer = new OpenAIPromptTransformer(getApiKey, logger);
+  const promptTransformer = new OpenAIPromptTransformer(getApiKey, getModel, logger);
+  const modelService = new OpenAIModelService(getApiKey, logger);
 
   // Text Insertion (Chain of Responsibility)
   const inserters = [
@@ -117,8 +125,20 @@ export function activate(context: vscode.ExtensionContext): void {
   });
   const cancelCommand = registerCancelRecordingCommand(context, cancelRecordingUseCase);
   const configureCommand = registerConfigureApiKeyCommand(context, configRepository);
+  const configureModelCommand = registerConfigureModelCommand(
+    context,
+    configRepository,
+    modelService,
+    logger
+  );
 
-  context.subscriptions.push(startCommand, stopCommand, cancelCommand, configureCommand);
+  context.subscriptions.push(
+    startCommand,
+    stopCommand,
+    cancelCommand,
+    configureCommand,
+    configureModelCommand
+  );
 
   // ========================================
   // STARTUP CHECKS
