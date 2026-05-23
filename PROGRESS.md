@@ -137,7 +137,7 @@ These options are exposed in `package.json` and documented in README for forward
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 22+ (via nvm; see `.nvmrc`)
 - VSCode or Cursor
 - OpenAI API key
 

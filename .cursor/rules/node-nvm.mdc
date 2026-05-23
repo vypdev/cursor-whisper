@@ -1,0 +1,30 @@
+---
+description: Use Node 22 via nvm for all shell commands in this project
+alwaysApply: true
+---
+
+# Node.js via nvm
+
+This project requires **Node.js 22** (see `.nvmrc`).
+
+Before running any Node.js, pnpm, or build command in the terminal, activate the correct version:
+
+```bash
+source scripts/ensure-node.sh
+```
+
+Or inline:
+
+```bash
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}" && . "$NVM_DIR/nvm.sh" && nvm use
+```
+
+When chaining commands, prefix the full chain:
+
+```bash
+source scripts/ensure-node.sh && pnpm install
+source scripts/ensure-node.sh && pnpm run compile
+source scripts/ensure-node.sh && pnpm run package
+```
+
+Do not use the system default Node if it is not v22. If `nvm use` fails, run `nvm install` first.

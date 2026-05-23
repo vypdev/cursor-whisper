@@ -4,12 +4,8 @@
 
 echo "🎤 Setting up Cursor Whisper development environment..."
 
-# Check Node.js version
-NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
-if [ "$NODE_VERSION" -lt 20 ]; then
-  echo "❌ Node.js 20+ required. Current version: $(node -v)"
-  exit 1
-fi
+# Use Node 22 via nvm
+source "$(dirname "$0")/scripts/ensure-node.sh"
 
 echo "✅ Node.js version: $(node -v)"
 

@@ -103,7 +103,7 @@ See [`docs/architecture/`](docs/architecture/) for detailed architecture documen
 ### Core
 - **TypeScript 5.4+** - Type-safe development
 - **VSCode Extension API 1.120+** - Extension foundation
-- **Node.js 20 LTS** - Runtime environment
+- **Node.js 22 LTS** - Runtime environment
 - **Webpack 5** - Bundling and optimization
 
 ### Integrations
@@ -176,7 +176,7 @@ Open Settings (`Cmd+,` / `Ctrl+,`) and search for "Cursor Whisper":
 
 ### Prerequisites
 
-- Node.js 18+ installed
+- Node.js 22+ installed (via nvm; see `.nvmrc`)
 - VSCode or Cursor IDE
 - OpenAI API key
 
@@ -187,7 +187,7 @@ Open Settings (`Cmd+,` / `Ctrl+,`) and search for "Cursor Whisper":
 git clone https://github.com/vypdev/cursor-whisper
 cd cursor-whisper
 
-# Install dependencies
+# Install dependencies (requires Node 22 — run `nvm use` first)
 pnpm install
 
 # Compile TypeScript
@@ -388,7 +388,7 @@ The extension requests microphone access:
 
 ### Prerequisites
 
-- **Node.js 20+**
+- **Node.js 22+** (via [nvm](https://github.com/nvm-sh/nvm); see `.nvmrc`)
 - **pnpm**
 - **VSCode 1.120+** for testing
 
@@ -399,7 +399,7 @@ The extension requests microphone access:
 git clone https://github.com/vypdev/cursor-whisper.git
 cd cursor-whisper
 
-# Install dependencies
+# Install dependencies (requires Node 22 — run `nvm use` first)
 pnpm install
 
 # Build the extension
