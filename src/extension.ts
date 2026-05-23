@@ -31,6 +31,8 @@ import { registerConfigureModelCommand } from './presentation/commands/Configure
 import { registerConfigureTransformationProviderCommand } from './presentation/commands/ConfigureTransformationProviderCommand';
 import { registerTestTransformationCommand } from './presentation/commands/TestTransformationCommand';
 import { RecordingStatusBarItem } from './presentation/ui/RecordingStatusBarItem';
+import { validateConfigurationOnStartup } from './application/services/ConfigurationValidationService';
+import { PROVIDER_METADATA } from './domain/value-objects/TransformationProvider';
 
 let activeAudioRecorder: NativeAudioRecorder | null = null;
 
@@ -77,7 +79,12 @@ export function activate(context: vscode.ExtensionContext): void {
   // APPLICATION LAYER (Use Cases)
   // ========================================
 
-  const startRecordingUseCase = new StartRecordingUseCase(audioRecorder, configRepository, logger);
+  const startRecordingUseCase = new StartRecordingUseCase(
+    audioRecorder,
+    configRepository,
+    transformerFactory,
+    logger
+  );
 
   const stopRecordingUseCase = new StopRecordingUseCase(audioRecorder, logger);
 
@@ -101,6 +108,17 @@ export function activate(context: vscode.ExtensionContext): void {
   // Status Bar
   const statusBar = new RecordingStatusBarItem();
   context.subscriptions.push(statusBar);
+
+  const syncTransformationProviderLabel = async (): Promise<void> => {
+    const config = await configRepository.getConfig();
+    const metadata = PROVIDER_METADATA[config.transformationProvider];
+    statusBar.setTransformationProviderLabel(metadata.displayName);
+  };
+
+  void syncTransformationProviderLabel();
+  configRepository.onConfigChange(() => {
+    void syncTransformationProviderLabel();
+  });
 
   // Sync status bar with recorder state
   audioRecorder.onStateChange(state => {
@@ -152,24 +170,20 @@ export function activate(context: vscode.ExtensionContext): void {
   // STARTUP CHECKS
   // ========================================
 
-  // Check if API key is configured
-  void configRepository.getConfig().then(config => {
-    if (!config.apiKey) {
-      logger.warn('OpenAI API Key not configured');
+  void validateConfigurationOnStartup(configRepository, transformerFactory).then(issue => {
+    if (issue) {
+      logger.warn(issue.message);
       void vscode.window
-        .showWarningMessage(
-          'Cursor Whisper: OpenAI API Key not configured',
-          'Configure Now',
-          'Later'
-        )
+        .showWarningMessage(issue.message, 'Configure Now', 'Later')
         .then(selection => {
           if (selection === 'Configure Now') {
-            void vscode.commands.executeCommand('cursor-whisper.configureApiKey');
+            void vscode.commands.executeCommand(issue.configureCommand);
           }
         });
-    } else {
-      logger.info('Configuration loaded successfully');
+      return;
     }
+
+    logger.info('Configuration loaded successfully');
   });
 
   logger.info('Cursor Whisper extension fully activated');

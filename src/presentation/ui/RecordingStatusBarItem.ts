@@ -4,6 +4,7 @@ import { RecordingState } from '../../domain/value-objects/RecordingState';
 export class RecordingStatusBarItem {
   private statusBarItem: vscode.StatusBarItem;
   private currentState: RecordingState = RecordingState.IDLE;
+  private transformationProviderLabel = 'AI provider';
 
   constructor() {
     this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
@@ -14,6 +15,11 @@ export class RecordingStatusBarItem {
 
   setState(state: RecordingState): void {
     this.currentState = state;
+    this.updateUI();
+  }
+
+  setTransformationProviderLabel(label: string): void {
+    this.transformationProviderLabel = label;
     this.updateUI();
   }
 
@@ -48,7 +54,7 @@ export class RecordingStatusBarItem {
 
       case RecordingState.TRANSFORMING:
         this.statusBarItem.text = '$(sync~spin) Optimizing...';
-        this.statusBarItem.tooltip = 'Optimizing prompt with GPT-4';
+        this.statusBarItem.tooltip = `Optimizing prompt with ${this.transformationProviderLabel}`;
         this.statusBarItem.command = undefined;
         break;
 

@@ -1,31 +1,41 @@
 import { IAudioRecorder } from '../ports/IAudioRecorder';
 import { IConfigRepository } from '../ports/IConfigRepository';
 import { ILogger } from '../ports/ILogger';
-import { MissingApiKeyError } from '../../domain/errors/ConfigError';
+import { ITransformationProviderValidator } from '../ports/ITransformationProviderValidator';
+import { InvalidConfigError, MissingApiKeyError } from '../../domain/errors/ConfigError';
 import { RecordingError } from '../../domain/errors/RecordingError';
+import { validateConfigurationForRecording } from '../services/ConfigurationValidationService';
 
 export class StartRecordingUseCase {
   constructor(
     private readonly audioRecorder: IAudioRecorder,
     private readonly configRepo: IConfigRepository,
+    private readonly providerValidator: ITransformationProviderValidator,
     private readonly logger: ILogger
   ) {}
 
   async execute(): Promise<void> {
     this.logger.info('Starting recording use case');
 
-    // 1. Validate configuration
-    const config = await this.configRepo.getConfig();
-    if (!config.apiKey) {
-      throw new MissingApiKeyError();
+    const validationIssue = await validateConfigurationForRecording(
+      this.configRepo,
+      this.providerValidator
+    );
+
+    if (validationIssue) {
+      if (validationIssue.configureCommand === 'cursor-whisper.configureApiKey') {
+        throw new MissingApiKeyError();
+      }
+
+      throw new InvalidConfigError('transformationProvider', validationIssue.message);
     }
 
-    // 2. Check if already recording
+    // Check if already recording
     if (this.audioRecorder.isRecording()) {
       throw new RecordingError('Already recording');
     }
 
-    // 3. Start recording
+    // Start recording
     try {
       await this.audioRecorder.startRecording();
       this.logger.info('Recording started successfully');

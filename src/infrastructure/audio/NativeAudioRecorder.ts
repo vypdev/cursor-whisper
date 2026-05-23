@@ -98,14 +98,14 @@ export class NativeAudioRecorder implements IAudioRecorder {
   }
 
   stopRecording(): Promise<AudioData> {
-    if (this.state !== RecordingState.RECORDING) {
-      throw new RecordingError('No active recording to stop');
-    }
-
-    this.logger.info('Stopping native recording');
-    this.setState(RecordingState.PROCESSING);
-
     try {
+      if (this.state !== RecordingState.RECORDING) {
+        throw new RecordingError('No active recording to stop');
+      }
+
+      this.logger.info('Stopping native recording');
+      this.setState(RecordingState.PROCESSING);
+
       this.cleanupRecorder();
 
       if (this.captureError) {
