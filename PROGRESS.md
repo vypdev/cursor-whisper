@@ -146,8 +146,8 @@ These options are exposed in `package.json` and documented in README for forward
 ```bash
 git clone https://github.com/vypdev/cursor-whisper
 cd cursor-whisper
-npm install
-npm run compile
+pnpm install
+pnpm run compile
 ```
 
 ### Debug
@@ -175,7 +175,7 @@ See [`README.md`](README.md) for full usage, configuration, and troubleshooting.
 
 1. Internal testing and feedback
 2. Optional: add unit and integration tests
-3. Package with `npm run package` when ready to distribute
+3. Package with `pnpm run package` when ready to distribute
 4. Publish to VSCode Marketplace / Open VSX
 
 For developer documentation, see [`docs/README.md`](docs/README.md).

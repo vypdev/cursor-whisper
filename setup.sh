@@ -15,7 +15,7 @@ echo "✅ Node.js version: $(node -v)"
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+pnpm install
 
 if [ $? -ne 0 ]; then
   echo "❌ Failed to install dependencies"
@@ -26,7 +26,7 @@ echo "✅ Dependencies installed"
 
 # Compile TypeScript
 echo "🔨 Compiling TypeScript..."
-npm run compile
+pnpm run compile
 
 if [ $? -ne 0 ]; then
   echo "❌ Compilation failed"
@@ -37,10 +37,10 @@ echo "✅ TypeScript compiled"
 
 # Run linter
 echo "🔍 Running linter..."
-npm run lint
+pnpm run lint
 
 if [ $? -ne 0 ]; then
-  echo "⚠️  Linter found issues (run 'npm run lint:fix' to auto-fix)"
+  echo "⚠️  Linter found issues (run 'pnpm run lint:fix' to auto-fix)"
 else
   echo "✅ Linter passed"
 fi
@@ -54,8 +54,8 @@ echo "  2. Press F5 to start debugging"
 echo "  3. Configure your OpenAI API key in the extension"
 echo ""
 echo "Development commands:"
-echo "  npm run watch       - Watch mode for development"
-echo "  npm run test        - Run tests"
-echo "  npm run lint:fix    - Auto-fix linter issues"
-echo "  npm run package     - Build .vsix package"
+echo "  pnpm run watch       - Watch mode for development"
+echo "  pnpm run test        - Run tests"
+echo "  pnpm run lint:fix    - Auto-fix linter issues"
+echo "  pnpm run package     - Build .vsix package"
 echo ""

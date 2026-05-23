@@ -188,10 +188,10 @@ git clone https://github.com/vypdev/cursor-whisper
 cd cursor-whisper
 
 # Install dependencies
-npm install
+pnpm install
 
 # Compile TypeScript
-npm run compile
+pnpm run compile
 ```
 
 ### Debug the Extension
@@ -235,19 +235,19 @@ npm run compile
 
 ```bash
 # Compile TypeScript
-npm run compile
+pnpm run compile
 
 # Run linter
-npm run lint
+pnpm run lint
 
 # Run tests (when available)
-npm test
+pnpm test
 
 # Package extension (includes all platform native binaries)
-npm run package
+pnpm run package
 
 # Verify VSIX contains all platform binaries
-npm run package:verify
+pnpm run package:verify
 ```
 
 ### Packaging for Distribution
@@ -255,7 +255,7 @@ npm run package:verify
 To create a VSIX that works across all platforms (macOS, Linux, Windows):
 
 ```bash
-npm run package
+pnpm run package
 ```
 
 This will:
@@ -267,7 +267,7 @@ This will:
 To verify all binaries are included:
 
 ```bash
-npm run package:verify
+pnpm run package:verify
 ```
 
 Expected output:
@@ -389,7 +389,7 @@ The extension requests microphone access:
 ### Prerequisites
 
 - **Node.js 20+**
-- **npm or pnpm**
+- **pnpm**
 - **VSCode 1.120+** for testing
 
 ### Setup
@@ -400,16 +400,16 @@ git clone https://github.com/vypdev/cursor-whisper.git
 cd cursor-whisper
 
 # Install dependencies
-npm install
+pnpm install
 
 # Build the extension
-npm run compile
+pnpm run compile
 
 # Run tests
-npm test
+pnpm test
 
 # Watch mode for development
-npm run watch
+pnpm run watch
 ```
 
 ### Project Structure
@@ -447,10 +447,10 @@ Automated tests are **pending** — see [`PROGRESS.md`](PROGRESS.md) and [`docs/
 
 ```bash
 # Unit tests
-npm test
+pnpm test
 
 # Watch mode
-npm run test:watch
+pnpm run test:watch
 ```
 
 ### Test Strategy

@@ -10,19 +10,19 @@
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Run linter
-npm run lint
+pnpm run lint
 
 # Run tests
-npm test
+pnpm test
 
 # Build extension
-npm run compile
+pnpm run compile
 
 # Package VSIX
-npm run package
+pnpm run package
 ```
 
 ### Build Scripts
@@ -192,33 +192,39 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
-      
+          cache: pnpm
+
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
       
       - name: Test
-        run: npm test
+        run: pnpm test
       
       - name: Build
-        run: npm run compile
+        run: pnpm run compile
       
       - name: Package
-        run: npm run package
+        run: pnpm run package
       
       - name: Publish to VSCode Marketplace
-        run: npm run publish
+        run: pnpm run publish
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
       
       - name: Publish to Open VSX
-        run: npm run publish:ovsx
+        run: pnpm run publish:ovsx
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
       
@@ -250,9 +256,9 @@ jobs:
 
 1. **Version Bump**:
    ```bash
-   npm version patch  # 0.1.0 -> 0.1.1
-   npm version minor  # 0.1.1 -> 0.2.0
-   npm version major  # 0.2.0 -> 1.0.0
+   pnpm version patch  # 0.1.0 -> 0.1.1
+   pnpm version minor  # 0.1.1 -> 0.2.0
+   pnpm version major  # 0.2.0 -> 1.0.0
    ```
 
 2. **Create Tag**:
@@ -263,9 +269,9 @@ jobs:
 
 3. **Build & Test**:
    ```bash
-   npm run compile
-   npm test
-   npm run package
+   pnpm run compile
+   pnpm test
+   pnpm run package
    ```
 
 4. **Test VSIX Locally**:
@@ -342,8 +348,8 @@ code --install-extension cursor-whisper-0.1.0.vsix
 ```bash
 git clone https://github.com/vypdev/cursor-whisper
 cd extension
-npm install
-npm run compile
+pnpm install
+pnpm run compile
 code --extensionDevelopmentPath=$PWD
 ```
 
@@ -367,12 +373,12 @@ code --extensionDevelopmentPath=$PWD
    # ...
 
    # Test thoroughly
-   npm test
+   pnpm test
 
    # Merge and release patch
    git checkout main
    git merge hotfix/critical-bug
-   npm version patch
+   pnpm version patch
    git push --tags
    ```
 

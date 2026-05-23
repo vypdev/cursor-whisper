@@ -398,7 +398,7 @@ timeline
 ### Release Steps
 
 1. **Tag release**: `git tag v0.1.0`
-2. **Build**: `npm run package`
+2. **Build**: `pnpm run package`
 3. **Test .vsix**: Install and test manually
 4. **Publish to VSCode**: `vsce publish`
 5. **Publish to Open VSX**: `ovsx publish`

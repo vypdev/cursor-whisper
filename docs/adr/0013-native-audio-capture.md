@@ -43,7 +43,7 @@ Key aspects:
 - Capture 16kHz 16-bit PCM mono samples via native Rust/cpal bindings
 - Encode captured PCM to WAV before transcription
 - Keep `WebviewAudioRecorder` in the codebase as a deprecated fallback (not wired by default)
-- Package native binaries via npm optional dependencies and include them in the `.vsix`
+- Package native binaries via optional dependencies and include them in the `.vsix`
 - Mark webpack external for `@kstonekuan/audio-capture` so native bindings load at runtime
 
 ### Architecture

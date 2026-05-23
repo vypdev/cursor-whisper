@@ -134,9 +134,9 @@ Create `tsconfig.json` with:
 ```
 
 ### Build Scripts
-- `npm run compile`: Build once
-- `npm run watch`: Watch mode for development
-- `npm run lint`: ESLint with TypeScript parser
+- `pnpm run compile`: Build once
+- `pnpm run watch`: Watch mode for development
+- `pnpm run lint`: ESLint with TypeScript parser
 
 ### Type Definitions
 - Install `@types/vscode` for VSCode API
