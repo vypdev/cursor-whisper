@@ -3,6 +3,8 @@ out/
 dist/
 # *.vsix
 
+.env
+
 # Dependencies
 node_modules/
 
