@@ -726,7 +726,7 @@ export class Recording {
 ## References
 
 - [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)
+- [Hexagonal Architecture](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
 - [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle)
 - [SOLID Principles](https://en.wikipedia.org/wiki/SOLID)
 - [ADR-0002: Adopt Clean Architecture](../adr/0002-clean-architecture.md)

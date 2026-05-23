@@ -287,7 +287,7 @@ try {
   ).then(selection => {
     if (selection === 'Troubleshooting') {
       vscode.env.openExternal(vscode.Uri.parse(
-        'https://docs.cursor-whisper.dev/troubleshooting/api-key-storage'
+        'https://github.com/vypdev/cursor-whisper#-configuration'
       ));
     }
   });
@@ -320,5 +320,5 @@ export function validateApiKey(key: string): { valid: boolean; error?: string } 
 ## References
 
 - [VSCode SecretStorage API](https://code.visualstudio.com/api/references/vscode-api#SecretStorage)
-- [VSCode Extension Secrets Guide](https://code.visualstudio.com/api/references/vscode-api#secrets)
-- [OWASP Credential Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Credential_Storage_Cheat_Sheet.html)
+- [VSCode SecretStorage API](https://code.visualstudio.com/api/references/vscode-api#SecretStorage)
+- [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)

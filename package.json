@@ -10,10 +10,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cursor-whisper/extension"
+    "url": "https://github.com/vypdev/cursor-whisper"
   },
   "bugs": {
-    "url": "https://github.com/cursor-whisper/extension/issues"
+    "url": "https://github.com/vypdev/cursor-whisper/issues"
   },
   "engines": {
     "vscode": "^1.85.0",

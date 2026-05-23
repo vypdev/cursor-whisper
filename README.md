@@ -129,7 +129,7 @@ See [`docs/architecture/`](docs/architecture/) for detailed architecture documen
 
 ### Manual Installation (Current)
 
-1. Download the latest `.vsix` file from [Releases](https://github.com/your-org/cursor-whisper/releases)
+1. Download the latest `.vsix` file from [Releases](https://github.com/vypdev/cursor-whisper/releases)
 2. Open VSCode/Cursor
 3. Go to Extensions
 4. Click "..." menu → "Install from VSIX..."
@@ -184,7 +184,7 @@ Open Settings (`Cmd+,` / `Ctrl+,`) and search for "Cursor Whisper":
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/cursor-whisper
+git clone https://github.com/vypdev/cursor-whisper
 cd cursor-whisper
 
 # Install dependencies
@@ -366,7 +366,7 @@ The extension requests microphone access:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/cursor-whisper.git
+git clone https://github.com/vypdev/cursor-whisper.git
 cd cursor-whisper
 
 # Install dependencies
@@ -411,26 +411,24 @@ See [`docs/architecture/`](docs/architecture/) for detailed structure documentat
 
 ## 🧪 Testing
 
-### Run Tests
+Automated tests are **pending** — see [`PROGRESS.md`](PROGRESS.md) and [`docs/testing/strategy.md`](docs/testing/strategy.md) for the focused test plan.
+
+### Run Tests (when implemented)
 
 ```bash
 # Unit tests
 npm test
 
-# Integration tests
-npm run test:integration
-
-# Coverage
-npm run test:coverage
+# Watch mode
+npm run test:watch
 ```
 
 ### Test Strategy
 
-- **Unit tests**: Pure business logic, use cases, domain entities
-- **Integration tests**: Full recording → transcription → insertion flow
-- **Manual testing**: Real-world scenarios with different audio inputs
+- **Unit tests**: Use cases and adapters with mocked ports (priority)
+- **Manual smoke tests**: Real recording → transcription → insertion before release
 
-See [`docs/testing/`](docs/testing/) for complete testing documentation.
+See [`docs/testing/strategy.md`](docs/testing/strategy.md) for critical test priorities and manual checklist.
 
 ---
 
@@ -546,11 +544,9 @@ Cursor Whisper works best in:
 - **Classic Mode** (`cursor --classic`)
 - **Editor Window**
 
-The new "Agents Window" (Glass) has limited extension support. You'll see a warning if detected.
+### Debug output and privacy
 
----
-
-## 📄 License
+Transcriptions and optimized prompts are **never written to logs**. For troubleshooting, use the status bar, progress notifications, and error dialogs. Enable the **Cursor Whisper** output channel only for operational messages (timestamps, durations, error types)—not user speech content.
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
@@ -566,8 +562,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 📬 Contact & Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-org/cursor-whisper/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/cursor-whisper/discussions)
+- **Issues**: [GitHub Issues](https://github.com/vypdev/cursor-whisper/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/vypdev/cursor-whisper/discussions)
 - **Email**: support@cursor-whisper.dev
 
 ---

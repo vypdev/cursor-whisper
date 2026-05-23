@@ -240,7 +240,7 @@ export class StopRecordingUseCase {
 
 ### Privacy Documentation
 
-Add to `docs/security/privacy-policy.md`:
+Add to [`docs/security/privacy.md`](../security/privacy.md):
 
 ```markdown
 ## Audio Data Handling

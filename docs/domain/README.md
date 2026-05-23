@@ -40,9 +40,10 @@ src/domain/
 │   ├── ValidationError.ts
 │   └── ConfigError.ts
 │
-└── services/           # Domain services (optional)
-    └── AudioValidator.ts
+└── services/           # Domain services (optional, not yet implemented)
 ```
+
+> **Note**: Audio validation is implemented in `AudioData`, `Recording`, and `TranscribeAudioUseCase` rather than a separate `AudioValidator` service.
 
 ---
 
@@ -520,83 +521,12 @@ export class InvalidConfigError extends ConfigError {
 
 ## Domain Services
 
-### AudioValidator Service
+> **Planned, not implemented**: A dedicated `AudioValidator` domain service was documented during design but validation is currently handled by:
+> - `AudioData` value object (buffer size, format)
+> - `Recording` entity (duration and size limits)
+> - `TranscribeAudioUseCase` and `OpenAIWhisperService.validateAudioFile()` (Whisper API constraints)
 
-**Purpose**: Complex validation logic that doesn't belong to a single entity.
-
-**File**: `src/domain/services/AudioValidator.ts`
-
-```typescript
-import { AudioData } from '../value-objects/AudioData';
-import { ValidationError } from '../errors/ValidationError';
-
-export class AudioValidator {
-  private static readonly MAX_SIZE_BYTES = 25 * 1024 * 1024; // 25MB
-  private static readonly MIN_DURATION_SECONDS = 0.1;
-  private static readonly MAX_DURATION_SECONDS = 300; // 5 minutes
-  private static readonly SUPPORTED_SAMPLE_RATES = [8000, 16000, 22050, 44100, 48000];
-
-  static validate(audio: AudioData): void {
-    this.validateSize(audio);
-    this.validateDuration(audio);
-    this.validateSampleRate(audio);
-    this.validateChannels(audio);
-  }
-
-  private static validateSize(audio: AudioData): void {
-    if (audio.getSizeInBytes() > this.MAX_SIZE_BYTES) {
-      throw new ValidationError(
-        `Audio file exceeds maximum size of 25MB (got ${audio.getSizeInMB().toFixed(2)}MB)`
-      );
-    }
-
-    if (audio.getSizeInBytes() === 0) {
-      throw new ValidationError('Audio file is empty');
-    }
-  }
-
-  private static validateDuration(audio: AudioData): void {
-    const duration = audio.getDurationInSeconds();
-
-    if (duration < this.MIN_DURATION_SECONDS) {
-      throw new ValidationError(
-        `Audio duration too short: ${duration.toFixed(2)}s (minimum ${this.MIN_DURATION_SECONDS}s)`
-      );
-    }
-
-    if (duration > this.MAX_DURATION_SECONDS) {
-      throw new ValidationError(
-        `Audio duration too long: ${duration.toFixed(2)}s (maximum ${this.MAX_DURATION_SECONDS}s)`
-      );
-    }
-  }
-
-  private static validateSampleRate(audio: AudioData): void {
-    if (!this.SUPPORTED_SAMPLE_RATES.includes(audio.sampleRate)) {
-      throw new ValidationError(
-        `Unsupported sample rate: ${audio.sampleRate}Hz (supported: ${this.SUPPORTED_SAMPLE_RATES.join(', ')})`
-      );
-    }
-  }
-
-  private static validateChannels(audio: AudioData): void {
-    if (audio.channels < 1 || audio.channels > 2) {
-      throw new ValidationError(
-        `Invalid channel count: ${audio.channels} (must be 1 or 2)`
-      );
-    }
-  }
-
-  static isValidForWhisper(audio: AudioData): boolean {
-    try {
-      this.validate(audio);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-}
-```
+See [`src/domain/value-objects/AudioData.ts`](../../src/domain/value-objects/AudioData.ts) and [`src/application/use-cases/TranscribeAudioUseCase.ts`](../../src/application/use-cases/TranscribeAudioUseCase.ts).
 
 ---
 

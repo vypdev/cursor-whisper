@@ -249,6 +249,6 @@ export class StartRecordingUseCase {
 ## References
 
 - [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Hexagonal Architecture by Alistair Cockburn](https://alistair.cockburn.us/hexagonal-architecture/)
+- [Hexagonal Architecture (Herberto Graca)](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
 - [Ports and Adapters Pattern](https://herbertograca.com/2017/09/14/ports-adapters-architecture/)
 - [Clean Architecture in TypeScript](https://medium.com/@pankaj.panigrahi/clean-architecture-in-typescript-node-js-a9e7aa3ebe6f)

@@ -1,6 +1,8 @@
 # ADR-0010: Use React for Webview UI
 
-**Status**: Accepted
+**Status**: Superseded by [ADR-0013](0013-native-audio-capture.md)
+
+> **Note**: This ADR was accepted for a webview-based recording UI that was never shipped. Production uses native audio capture ([ADR-0013](0013-native-audio-capture.md)) with status bar feedback only. The referenced `src/presentation/webview/index.tsx` path was never implemented.
 
 **Date**: 2026-05-23
 

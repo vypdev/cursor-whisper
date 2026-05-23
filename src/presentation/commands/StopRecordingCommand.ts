@@ -5,6 +5,9 @@ import { TransformPromptUseCase } from '../../application/use-cases/TransformPro
 import { InsertTextUseCase } from '../../application/use-cases/InsertTextUseCase';
 import { RecordingError } from '../../domain/errors/RecordingError';
 import { TranscriptionError } from '../../domain/errors/TranscriptionError';
+import { PermissionError } from '../../domain/errors/PermissionError';
+import { ConfigError } from '../../domain/errors/ConfigError';
+import { InsertionError } from '../../application/use-cases/InsertTextUseCase';
 import { generateId } from '../../shared/utils/generateId';
 
 interface StopRecordingDependencies {
@@ -57,7 +60,24 @@ export function registerStopRecordingCommand(
       if (error instanceof RecordingError) {
         await vscode.window.showErrorMessage(`Recording error: ${error.message}`);
       } else if (error instanceof TranscriptionError) {
-        await vscode.window.showErrorMessage(`Transcription failed: ${error.message}`, 'Retry');
+        const action = await vscode.window.showErrorMessage(
+          `Transcription failed: ${error.message}`,
+          'Retry'
+        );
+        if (action === 'Retry') {
+          await vscode.commands.executeCommand('cursor-whisper.stopRecording');
+        }
+      } else if (error instanceof InsertionError) {
+        await vscode.window.showErrorMessage(
+          `Could not insert text: ${error.message}. Check clipboard fallback.`
+        );
+      } else if (error instanceof PermissionError) {
+        await vscode.window.showErrorMessage(
+          `Microphone permission denied: ${error.message}`,
+          'Open Settings'
+        );
+      } else if (error instanceof ConfigError) {
+        await vscode.window.showErrorMessage(`Configuration error: ${error.message}`);
       } else {
         await vscode.window.showErrorMessage(
           `Failed to process recording: ${error instanceof Error ? error.message : 'Unknown error'}`

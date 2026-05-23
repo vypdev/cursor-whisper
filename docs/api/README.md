@@ -27,7 +27,7 @@ docs/api/
 │
 ├── infrastructure/
 │   ├── audio/
-│   │   └── WebviewAudioRecorder.md
+│   │   └── NativeAudioRecorder (see src/infrastructure/audio/)
 │   ├── transcription/
 │   │   └── OpenAIWhisperService.md
 │   ├── transformation/
@@ -42,8 +42,10 @@ docs/api/
 └── presentation/
     ├── commands.md         # All command handlers
     ├── status-bar.md       # Status bar item
-    └── webview.md          # Webview components
+    └── status-bar.md       # Status bar item
 ```
+
+> **Note**: Layer implementation details live in [`src/`](../../src/). The tree above is the documentation target structure; not every file exists yet.
 
 ---
 
@@ -55,7 +57,7 @@ docs/api/
 
 | Class | Purpose | Key Methods |
 |-------|---------|-------------|
-| `Recording` | Audio recording session | `isLongRecording()`, `getFileSizeInMB()` |
+| `Recording` | Audio recording session (not yet wired in pipeline) | `isLongRecording()`, `getFileSizeInMB()` |
 | `Transcription` | Transcription result | `hasLowConfidence()`, `getWordCount()` |
 | `Prompt` | Transformed prompt | `wasTransformed()`, `getCompressionRatio()` |
 
@@ -96,12 +98,12 @@ docs/api/
 
 | Port | Purpose | Implementations |
 |------|---------|----------------|
-| `IAudioRecorder` | Audio recording | `WebviewAudioRecorder` |
+| `IAudioRecorder` | Audio recording | `NativeAudioRecorder` (primary), `WebviewAudioRecorder` (deprecated) |
 | `ITranscriptionService` | Speech-to-text | `OpenAIWhisperService` |
 | `IPromptTransformer` | Prompt optimization | `OpenAIPromptTransformer` |
 | `ITextInserter` | Text insertion | `ChatParticipantInserter`, `EditorTextInserter`, `FallbackTextInserter` |
 | `IConfigRepository` | Configuration | `VSCodeConfigRepository` |
-| `ILogger` | Logging | `ConsoleLogger`, `VSCodeOutputChannelLogger` |
+| `ILogger` | Logging | `VSCodeOutputChannelLogger` (production), `ConsoleLogger` (unused) |
 
 ---
 
@@ -111,9 +113,8 @@ docs/api/
 
 | Class | Purpose | External Dependencies |
 |-------|---------|---------------------|
-| `WebviewAudioRecorder` | Browser-based recording | MediaRecorder API |
-| `MicrophonePermissionManager` | Permission handling | `getUserMedia()` |
-| `WavConverter` | Audio format conversion | Web Audio API |
+| `NativeAudioRecorder` | Native PCM capture in extension host | `@kstonekuan/audio-capture` |
+| `WebviewAudioRecorder` | Deprecated browser-based recording | MediaRecorder API (not wired) |
 
 #### External Services
 

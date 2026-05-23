@@ -262,7 +262,7 @@ Documentation contributions are as valuable as code contributions!
 
 ### Architecture Patterns
 - [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)
+- [Hexagonal Architecture](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
 - [Dependency Injection Patterns](https://martinfowler.com/articles/injection.html)
 
 ---
@@ -272,9 +272,9 @@ Documentation contributions are as valuable as code contributions!
 If you have questions about the documentation:
 
 1. Check existing documentation first
-2. Search [GitHub Discussions](https://github.com/your-org/cursor-whisper/discussions)
+2. Search [GitHub Discussions](https://github.com/vypdev/cursor-whisper/discussions)
 3. Create a new discussion with tag `documentation`
-4. For specific issues, open a [GitHub Issue](https://github.com/your-org/cursor-whisper/issues)
+4. For specific issues, open a [GitHub Issue](https://github.com/vypdev/cursor-whisper/issues)
 
 ---
 

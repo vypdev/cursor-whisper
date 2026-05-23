@@ -16,8 +16,8 @@ Cursor Whisper takes security and privacy seriously. This document outlines our 
 
 ```mermaid
 flowchart LR
-    A[Microphone] -->|Captured| B[Browser Memory]
-    B -->|Converted| C[WAV Buffer]
+    A[Microphone] -->|Captured| B[Extension Host Memory]
+    B -->|Encoded| C[WAV Buffer]
     C -->|Sent via HTTPS| D[OpenAI Whisper]
     D -->|Response| E[Text Result]
     C -.->|Immediately Discarded| F[Garbage Collected]
@@ -60,7 +60,7 @@ See [ADR-0009: No Persistent Audio Storage](../adr/0009-no-persistent-audio.md) 
 **How keys are used**:
 - ✅ Read only when needed
 - ✅ Sent only to OpenAI (HTTPS)
-- ✅ Never logged
+- ✅ Never logged (transcriptions and prompts are also excluded from logs)
 - ✅ Never displayed (masked in UI)
 - ✅ Never sent to telemetry
 

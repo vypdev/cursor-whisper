@@ -2,6 +2,12 @@ import { AudioData } from '../value-objects/AudioData';
 import { RecordingState } from '../value-objects/RecordingState';
 import { InvalidRecordingError } from '../errors/RecordingError';
 
+/**
+ * Domain entity for a completed recording session.
+ *
+ * @remarks Not yet wired in the live pipeline — stop/transcribe flows use {@link AudioData}
+ * directly. Retained for future session tracking and domain validation.
+ */
 export class Recording {
   private state: RecordingState;
 

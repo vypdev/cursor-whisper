@@ -6,6 +6,8 @@
 
 ## Recording States
 
+> **MVP implementation**: The status bar currently reflects states emitted by `NativeAudioRecorder`: `IDLE`, `RECORDING`, `PROCESSING`, `ERROR`, and `CANCELLED`. Fine-grained states (`TRANSCRIBING`, `TRANSFORMING`, `INSERTING`) are shown via the progress notification during stop/processing, not on the status bar. The table below documents the full target UX.
+
 ### State Definitions
 
 | State | Description | Visual Indicator | User Actions |
@@ -97,9 +99,11 @@ stateDiagram-v2
 └────────────────┘
 ```
 
-### Webview Panel (Optional)
+### Webview Panel (Deprecated)
 
-For users who want a dedicated panel:
+> **Not in production**: A dedicated webview panel with React UI was planned in [ADR-0010](../adr/0010-react-for-ui.md) but superseded by native capture ([ADR-0013](../adr/0013-native-audio-capture.md)). The MVP uses status bar feedback only.
+
+For reference, the planned webview layout was:
 
 ```
 ┌─────────────────────────────────┐

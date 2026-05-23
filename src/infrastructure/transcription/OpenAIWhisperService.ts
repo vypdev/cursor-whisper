@@ -11,6 +11,7 @@ import { ApiKey } from '../../domain/value-objects/ApiKey';
 
 export class OpenAIWhisperService implements ITranscriptionService {
   private client: OpenAI | null = null;
+  private cachedApiKey: string | null = null;
   private static readonly MAX_SIZE_MB = 25;
 
   constructor(
@@ -19,17 +20,20 @@ export class OpenAIWhisperService implements ITranscriptionService {
   ) {}
 
   private async ensureClient(): Promise<OpenAI> {
-    if (!this.client) {
-      const apiKeyStr = await this.getApiKey();
-      if (!apiKeyStr) {
-        throw new TranscriptionError('OpenAI API key not configured');
-      }
-
-      const apiKey = new ApiKey(apiKeyStr);
-      this.client = new OpenAI({
-        apiKey: apiKey.toString(),
-      });
+    const apiKeyStr = await this.getApiKey();
+    if (!apiKeyStr) {
+      throw new TranscriptionError('OpenAI API key not configured');
     }
+
+    if (this.client && this.cachedApiKey === apiKeyStr) {
+      return this.client;
+    }
+
+    const apiKey = new ApiKey(apiKeyStr);
+    this.client = new OpenAI({
+      apiKey: apiKey.toString(),
+    });
+    this.cachedApiKey = apiKeyStr;
 
     return this.client;
   }
@@ -79,7 +83,6 @@ export class OpenAIWhisperService implements ITranscriptionService {
       this.logger.info('Whisper transcription completed', {
         duration: duration.toFixed(2) + 's',
         textLength: response.text.length,
-        text: response.text,
       });
 
       return {

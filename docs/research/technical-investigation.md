@@ -284,13 +284,13 @@ statusBar.show();
 
 ```typescript
 // Store API key
-await context.secrets.store('openai-api-key', apiKey);
+await context.secrets.store('cursor-whisper.openai.apiKey', apiKey);
 
 // Retrieve API key
-const apiKey = await context.secrets.get('openai-api-key');
+const apiKey = await context.secrets.get('cursor-whisper.openai.apiKey');
 
 // Delete API key
-await context.secrets.delete('openai-api-key');
+await context.secrets.delete('cursor-whisper.openai.apiKey');
 ```
 
 **Platform Storage**:

@@ -61,7 +61,7 @@ npm run package
   "icon": "assets/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cursor-whisper/extension"
+    "url": "https://github.com/vypdev/cursor-whisper"
   },
   "engines": {
     "vscode": "^1.120.0"
@@ -340,7 +340,7 @@ code --install-extension cursor-whisper-0.1.0.vsix
 
 **From Source**:
 ```bash
-git clone https://github.com/cursor-whisper/extension
+git clone https://github.com/vypdev/cursor-whisper
 cd extension
 npm install
 npm run compile

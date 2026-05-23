@@ -36,7 +36,7 @@ Each ADR follows this structure:
 - [ADR-0007](0007-cursor-compatibility.md) - Prioritize Classic Mode Compatibility
 - [ADR-0008](0008-secret-storage.md) - Use VSCode SecretStorage for API Keys
 - [ADR-0009](0009-no-persistent-audio.md) - No Persistent Audio Storage
-- [ADR-0010](0010-react-for-ui.md) - Use React for Webview UI
+- [ADR-0010](0010-react-for-ui.md) - Use React for Webview UI (Superseded)
 - [ADR-0011](0011-gpt4-transformation.md) - Use GPT-4 for Prompt Transformation
 - [ADR-0012](0012-mono-audio-16khz.md) - Use Mono Audio at 16kHz Sample Rate
 - [ADR-0013](0013-native-audio-capture.md) - Use Native Audio Capture with @kstonekuan/audio-capture
@@ -48,6 +48,7 @@ Each ADR follows this structure:
 ### Superseded ADRs
 
 - [ADR-0005](0005-webview-audio-recording.md) - Superseded by [ADR-0013](0013-native-audio-capture.md)
+- [ADR-0010](0010-react-for-ui.md) - Superseded by [ADR-0013](0013-native-audio-capture.md) (webview UI never implemented)
 
 ---
 

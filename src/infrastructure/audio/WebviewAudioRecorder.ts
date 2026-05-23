@@ -8,6 +8,22 @@ import { RecordingError } from '../../domain/errors/RecordingError';
 import { PermissionError } from '../../domain/errors/PermissionError';
 import { ILogger } from '../../application/ports/ILogger';
 
+type WebviewMessage =
+  | { type: 'ready' }
+  | { type: 'recordingStarted' }
+  | {
+      type: 'audioData';
+      data: number[];
+      mimeType: string;
+      duration: number;
+    }
+  | { type: 'cancelled' }
+  | { type: 'error'; error: string };
+
+/**
+ * @deprecated Superseded by {@link NativeAudioRecorder} (ADR-0013). Retained as an
+ * alternative implementation; not wired in `extension.ts`.
+ */
 export class WebviewAudioRecorder implements IAudioRecorder {
   private panel: vscode.WebviewPanel | null = null;
   private state: RecordingState = RecordingState.IDLE;
@@ -160,7 +176,7 @@ export class WebviewAudioRecorder implements IAudioRecorder {
     this.stateListeners.forEach(listener => listener(newState));
   }
 
-  private async handleWebviewMessage(message: any): Promise<void> {
+  private async handleWebviewMessage(message: WebviewMessage): Promise<void> {
     switch (message.type) {
       case 'ready':
         this.logger.debug('Webview ready');
@@ -205,8 +221,13 @@ export class WebviewAudioRecorder implements IAudioRecorder {
     }
   }
 
-  private async handleAudioData(message: any): Promise<void> {
+  private async handleAudioData(message: Extract<WebviewMessage, { type: 'audioData' }>): Promise<void> {
     try {
+      const maxBytes = 30 * 1024 * 1024;
+      if (message.data.length > maxBytes) {
+        throw new RecordingError('Audio data exceeds maximum size');
+      }
+
       this.logger.info('Received audio data from webview', {
         size: message.data.length,
         mimeType: message.mimeType,

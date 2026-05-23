@@ -1,5 +1,8 @@
 import { ILogger, LogLevel } from '../../application/ports/ILogger';
 
+/**
+ * @deprecated Not used in production. {@link VSCodeOutputChannelLogger} is wired in `extension.ts`.
+ */
 export class ConsoleLogger implements ILogger {
   private level: LogLevel = LogLevel.INFO;
 

@@ -9,23 +9,24 @@ export class InsertionError extends Error {
 }
 
 export class InsertTextUseCase {
+  private readonly sortedInserters: ITextInserter[];
+
   constructor(
-    private readonly inserters: ITextInserter[],
+    inserters: ITextInserter[],
     private readonly logger: ILogger
   ) {
-    // Sort inserters by priority (highest first)
-    this.inserters.sort((a, b) => a.getPriority() - b.getPriority());
+    // Copy before sort to avoid mutating the caller's array
+    this.sortedInserters = [...inserters].sort((a, b) => a.getPriority() - b.getPriority());
   }
 
   async execute(text: string): Promise<void> {
     this.logger.info('Starting text insertion', {
       textLength: text.length,
-      insertersCount: this.inserters.length,
-      textPreview: text.substring(0, 100),
+      insertersCount: this.sortedInserters.length,
     });
 
     // Try each inserter in priority order
-    for (const inserter of this.inserters) {
+    for (const inserter of this.sortedInserters) {
       if (inserter.canInsert()) {
         try {
           this.logger.debug(`Trying inserter: ${inserter.constructor.name}`, {

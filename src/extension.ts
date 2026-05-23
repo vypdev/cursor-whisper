@@ -25,6 +25,8 @@ import { registerCancelRecordingCommand } from './presentation/commands/CancelRe
 import { registerConfigureApiKeyCommand } from './presentation/commands/ConfigureApiKeyCommand';
 import { RecordingStatusBarItem } from './presentation/ui/RecordingStatusBarItem';
 
+let activeAudioRecorder: NativeAudioRecorder | null = null;
+
 /**
  * Main extension entry point.
  * Composition root - all dependencies are wired here.
@@ -45,6 +47,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // Audio Recording (NativeAudioRecorder)
   const audioRecorder = new NativeAudioRecorder(logger);
+  activeAudioRecorder = audioRecorder;
   logger.info('NativeAudioRecorder initialized');
 
   // OpenAI Services
@@ -150,5 +153,7 @@ export function activate(context: vscode.ExtensionContext): void {
  * Clean up resources.
  */
 export function deactivate(): void {
+  activeAudioRecorder?.dispose();
+  activeAudioRecorder = null;
   console.log('Cursor Whisper extension is now deactivated');
 }

@@ -142,12 +142,12 @@ Create `tsconfig.json` with:
 - Install `@types/vscode` for VSCode API
 - Install `@types/node` for Node.js APIs
 - Use official type definitions where available
-- Create custom type definitions in `src/shared/types/`
+- Create custom type definitions in `src/shared/utils/` or alongside domain/application modules
 
 ---
 
 ## References
 
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-- [VSCode Extension TypeScript Guide](https://code.visualstudio.com/api/working-with-extensions/bundling-extension#using-typescript)
+- [VSCode Extension TypeScript Guide](https://code.visualstudio.com/api/working-with-extensions/bundling-extension#using-webpack)
 - [TypeScript Best Practices](https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html)

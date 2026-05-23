@@ -14,7 +14,7 @@ Cursor Whisper is a working VSCode/Cursor extension that records voice, transcri
 |-------|--------|----------|
 | Documentation | Complete | 100% |
 | MVP Implementation | Complete | 100% |
-| Testing | Pending | Low coverage |
+| Testing | In progress | Strategy defined; automated tests pending |
 | Publication | Pending | Not published |
 
 **Build**: Successful (`out/extension.js`, ~579 KB)  
@@ -109,6 +109,30 @@ Layer-specific implementation details live in `src/` with TypeScript types and J
 
 ---
 
+## Known Gaps (Documented, Not Blocking MVP)
+
+### Unused or unwired code
+
+| Item | Location | Status |
+|------|----------|--------|
+| `WebviewAudioRecorder` | `src/infrastructure/audio/` | Deprecated ([ADR-0013](docs/adr/0013-native-audio-capture.md)); not wired in `extension.ts` |
+| `ConsoleLogger` | `src/infrastructure/logging/` | Unused; production uses `VSCodeOutputChannelLogger` |
+| `Recording` entity | `src/domain/entities/Recording.ts` | Defined but not instantiated in the live pipeline |
+| Unused error types | `InvalidConfigError`, `RecordingTimeoutError`, `TranscriptionTimeoutError` | Reserved for future use |
+
+### Configuration options not yet enforced
+
+| Setting | Documented | Applied in code |
+|---------|------------|-----------------|
+| `audioQuality` | Yes | Loaded only — recorder always uses 16 kHz mono |
+| `maxRecordingDuration` | Yes | Loaded only — not enforced in `NativeAudioRecorder` |
+| `showNotifications` | Yes | Loaded only — commands always show notifications |
+| `transcriptionHint` | Partial | Read-only; not writable via settings UI |
+
+These options are exposed in `package.json` and documented in README for forward compatibility.
+
+---
+
 ## How to Test
 
 ### Prerequisites
@@ -120,7 +144,7 @@ Layer-specific implementation details live in `src/` with TypeScript types and J
 ### Setup
 
 ```bash
-git clone https://github.com/cursor-whisper/extension
+git clone https://github.com/vypdev/cursor-whisper
 cd cursor-whisper
 npm install
 npm run compile

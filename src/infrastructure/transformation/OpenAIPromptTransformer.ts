@@ -13,6 +13,7 @@ export class TransformationError extends Error {
 
 export class OpenAIPromptTransformer implements IPromptTransformer {
   private client: OpenAI | null = null;
+  private cachedApiKey: string | null = null;
 
   private static readonly SYSTEM_PROMPT = `You are an expert at transforming natural speech into structured, optimized prompts for AI coding assistants.
 
@@ -39,17 +40,20 @@ Output ONLY the transformed prompt, no explanations.`;
   ) {}
 
   private async ensureClient(): Promise<OpenAI> {
-    if (!this.client) {
-      const apiKeyStr = await this.getApiKey();
-      if (!apiKeyStr) {
-        throw new TransformationError('OpenAI API key not configured');
-      }
-
-      const apiKey = new ApiKey(apiKeyStr);
-      this.client = new OpenAI({
-        apiKey: apiKey.toString(),
-      });
+    const apiKeyStr = await this.getApiKey();
+    if (!apiKeyStr) {
+      throw new TransformationError('OpenAI API key not configured');
     }
+
+    if (this.client && this.cachedApiKey === apiKeyStr) {
+      return this.client;
+    }
+
+    const apiKey = new ApiKey(apiKeyStr);
+    this.client = new OpenAI({
+      apiKey: apiKey.toString(),
+    });
+    this.cachedApiKey = apiKeyStr;
 
     return this.client;
   }
@@ -58,7 +62,6 @@ Output ONLY the transformed prompt, no explanations.`;
     this.logger.info('Starting prompt transformation', {
       textLength: transcription.length,
       hasContext: !!context,
-      originalText: transcription,
     });
 
     const client = await this.ensureClient();
@@ -80,7 +83,7 @@ Output ONLY the transformed prompt, no explanations.`;
       this.logger.debug('GPT-4 transformation request', {
         model: 'gpt-4o',
         temperature: 0.3,
-        userPrompt,
+        promptLength: userPrompt.length,
       });
 
       const response = await client.chat.completions.create({
@@ -111,7 +114,6 @@ Output ONLY the transformed prompt, no explanations.`;
         originalLength: transcription.length,
         transformedLength: transformedText.length,
         improvements: improvements.length,
-        transformedText,
       });
 
       return {

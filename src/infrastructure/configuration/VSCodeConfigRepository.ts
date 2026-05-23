@@ -1,8 +1,11 @@
 import * as vscode from 'vscode';
 import { IConfigRepository, Config } from '../../application/ports/IConfigRepository';
+import { ConfigError } from '../../domain/errors/ConfigError';
 
 export class VSCodeConfigRepository implements IConfigRepository {
   private static readonly SECTION = 'cursorWhisper';
+  private static readonly SECRET_KEY = 'cursor-whisper.openai.apiKey';
+  private static readonly LEGACY_SECRET_KEY = 'openai-api-key';
   private callbacks: Array<(config: Config) => void> = [];
 
   constructor(
@@ -22,8 +25,16 @@ export class VSCodeConfigRepository implements IConfigRepository {
   async getConfig(): Promise<Config> {
     const config = vscode.workspace.getConfiguration(VSCodeConfigRepository.SECTION);
 
-    // Get API key from secure storage
-    const apiKey = await this.secretStorage.get('openai-api-key');
+    // Get API key from secure storage (migrate legacy key if present)
+    let apiKey = await this.secretStorage.get(VSCodeConfigRepository.SECRET_KEY);
+    if (!apiKey) {
+      const legacyKey = await this.secretStorage.get(VSCodeConfigRepository.LEGACY_SECRET_KEY);
+      if (legacyKey) {
+        apiKey = legacyKey;
+        await this.secretStorage.store(VSCodeConfigRepository.SECRET_KEY, legacyKey);
+        await this.secretStorage.delete(VSCodeConfigRepository.LEGACY_SECRET_KEY);
+      }
+    }
 
     return {
       apiKey,
@@ -41,10 +52,21 @@ export class VSCodeConfigRepository implements IConfigRepository {
 
     // Handle API key separately (secure storage)
     if (partialConfig.apiKey !== undefined) {
-      if (partialConfig.apiKey) {
-        await this.secretStorage.store('openai-api-key', partialConfig.apiKey);
-      } else {
-        await this.secretStorage.delete('openai-api-key');
+      try {
+        if (partialConfig.apiKey) {
+          await this.secretStorage.store(
+            VSCodeConfigRepository.SECRET_KEY,
+            partialConfig.apiKey
+          );
+          await this.secretStorage.delete(VSCodeConfigRepository.LEGACY_SECRET_KEY);
+        } else {
+          await this.secretStorage.delete(VSCodeConfigRepository.SECRET_KEY);
+          await this.secretStorage.delete(VSCodeConfigRepository.LEGACY_SECRET_KEY);
+        }
+      } catch (error) {
+        throw new ConfigError(
+          'Failed to save API key securely. Check your system keychain settings.'
+        );
       }
     }
 

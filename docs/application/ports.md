@@ -28,8 +28,8 @@ import { RecordingState } from '../../domain/value-objects/RecordingState';
  * Port for audio recording functionality.
  * 
  * Implementations:
- * - WebviewAudioRecorder (primary): Uses browser MediaRecorder
- * - NodeAudioRecorder (fallback): Uses Node.js libraries
+ * - NativeAudioRecorder (primary): Uses @kstonekuan/audio-capture in the extension host
+ * - WebviewAudioRecorder (deprecated): Uses browser MediaRecorder — not wired in extension.ts
  */
 export interface IAudioRecorder {
   /**

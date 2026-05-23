@@ -1,12 +1,23 @@
 import * as vscode from 'vscode';
 import { CancelRecordingUseCase } from '../../application/use-cases/CancelRecordingUseCase';
+import { RecordingError } from '../../domain/errors/RecordingError';
 
 export function registerCancelRecordingCommand(
   _context: vscode.ExtensionContext,
   useCase: CancelRecordingUseCase
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.cancelRecording', () => {
-    useCase.execute();
-    void vscode.window.showInformationMessage('Recording cancelled');
+  return vscode.commands.registerCommand('cursor-whisper.cancelRecording', async () => {
+    try {
+      await useCase.execute();
+      await vscode.window.showInformationMessage('Recording cancelled');
+    } catch (error) {
+      const message =
+        error instanceof RecordingError
+          ? error.message
+          : error instanceof Error
+            ? error.message
+            : 'Unknown error';
+      await vscode.window.showErrorMessage(`Failed to cancel recording: ${message}`);
+    }
   });
 }

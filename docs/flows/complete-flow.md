@@ -32,11 +32,8 @@ sequenceDiagram
     CMD->>UC1: execute()
     
     UC1->>UC1: Check config (API key)
-    UC1->>Audio: Check permissions
-    Audio-->>UC1: Permission granted
-    
     UC1->>Audio: startRecording()
-    Audio->>Audio: Start MediaRecorder
+    Audio->>Audio: Start native PCM capture
     Audio-->>UC1: Recording started
     UC1-->>CMD: Success
     CMD-->>UI: Update state (RECORDING)
@@ -49,12 +46,12 @@ sequenceDiagram
     CMD->>UC2: execute()
     
     UC2->>Audio: stopRecording()
-    Audio->>Audio: Stop MediaRecorder
-    Audio->>Audio: Convert to WAV
+    Audio->>Audio: Stop native capture
+    Audio->>Audio: Encode PCM to WAV (16kHz mono)
     Audio-->>UC2: AudioData
     
-    UC2-->>UI: Update state (TRANSCRIBING)
-    UI-->>User: Show "Transcribing..."
+    UC2-->>UI: Update state (PROCESSING)
+    UI-->>User: Show "Processing..."
     
     UC2->>Whisper: transcribe(audioData)
     Whisper->>Whisper: Validate audio
@@ -62,16 +59,11 @@ sequenceDiagram
     OpenAI-->>Whisper: { text: "..." }
     Whisper-->>UC2: TranscriptionResult
     
-    UC2-->>UI: Update state (TRANSFORMING)
-    UI-->>User: Show "Optimizing prompt..."
-    
     UC2->>GPT: transform(transcription)
     GPT->>GPT: Build system prompt
     GPT->>OpenAI: POST /chat/completions
     OpenAI-->>GPT: { content: "..." }
     GPT-->>UC2: TransformedPrompt
-    
-    UC2-->>UI: Update state (INSERTING)
     
     UC2->>Insert: insert(transformedText)
     Insert->>Insert: Try ChatInserter
@@ -92,38 +84,35 @@ sequenceDiagram
 2. `StartRecordingCommand` handler invoked
 3. `StartRecordingUseCase.execute()` called:
    - Validates API key is configured
-   - Checks microphone permission
    - Calls `audioRecorder.startRecording()`
-4. `WebviewAudioRecorder`:
-   - Requests `getUserMedia()` from browser
-   - Creates `MediaRecorder` instance
-   - Starts capturing audio chunks
+4. `NativeAudioRecorder` ([ADR-0013](../adr/0013-native-audio-capture.md)):
+   - Uses `@kstonekuan/audio-capture` in the extension host
+   - Captures 16 kHz mono PCM in memory
+   - Surfaces permission errors from the native layer
 5. Status bar updates to "Recording..." (red)
-6. User sees visual feedback (pulse animation)
+6. User sees visual feedback via status bar
 
 **Phase 2: Recording in Progress (0-120 seconds)**
 
-7. Audio chunks collected every 100ms
+7. PCM chunks collected in extension host memory
 8. User speaks naturally about requirements
-9. Duration displayed in real-time
-10. User can cancel at any time
+9. User can cancel at any time (Escape)
 
 **Phase 3: Stop Recording (1-2 seconds)**
 
-11. User clicks stop button (or hotkey)
-12. `StopRecordingCommand` handler invoked
-13. `StopRecordingUseCase.execute()` called:
+10. User clicks stop button or runs stop command
+11. `StopRecordingCommand` handler invoked (orchestrates stop → transcribe → transform → insert)
+12. `StopRecordingUseCase.execute()` called:
     - Calls `audioRecorder.stopRecording()`
-14. `WebviewAudioRecorder`:
-    - Stops MediaRecorder
-    - Combines audio chunks into Blob
-    - Converts to WAV format (16kHz mono)
+13. `NativeAudioRecorder`:
+    - Stops native capture
+    - Encodes PCM to WAV format (16 kHz mono)
     - Returns `AudioData` object
-15. Status bar updates to "Processing..."
+14. Status bar updates to "Processing..."
 
 **Phase 4: Transcription (3-8 seconds)**
 
-16. Status bar updates to "Transcribing..."
+16. Progress notification shows "Transcribing..."
 17. `TranscribeAudioUseCase.execute()` called:
     - Validates audio file size/duration
     - Calls `whisperService.transcribe(audioData)`
@@ -136,7 +125,7 @@ sequenceDiagram
 
 **Phase 5: Transformation (2-4 seconds)**
 
-21. Status bar updates to "Optimizing prompt..."
+21. Progress notification shows "Optimizing prompt..."
 22. `TransformPromptUseCase.execute()` called:
     - Checks if transformation enabled
     - Gathers context (editor language, project type)
@@ -149,7 +138,7 @@ sequenceDiagram
 
 **Phase 6: Insertion (<1 second)**
 
-25. Status bar updates to "Inserting..."
+25. Progress notification shows "Inserting text..."
 26. `InsertTextUseCase.execute()` called:
     - Tries `ChatParticipantInserter` first
     - Falls back to `EditorTextInserter`
@@ -202,9 +191,7 @@ sequenceDiagram
 
     User->>UC: Start Recording
     UC->>Audio: startRecording()
-    Audio->>Perm: requestPermission()
-    Perm->>Perm: navigator.getUserMedia()
-    Perm--xAudio: NotAllowedError
+    Audio->>Audio: Native capture permission check
     Audio--xUC: PermissionError
     UC--xUI: PermissionError
     UI-->>User: "Microphone permission denied"<br/>[Open Settings]
@@ -299,9 +286,8 @@ sequenceDiagram
 
     User->>UC: Cancel (Escape key)
     UC->>Audio: cancelRecording()
-    Audio->>Audio: Stop MediaRecorder
-    Audio->>Audio: Clear audio chunks
-    Audio->>Audio: Release microphone
+    Audio->>Audio: Stop native capture
+    Audio->>Audio: Clear PCM buffers
     Audio-->>UC: Cancelled
     UC-->>User: "Recording cancelled"
 ```
