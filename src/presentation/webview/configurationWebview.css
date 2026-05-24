@@ -72,6 +72,16 @@ body {
   margin-bottom: 12px;
 }
 
+.field-stack vscode-text-area {
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .status-row {
   display: flex;
   align-items: center;

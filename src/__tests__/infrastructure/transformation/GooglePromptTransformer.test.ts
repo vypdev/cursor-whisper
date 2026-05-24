@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GooglePromptTransformer } from '../../../infrastructure/transformation/GooglePromptTransformer';
+import { TRANSFORMATION_SYSTEM_PROMPT } from '../../../infrastructure/transformation/transformationUtils';
 import { createMockLogger } from '../../helpers/mockLogger';
 
 jest.mock('@google/generative-ai');
@@ -21,6 +22,7 @@ describe('GooglePromptTransformer', () => {
     const transformer = new GooglePromptTransformer(
       async () => 'google-key',
       async () => 'gemini-1.5-pro',
+      async () => TRANSFORMATION_SYSTEM_PROMPT,
       logger
     );
 

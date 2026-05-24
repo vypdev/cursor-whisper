@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { OllamaPromptTransformer } from '../../../infrastructure/transformation/OllamaPromptTransformer';
+import { TRANSFORMATION_SYSTEM_PROMPT } from '../../../infrastructure/transformation/transformationUtils';
 import { createMockLogger } from '../../helpers/mockLogger';
 
 jest.mock('axios');
@@ -40,6 +41,7 @@ describe('OllamaPromptTransformer', () => {
 
     const transformer = new OllamaPromptTransformer(
       async () => ({ baseUrl: 'http://localhost:11434', model: 'llama3.1:8b' }),
+      async () => TRANSFORMATION_SYSTEM_PROMPT,
       logger
     );
 
@@ -49,6 +51,30 @@ describe('OllamaPromptTransformer', () => {
     expect(mockedAxios.post).toHaveBeenCalledWith(
       'http://localhost:11434/api/generate',
       expect.objectContaining({ model: 'llama3.1:8b', stream: false }),
+      expect.any(Object)
+    );
+  });
+
+  it('uses configured system prompt in Ollama request', async () => {
+    mockedAxios.post.mockResolvedValueOnce({
+      status: 200,
+      data: { response: 'Transformed output.' },
+    });
+
+    const customPrompt = 'Custom system prompt for transformation.';
+    const transformer = new OllamaPromptTransformer(
+      async () => ({ baseUrl: 'http://localhost:11434', model: 'llama3.1:8b' }),
+      async () => customPrompt,
+      logger
+    );
+
+    await transformer.transform('hello world');
+
+    expect(mockedAxios.post).toHaveBeenCalledWith(
+      'http://localhost:11434/api/generate',
+      expect.objectContaining({
+        prompt: expect.stringContaining(customPrompt),
+      }),
       expect.any(Object)
     );
   });

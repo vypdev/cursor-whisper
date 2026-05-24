@@ -76,6 +76,11 @@ export interface Config {
    * Transcription hint for technical terms (future).
    */
   transcriptionHint?: string;
+
+  /**
+   * System prompt used to instruct the AI during prompt transformation.
+   */
+  transformationSystemPrompt: string;
 }
 
 /**

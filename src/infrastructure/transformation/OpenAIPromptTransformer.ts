@@ -5,7 +5,6 @@ import { ILogger } from '../../application/ports/ILogger';
 import { ApiKey } from '../../domain/value-objects/ApiKey';
 import {
   TransformationError,
-  TRANSFORMATION_SYSTEM_PROMPT,
   buildUserPrompt,
   calculateImprovements,
 } from './transformationUtils';
@@ -18,6 +17,7 @@ export class OpenAIPromptTransformer implements IPromptTransformer {
   constructor(
     private readonly getApiKey: () => Promise<string | undefined>,
     private readonly getModel: () => Promise<string | undefined>,
+    private readonly getSystemPrompt: () => Promise<string>,
     private readonly logger: ILogger
   ) {}
 
@@ -53,6 +53,7 @@ export class OpenAIPromptTransformer implements IPromptTransformer {
 
     const client = await this.ensureClient();
     const model = await this.resolveModel();
+    const systemPrompt = await this.getSystemPrompt();
     const userPrompt = buildUserPrompt(transcription, context);
 
     try {
@@ -67,7 +68,7 @@ export class OpenAIPromptTransformer implements IPromptTransformer {
       const response = await client.chat.completions.create({
         model,
         messages: [
-          { role: 'system', content: TRANSFORMATION_SYSTEM_PROMPT },
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
         ],
         temperature: 0.3,

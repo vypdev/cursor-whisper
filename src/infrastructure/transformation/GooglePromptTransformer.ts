@@ -4,7 +4,6 @@ import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { ILogger } from '../../application/ports/ILogger';
 import {
   TransformationError,
-  TRANSFORMATION_SYSTEM_PROMPT,
   buildUserPrompt,
   calculateImprovements,
 } from './transformationUtils';
@@ -17,6 +16,7 @@ export class GooglePromptTransformer implements IPromptTransformer {
   constructor(
     private readonly getApiKey: () => Promise<string | undefined>,
     private readonly getModel: () => Promise<string | undefined>,
+    private readonly getSystemPrompt: () => Promise<string>,
     private readonly logger: ILogger
   ) {}
 
@@ -49,13 +49,14 @@ export class GooglePromptTransformer implements IPromptTransformer {
 
     const client = await this.ensureClient();
     const modelName = await this.resolveModel();
+    const systemPrompt = await this.getSystemPrompt();
     const userPrompt = buildUserPrompt(transcription, context);
 
     try {
       const startTime = Date.now();
       const model = client.getGenerativeModel({
         model: modelName,
-        systemInstruction: TRANSFORMATION_SYSTEM_PROMPT,
+        systemInstruction: systemPrompt,
       });
 
       this.logger.debug('Google Gemini transformation request', {

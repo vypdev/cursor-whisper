@@ -4,7 +4,6 @@ import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { ILogger } from '../../application/ports/ILogger';
 import {
   TransformationError,
-  TRANSFORMATION_SYSTEM_PROMPT,
   buildUserPrompt,
   calculateImprovements,
 } from './transformationUtils';
@@ -21,6 +20,7 @@ export class AzureOpenAIPromptTransformer implements IPromptTransformer {
   constructor(
     private readonly getApiKey: () => Promise<string | undefined>,
     private readonly getAzureConfig: () => Promise<AzureOpenAIConfig>,
+    private readonly getSystemPrompt: () => Promise<string>,
     private readonly logger: ILogger
   ) {}
 
@@ -68,6 +68,7 @@ export class AzureOpenAIPromptTransformer implements IPromptTransformer {
     });
 
     const { client, deployment } = await this.ensureClient();
+    const systemPrompt = await this.getSystemPrompt();
     const userPrompt = buildUserPrompt(transcription, context);
 
     try {
@@ -81,7 +82,7 @@ export class AzureOpenAIPromptTransformer implements IPromptTransformer {
       const response = await client.chat.completions.create({
         model: deployment,
         messages: [
-          { role: 'system', content: TRANSFORMATION_SYSTEM_PROMPT },
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
         ],
         temperature: 0.3,

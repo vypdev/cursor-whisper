@@ -7,6 +7,7 @@ import { OllamaPromptTransformer } from '../../../infrastructure/transformation/
 import { TransformationProvider } from '../../../domain/value-objects/TransformationProvider';
 import { IConfigRepository, Config } from '../../../application/ports/IConfigRepository';
 import { createMockLogger } from '../../helpers/mockLogger';
+import { TRANSFORMATION_SYSTEM_PROMPT } from '../../../infrastructure/transformation/transformationUtils';
 
 const baseConfig: Config = {
   transformationProvider: TransformationProvider.OpenAI,
@@ -22,6 +23,7 @@ const baseConfig: Config = {
   audioQuality: 'high',
   maxRecordingDuration: 120,
   showNotifications: true,
+  transformationSystemPrompt: TRANSFORMATION_SYSTEM_PROMPT,
 };
 
 function createConfigRepo(overrides: Partial<Config> = {}): IConfigRepository {

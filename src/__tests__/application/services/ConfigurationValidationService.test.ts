@@ -8,6 +8,7 @@ import { IConfigRepository, Config } from '../../../application/ports/IConfigRep
 import { ITransformationProviderValidator } from '../../../application/ports/ITransformationProviderValidator';
 import { TransformationProvider } from '../../../domain/value-objects/TransformationProvider';
 import { OPENAI_API_KEY_REQUIRED_RECORDING } from '../../../shared/constants/uxMessages';
+import { TRANSFORMATION_SYSTEM_PROMPT } from '../../../infrastructure/transformation/transformationUtils';
 
 const baseConfig: Config = {
   transformationProvider: TransformationProvider.Anthropic,
@@ -23,6 +24,7 @@ const baseConfig: Config = {
   audioQuality: 'high',
   maxRecordingDuration: 120,
   showNotifications: true,
+  transformationSystemPrompt: TRANSFORMATION_SYSTEM_PROMPT,
 };
 
 function createConfigRepo(

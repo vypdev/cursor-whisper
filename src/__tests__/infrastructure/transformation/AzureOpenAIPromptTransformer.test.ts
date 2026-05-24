@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { AzureOpenAIPromptTransformer } from '../../../infrastructure/transformation/AzureOpenAIPromptTransformer';
+import { TRANSFORMATION_SYSTEM_PROMPT } from '../../../infrastructure/transformation/transformationUtils';
 import { createMockLogger } from '../../helpers/mockLogger';
 
 jest.mock('openai');
@@ -22,6 +23,7 @@ describe('AzureOpenAIPromptTransformer', () => {
         endpoint: 'https://example.openai.azure.com',
         deployment: 'gpt-4o',
       }),
+      async () => TRANSFORMATION_SYSTEM_PROMPT,
       logger
     );
 

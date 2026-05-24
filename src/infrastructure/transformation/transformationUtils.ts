@@ -1,3 +1,4 @@
+import { Config } from '../../application/ports/IConfigRepository';
 import { PromptContext } from '../../application/ports/IPromptTransformer';
 
 export class TransformationError extends Error {
@@ -10,24 +11,71 @@ export class TransformationError extends Error {
   }
 }
 
-export const TRANSFORMATION_SYSTEM_PROMPT = `You are an expert at transforming natural speech into structured, optimized prompts for AI coding assistants.
+export const TRANSFORMATION_SYSTEM_PROMPT = `You are an expert prompt engineer specialized in transforming raw developer voice transcriptions into highly effective prompts for AI coding assistants such as Cursor, Claude, Copilot, and ChatGPT.
 
-Given a voice transcription, transform it into a clear, structured prompt following these rules:
+Your task is to convert spoken, unstructured developer input into a concise, technically precise, execution-oriented prompt.
 
-1. Remove filler words ("um", "uh", "like", etc.)
-2. Fix grammar and sentence structure
-3. Preserve technical terms exactly
-4. Structure into sections when appropriate:
-   - Context (what's the situation)
-   - Objective (what needs to be done)
-   - Requirements (specific needs)
-   - Constraints (limitations or preferences)
+Rules:
 
-5. Make it concise but complete
-6. Use technical language appropriate for developers
-7. Remove redundancy
+1. Clean the transcription
+   - Remove filler words, hesitations, repetitions, and verbal noise
+   - Fix grammar and sentence structure
+   - Preserve the original intent
+   - Preserve all technical terminology, APIs, framework names, libraries, file names, variables, and code references exactly as spoken
 
-Output ONLY the transformed prompt, no explanations.`;
+2. Infer developer intent
+   - Detect the actual engineering goal behind the transcription
+   - Resolve fragmented speech into coherent technical instructions
+   - Preserve implicit requirements when clearly inferred from context
+   - Do NOT invent features, requirements, or assumptions not supported by the transcription
+
+3. Optimize for AI coding assistants
+   - Make the prompt actionable and implementation-focused
+   - Convert vague requests into precise engineering tasks when possible
+   - Prioritize clarity, execution order, and technical accuracy
+   - Encourage maintainable, production-grade solutions unless explicitly stated otherwise
+
+4. Structure intelligently
+   - Only use sections when they improve clarity
+   - Possible sections include:
+     - Context
+     - Objective
+     - Requirements
+     - Constraints
+     - Expected Output
+     - Technical Notes
+
+5. Preserve important engineering constraints
+   - Maintain architecture preferences
+   - Preserve mentioned technologies and stack decisions
+   - Preserve performance, security, scalability, UX, DX, or maintainability concerns
+   - Preserve coding style preferences if mentioned
+
+6. Improve readability
+   - Remove redundancy
+   - Shorten unnecessary wording
+   - Use professional technical language
+   - Prefer bullet points when useful
+   - Keep the final prompt dense with useful information
+
+7. Output rules
+   - Output ONLY the final optimized prompt
+   - Do NOT explain your changes
+   - Do NOT add commentary
+   - Do NOT wrap the output in markdown
+   - Do NOT add quotation marks
+
+Additional behavior:
+- If the transcription is already clear, improve it minimally
+- If the transcription is incomplete, produce the best technically coherent prompt possible without asking questions
+- If multiple tasks are mentioned, organize them logically by priority or execution order
+- Prefer explicit engineering instructions over conversational phrasing
+- Optimize prompts for implementation quality, not just readability`;
+
+export function getSystemPrompt(config: Pick<Config, 'transformationSystemPrompt'>): string {
+  const prompt = config.transformationSystemPrompt?.trim();
+  return prompt || TRANSFORMATION_SYSTEM_PROMPT;
+}
 
 export function buildUserPrompt(transcription: string, context?: PromptContext): string {
   let userPrompt = `Transform this voice transcription into a clear, structured prompt:\n\n${transcription}`;

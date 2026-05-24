@@ -12,7 +12,7 @@ import { AnthropicPromptTransformer } from './AnthropicPromptTransformer';
 import { GooglePromptTransformer } from './GooglePromptTransformer';
 import { AzureOpenAIPromptTransformer } from './AzureOpenAIPromptTransformer';
 import { OllamaPromptTransformer } from './OllamaPromptTransformer';
-import { TransformationError } from './transformationUtils';
+import { TransformationError, getSystemPrompt } from './transformationUtils';
 
 export class PromptTransformerFactory implements ITransformationProviderValidator {
   constructor(
@@ -26,11 +26,15 @@ export class PromptTransformerFactory implements ITransformationProviderValidato
   }
 
   createForProvider(provider: TransformationProvider): IPromptTransformer {
+    const resolveSystemPrompt = () =>
+      this.configRepo.getConfig().then(config => getSystemPrompt(config));
+
     switch (provider) {
       case TransformationProvider.OpenAI:
         return new OpenAIPromptTransformer(
           () => this.configRepo.getProviderApiKey(TransformationProvider.OpenAI),
           () => this.configRepo.getConfig().then(c => c.transformationModel),
+          resolveSystemPrompt,
           this.logger
         );
 
@@ -38,6 +42,7 @@ export class PromptTransformerFactory implements ITransformationProviderValidato
         return new AnthropicPromptTransformer(
           () => this.configRepo.getProviderApiKey(TransformationProvider.Anthropic),
           () => this.configRepo.getConfig().then(c => c.anthropicModel),
+          resolveSystemPrompt,
           this.logger
         );
 
@@ -45,6 +50,7 @@ export class PromptTransformerFactory implements ITransformationProviderValidato
         return new GooglePromptTransformer(
           () => this.configRepo.getProviderApiKey(TransformationProvider.Google),
           () => this.configRepo.getConfig().then(c => c.googleModel),
+          resolveSystemPrompt,
           this.logger
         );
 
@@ -58,17 +64,22 @@ export class PromptTransformerFactory implements ITransformationProviderValidato
               deployment: config.azureDeployment,
             };
           },
+          resolveSystemPrompt,
           this.logger
         );
 
       case TransformationProvider.Ollama:
-        return new OllamaPromptTransformer(async () => {
-          const config = await this.configRepo.getConfig();
-          return {
-            baseUrl: config.ollamaBaseUrl,
-            model: config.ollamaModel,
-          };
-        }, this.logger);
+        return new OllamaPromptTransformer(
+          async () => {
+            const config = await this.configRepo.getConfig();
+            return {
+              baseUrl: config.ollamaBaseUrl,
+              model: config.ollamaModel,
+            };
+          },
+          resolveSystemPrompt,
+          this.logger
+        );
 
       default: {
         const exhaustiveCheck: never = provider;

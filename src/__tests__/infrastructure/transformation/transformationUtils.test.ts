@@ -1,6 +1,7 @@
 import {
   buildUserPrompt,
   calculateImprovements,
+  getSystemPrompt,
   TRANSFORMATION_SYSTEM_PROMPT,
 } from '../../../infrastructure/transformation/transformationUtils';
 
@@ -27,6 +28,18 @@ describe('transformationUtils', () => {
   });
 
   it('includes a system prompt', () => {
-    expect(TRANSFORMATION_SYSTEM_PROMPT).toContain('structured');
+    expect(TRANSFORMATION_SYSTEM_PROMPT).toContain('prompt engineer');
+  });
+
+  it('returns configured system prompt when set', () => {
+    expect(
+      getSystemPrompt({ transformationSystemPrompt: 'Custom prompt for testing.' })
+    ).toBe('Custom prompt for testing.');
+  });
+
+  it('falls back to default system prompt when empty', () => {
+    expect(getSystemPrompt({ transformationSystemPrompt: '   ' })).toBe(
+      TRANSFORMATION_SYSTEM_PROMPT
+    );
   });
 });

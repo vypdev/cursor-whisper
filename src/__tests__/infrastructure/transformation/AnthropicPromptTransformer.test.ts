@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { AnthropicPromptTransformer } from '../../../infrastructure/transformation/AnthropicPromptTransformer';
+import { TRANSFORMATION_SYSTEM_PROMPT } from '../../../infrastructure/transformation/transformationUtils';
 import { createMockLogger } from '../../helpers/mockLogger';
 
 jest.mock('@anthropic-ai/sdk');
@@ -19,6 +20,7 @@ describe('AnthropicPromptTransformer', () => {
     const transformer = new AnthropicPromptTransformer(
       async () => 'anthropic-key',
       async () => 'claude-3-5-sonnet-20241022',
+      async () => TRANSFORMATION_SYSTEM_PROMPT,
       logger
     );
 

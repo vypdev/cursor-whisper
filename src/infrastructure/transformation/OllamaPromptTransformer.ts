@@ -4,7 +4,6 @@ import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { ILogger } from '../../application/ports/ILogger';
 import {
   TransformationError,
-  TRANSFORMATION_SYSTEM_PROMPT,
   buildUserPrompt,
   calculateImprovements,
 } from './transformationUtils';
@@ -29,6 +28,7 @@ export class OllamaPromptTransformer implements IPromptTransformer {
 
   constructor(
     private readonly getOllamaConfig: () => Promise<OllamaConfig>,
+    private readonly getSystemPrompt: () => Promise<string>,
     private readonly logger: ILogger
   ) {}
 
@@ -65,6 +65,7 @@ export class OllamaPromptTransformer implements IPromptTransformer {
       config.baseUrl || OllamaPromptTransformer.DEFAULT_BASE_URL
     );
     const model = config.model || OllamaPromptTransformer.DEFAULT_MODEL;
+    const systemPrompt = await this.getSystemPrompt();
     const userPrompt = buildUserPrompt(transcription, context);
 
     try {
@@ -80,7 +81,7 @@ export class OllamaPromptTransformer implements IPromptTransformer {
         `${baseUrl}/api/generate`,
         {
           model,
-          prompt: `${TRANSFORMATION_SYSTEM_PROMPT}\n\n${userPrompt}`,
+          prompt: `${systemPrompt}\n\n${userPrompt}`,
           stream: false,
           options: {
             temperature: 0.3,

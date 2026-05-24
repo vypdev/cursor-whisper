@@ -94,6 +94,31 @@
 
     <vscode-divider></vscode-divider>
 
+    <section class="section" aria-labelledby="system-prompt-heading">
+      <div class="section-header">
+        <h2 id="system-prompt-heading">Transformation System Prompt</h2>
+      </div>
+      <p class="section-description">
+        Customize how the AI transforms your voice transcriptions. This prompt instructs the AI on formatting, structure, and style.
+      </p>
+
+      <div class="field-stack">
+        <vscode-text-area id="systemPromptField" rows="12" resize="vertical">
+          System Prompt
+        </vscode-text-area>
+        <div class="button-row">
+          <vscode-button id="resetSystemPromptBtn" appearance="secondary">Reset to default</vscode-button>
+          <vscode-button id="saveSystemPromptBtn">Save prompt</vscode-button>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <span id="systemPromptStatus" class="status-text">Modify the prompt to customize transformation behavior.</span>
+      </div>
+    </section>
+
+    <vscode-divider></vscode-divider>
+
     <section class="section" aria-labelledby="comparison-heading">
       <div class="section-header">
         <h2 id="comparison-heading">Provider Comparison</h2>
@@ -149,6 +174,10 @@
       refreshModelsBtn: document.getElementById('refreshModelsBtn'),
       optimizationStatus: document.getElementById('optimizationStatus'),
       testOptimizationBtn: document.getElementById('testOptimizationBtn'),
+      systemPromptField: document.getElementById('systemPromptField'),
+      resetSystemPromptBtn: document.getElementById('resetSystemPromptBtn'),
+      saveSystemPromptBtn: document.getElementById('saveSystemPromptBtn'),
+      systemPromptStatus: document.getElementById('systemPromptStatus'),
       toggleComparisonBtn: document.getElementById('toggleComparisonBtn'),
       comparisonContainer: document.getElementById('comparisonContainer'),
       comparisonBody: document.getElementById('comparisonBody'),
@@ -171,6 +200,7 @@
       'vscode-badge',
       'vscode-divider',
       'vscode-option',
+      'vscode-text-area',
     ];
 
     function requireElement(name) {
@@ -439,6 +469,8 @@
           sendMessage({ type: 'getModels', provider: state.transformationProvider });
         }
 
+        setFieldValue(requireElement('systemPromptField'), state.transformationSystemPrompt || '');
+
         console.log('[Webview] State applied successfully');
       } catch (error) {
         console.error('[Webview] Failed to apply state', error);
@@ -535,6 +567,19 @@
         sendMessage({ type: 'testOptimization' });
       });
 
+      elements.saveSystemPromptBtn.addEventListener('click', function () {
+        const value = elements.systemPromptField.value.trim();
+        if (!value) {
+          setStatus(elements.systemPromptStatus, 'System prompt cannot be empty.', false);
+          return;
+        }
+        sendMessage({ type: 'saveSystemPrompt', systemPrompt: value });
+      });
+
+      elements.resetSystemPromptBtn.addEventListener('click', function () {
+        sendMessage({ type: 'resetSystemPrompt' });
+      });
+
       elements.toggleComparisonBtn.addEventListener('click', function () {
         const hidden = elements.comparisonContainer.classList.contains('hidden');
         elements.comparisonContainer.classList.toggle('hidden', !hidden);
@@ -609,6 +654,9 @@
               break;
             case 'saveResult':
               showNotification(message.message, message.ok ? 'success' : 'error');
+              if (message.ok && message.message && message.message.indexOf('System prompt') !== -1) {
+                setStatus(requireElement('systemPromptStatus'), message.message, true);
+              }
               break;
             case 'notification':
               showNotification(message.message, message.notificationKind);

@@ -7,6 +7,7 @@ import {
   parseTransformationProvider,
   PROVIDER_METADATA,
 } from '../../domain/value-objects/TransformationProvider';
+import { TRANSFORMATION_SYSTEM_PROMPT } from '../transformation/transformationUtils';
 
 export class VSCodeConfigRepository implements IConfigRepository {
   private static readonly SECTION = 'cursorWhisper';
@@ -64,6 +65,10 @@ export class VSCodeConfigRepository implements IConfigRepository {
       maxRecordingDuration: config.get<number>('maxRecordingDuration', 120),
       showNotifications: config.get<boolean>('showNotifications', true),
       transcriptionHint: config.get<string>('transcriptionHint'),
+      transformationSystemPrompt: config.get<string>(
+        'transformationSystemPrompt',
+        TRANSFORMATION_SYSTEM_PROMPT
+      ),
     };
   }
 
@@ -134,6 +139,7 @@ export class VSCodeConfigRepository implements IConfigRepository {
       'azureDeployment',
       'ollamaBaseUrl',
       'ollamaModel',
+      'transformationSystemPrompt',
     ];
 
     for (const field of stringFields) {

@@ -20,6 +20,7 @@ import {
   applyProviderConfiguration,
   testOpenAiApiKey,
 } from '../setup/providerConfigurationFlow';
+import { TRANSFORMATION_SYSTEM_PROMPT } from '../../infrastructure/transformation/transformationUtils';
 
 const ANTHROPIC_MODELS = [
   'claude-3-5-sonnet-20241022',
@@ -60,6 +61,7 @@ export interface ConfigurationWebviewState {
   providerApiKeyMasked: string;
   providerConfigured: boolean;
   setupCompleted: boolean;
+  transformationSystemPrompt: string;
 }
 
 type WebviewToExtensionMessage =
@@ -79,6 +81,8 @@ type WebviewToExtensionMessage =
   | { type: 'getModels'; provider: string }
   | { type: 'testWhisper' }
   | { type: 'testOptimization' }
+  | { type: 'saveSystemPrompt'; systemPrompt: string }
+  | { type: 'resetSystemPrompt' }
   | { type: 'completeSetup' }
   | { type: 'openDocs' };
 
@@ -252,6 +256,12 @@ export class ConfigurationPanel {
       case 'testOptimization':
         await this._testOptimization();
         break;
+      case 'saveSystemPrompt':
+        await this._saveSystemPrompt(message.systemPrompt);
+        break;
+      case 'resetSystemPrompt':
+        await this._resetSystemPrompt();
+        break;
       case 'completeSetup':
         await this._completeSetup();
         break;
@@ -310,6 +320,7 @@ export class ConfigurationPanel {
       providerApiKeyMasked: maskApiKey(typeof providerKey === 'string' ? providerKey : undefined),
       providerConfigured,
       setupCompleted: this._isSetupCompleted(),
+      transformationSystemPrompt: config.transformationSystemPrompt,
     };
   }
 
@@ -564,6 +575,36 @@ export class ConfigurationPanel {
         ok: false,
         message: error instanceof Error ? error.message : 'Unknown error',
       });
+    }
+  }
+
+  private async _saveSystemPrompt(systemPrompt: string): Promise<void> {
+    const trimmed = systemPrompt.trim();
+    if (!trimmed) {
+      await this._postSaveResult(false, 'System prompt cannot be empty.');
+      return;
+    }
+
+    try {
+      await this.configRepo.updateConfig({ transformationSystemPrompt: trimmed });
+      await this._postSaveResult(true, 'System prompt saved.');
+      await this._postConfigUpdated();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to save system prompt';
+      await this._postSaveResult(false, message);
+    }
+  }
+
+  private async _resetSystemPrompt(): Promise<void> {
+    try {
+      await this.configRepo.updateConfig({
+        transformationSystemPrompt: TRANSFORMATION_SYSTEM_PROMPT,
+      });
+      await this._postSaveResult(true, 'System prompt reset to default.');
+      await this._postConfigUpdated();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to reset system prompt';
+      await this._postSaveResult(false, message);
     }
   }
 

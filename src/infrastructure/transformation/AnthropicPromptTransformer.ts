@@ -4,7 +4,6 @@ import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { ILogger } from '../../application/ports/ILogger';
 import {
   TransformationError,
-  TRANSFORMATION_SYSTEM_PROMPT,
   buildUserPrompt,
   calculateImprovements,
 } from './transformationUtils';
@@ -17,6 +16,7 @@ export class AnthropicPromptTransformer implements IPromptTransformer {
   constructor(
     private readonly getApiKey: () => Promise<string | undefined>,
     private readonly getModel: () => Promise<string | undefined>,
+    private readonly getSystemPrompt: () => Promise<string>,
     private readonly logger: ILogger
   ) {}
 
@@ -49,6 +49,7 @@ export class AnthropicPromptTransformer implements IPromptTransformer {
 
     const client = await this.ensureClient();
     const model = await this.resolveModel();
+    const systemPrompt = await this.getSystemPrompt();
     const userPrompt = buildUserPrompt(transcription, context);
 
     try {
@@ -62,7 +63,7 @@ export class AnthropicPromptTransformer implements IPromptTransformer {
       const response = await client.messages.create({
         model,
         max_tokens: 2000,
-        system: TRANSFORMATION_SYSTEM_PROMPT,
+        system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
         temperature: 0.3,
       });
