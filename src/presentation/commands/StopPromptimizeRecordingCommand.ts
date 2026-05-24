@@ -21,7 +21,7 @@ export function registerStopPromptimizeRecordingCommand(
   _context: vscode.ExtensionContext,
   deps: StopPromptimizeRecordingDependencies
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.stopPromptimizeRecording', async () => {
+  return vscode.commands.registerCommand('promptimize.stopPromptimizeRecording', async () => {
     try {
       await vscode.window.withProgress(
         {
@@ -61,7 +61,7 @@ export function registerStopPromptimizeRecordingCommand(
           'Retry'
         );
         if (action === 'Retry') {
-          await vscode.commands.executeCommand('cursor-whisper.stopPromptimizeRecording');
+          await vscode.commands.executeCommand('promptimize.stopPromptimizeRecording');
         }
       } else if (error instanceof InsertionError) {
         await vscode.window.showErrorMessage(

@@ -1,6 +1,6 @@
 # Troubleshooting
 
-Decision trees and fixes for common Cursor Whisper issues.
+Decision trees and fixes for common Promptimize issues.
 
 ---
 
@@ -18,7 +18,7 @@ flowchart TD
     G -->|Yes| I{Microphone permission?}
     D -->|Transcribe| I
     I -->|Denied| J[Enable mic for VS Code/Cursor<br/>in OS settings]
-    I -->|Granted| K[Check Output channel<br/>Cursor Whisper for errors]
+    I -->|Granted| K[Check Output channel<br/>Promptimize for errors]
 ```
 
 ### Quick checks
@@ -89,7 +89,7 @@ flowchart TD
     D -->|Text there| E[Fallback worked<br/>Paste manually]
     D -->|Empty| F{Status bar error?}
     F -->|Insertion error| G[Open editor tab<br/>Try again]
-    F -->|None| H[Check Output channel<br/>Cursor Whisper]
+    F -->|None| H[Check Output channel<br/>Promptimize]
 ```
 
 ### Insertion priority
@@ -115,7 +115,7 @@ Restart the editor after granting permission.
 
 ## Escape Doesn't Cancel
 
-`Escape` cancels recording only while actively recording (`cursorWhisper.isRecording` context).
+`Escape` cancels recording only while actively recording (`promptimize.isRecording` context).
 
 If Escape doesn't work:
 
@@ -130,8 +130,8 @@ If scripts or keybindings use old commands:
 
 | Old | New |
 |-----|-----|
-| `cursor-whisper.startRecording` | `startTranscribeRecording` or `startPromptimizeRecording` |
-| `cursor-whisper.stopRecording` | `stopTranscribeRecording` or `stopPromptimizeRecording` |
+| `promptimize.startRecording` | `startTranscribeRecording` or `startPromptimizeRecording` |
+| `promptimize.stopRecording` | `stopTranscribeRecording` or `stopPromptimizeRecording` |
 
 ---
 
@@ -141,8 +141,8 @@ The extension migrates legacy secret storage keys automatically:
 
 | Legacy key | Current key |
 |------------|-------------|
-| `openai-api-key` | `cursor-whisper.apiKey.openai` |
-| `cursor-whisper.openai.apiKey` | `cursor-whisper.apiKey.openai` |
+| `openai-api-key` | `promptimize.apiKey.openai` |
+| `promptimize.openai.apiKey` | `promptimize.apiKey.openai` |
 
 If keys seem missing after upgrade, re-enter via **Open Configuration** panel.
 
@@ -165,7 +165,7 @@ See [Advanced Settings](configuration/advanced-settings.md#planned-settings-not-
 
 ## Cursor-Specific Issues
 
-Cursor Whisper works in:
+Promptimize works in:
 
 - **Classic Mode** (`cursor --classic`)
 - **Editor Window**
@@ -181,4 +181,4 @@ For chat insertion in Cursor, focus the Composer input before stopping recording
 - [Configuration Webview Guide](configuration/webview-guide.md)
 - [GitHub Issues](https://github.com/vypdev/cursor-whisper/issues)
 
-Enable the **Cursor Whisper** output channel for operational logs (timestamps, durations, error types). Transcriptions and optimized prompts are **never** written to logs.
+Enable the **Promptimize** output channel for operational logs (timestamps, durations, error types). Transcriptions and optimized prompts are **never** written to logs.

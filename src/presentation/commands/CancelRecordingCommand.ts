@@ -7,7 +7,7 @@ export function registerCancelRecordingCommand(
   _context: vscode.ExtensionContext,
   useCase: CancelRecordingUseCase
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.cancelRecording', async () => {
+  return vscode.commands.registerCommand('promptimize.cancelRecording', async () => {
     try {
       useCase.execute();
       setRecordingSessionMode(null);

@@ -71,7 +71,7 @@ flowchart TD
 
 ## Switching Providers
 
-- API keys are stored per provider (`cursor-whisper.apiKey.{provider}`)
+- API keys are stored per provider (`promptimize.apiKey.{provider}`)
 - Switching providers does **not** delete saved keys
 - Change provider in the configuration webview or via **Configure Prompt Optimization Provider**
 - Run **Test Configuration** after switching

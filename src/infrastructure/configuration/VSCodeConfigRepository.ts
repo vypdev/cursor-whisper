@@ -11,8 +11,8 @@ import { TRANSFORMATION_SYSTEM_PROMPT } from '../transformation/transformationUt
 import { OpenCodePromptTransformer } from '../transformation/OpenCodePromptTransformer';
 
 export class VSCodeConfigRepository implements IConfigRepository {
-  private static readonly SECTION = 'cursorWhisper';
-  private static readonly SECRET_KEY = 'cursor-whisper.openai.apiKey';
+  private static readonly SECTION = 'promptimize';
+  private static readonly SECRET_KEY = 'promptimize.openai.apiKey';
   private static readonly LEGACY_SECRET_KEY = 'openai-api-key';
   static readonly DEFAULT_TRANSFORMATION_MODEL = 'gpt-4o';
   private callbacks: Array<(config: Config) => void> = [];

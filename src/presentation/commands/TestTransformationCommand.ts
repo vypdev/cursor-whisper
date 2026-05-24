@@ -17,14 +17,14 @@ export function registerTestTransformationCommand(
   modelService: OpenAIModelService,
   logger: ILogger
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.testTransformation', async () => {
+  return vscode.commands.registerCommand('promptimize.testTransformation', async () => {
     const config = await configRepo.getConfig();
     const providerMeta = PROVIDER_METADATA[config.transformationProvider];
 
     await vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Notification,
-        title: 'Testing Cursor Whisper configuration...',
+        title: 'Testing Promptimize configuration...',
         cancellable: false,
       },
       async () => {
@@ -55,8 +55,8 @@ export function registerTestTransformationCommand(
           });
 
           const panel = vscode.window.createWebviewPanel(
-            'cursorWhisperTestTransformation',
-            'Cursor Whisper: Configuration Test',
+            'promptimizeTestTransformation',
+            'Promptimize: Configuration Test',
             vscode.ViewColumn.One,
             { enableScripts: false }
           );
@@ -119,7 +119,7 @@ export function registerTestTransformationCommand(
             )
             .then(async selection => {
               if (selection === 'Configure Provider') {
-                await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
+                await vscode.commands.executeCommand('promptimize.openConfigurationPanel');
               } else if (selection === 'Troubleshooting') {
                 await vscode.env.openExternal(
                   vscode.Uri.parse(

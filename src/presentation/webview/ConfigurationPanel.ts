@@ -190,8 +190,8 @@ export class ConfigurationPanel {
     }
 
     const panel = vscode.window.createWebviewPanel(
-      'cursorWhisperConfiguration',
-      'Cursor Whisper Configuration',
+      'promptimizeConfiguration',
+      'Promptimize Configuration',
       column,
       {
         enableScripts: true,

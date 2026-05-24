@@ -12,7 +12,7 @@
 
 ## Context
 
-We need to decide on the architectural pattern for Cursor Whisper. The extension has significant complexity:
+We need to decide on the architectural pattern for Promptimize. The extension has significant complexity:
 
 - **Multiple external integrations**: OpenAI Whisper, GPT-4, VSCode APIs, Audio APIs
 - **Complex business logic**: Recording state management, transcription, transformation

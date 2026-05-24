@@ -1,6 +1,6 @@
 # Configuration Webview Guide
 
-The **Cursor Whisper Configuration** panel is the primary way to set up and manage the extension. It opens automatically on first launch and is available anytime via **Cursor Whisper: Open Configuration** or the status bar gear icon.
+The **Promptimize Configuration** panel is the primary way to set up and manage the extension. It opens automatically on first launch and is available anytime via **Promptimize: Open Configuration** or the status bar gear icon.
 
 ---
 
@@ -10,7 +10,7 @@ The **Cursor Whisper Configuration** panel is the primary way to set up and mana
 |--------|--------|
 | First launch | Welcome notification → **Open Configuration** |
 | Status bar | Click $(gear) **Settings** (or $(warning) **Setup** if incomplete) |
-| Command Palette | `Cursor Whisper: Open Configuration` or `Cursor Whisper: Setup Wizard` |
+| Command Palette | `Promptimize: Open Configuration` or `Promptimize: Setup Wizard` |
 
 Both **Setup Wizard** and **Open Configuration** open the same webview panel.
 
@@ -57,7 +57,7 @@ Customize how the AI rewrites your transcriptions.
 |---------|---------|
 | **System Prompt** | Multiline editor for the transformation instructions |
 | **Reset to default** | Restores the built-in prompt engineer template |
-| **Save prompt** | Persists to `cursorWhisper.transformationSystemPrompt` |
+| **Save prompt** | Persists to `promptimize.transformationSystemPrompt` |
 
 Changes apply to all optimization providers.
 
@@ -88,8 +88,8 @@ Expandable table comparing all eight providers by cost, speed, privacy, and best
 | Edit system prompt | ✅ Full editor + reset | VS Code Settings only |
 | Test Whisper | ✅ Inline test button | Part of `Test Configuration` |
 | Test optimization | ✅ Inline test button | `Test Configuration` (opens results webview) |
-| Transcription language | ❌ Use VS Code Settings | Settings → `cursorWhisper.transcriptionLanguage` |
-| Transcription hint | ❌ Use VS Code Settings | Settings → `cursorWhisper.transcriptionHint` |
+| Transcription language | ❌ Use VS Code Settings | Settings → `promptimize.transcriptionLanguage` |
+| Transcription hint | ❌ Use VS Code Settings | Settings → `promptimize.transcriptionHint` |
 | Advanced settings (planned) | ❌ Use VS Code Settings | See [Advanced Settings](advanced-settings.md) |
 
 ---
@@ -119,7 +119,7 @@ If Whisper is missing or optimization is enabled but the provider is incomplete,
 
 ## Test Configuration Command (Full Results)
 
-For a detailed before/after comparison, run **Cursor Whisper: Test Configuration** from the Command Palette. This opens a separate webview panel showing:
+For a detailed before/after comparison, run **Promptimize: Test Configuration** from the Command Palette. This opens a separate webview panel showing:
 
 - Whisper connection status
 - Optimization provider status

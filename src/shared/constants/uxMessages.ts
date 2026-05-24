@@ -20,7 +20,7 @@ export const OPENAI_API_KEY_REQUIRED_RECORDING =
   'OpenAI API key is required for voice-to-text transcription (Whisper). Prompt optimization uses a separate provider you can configure later.';
 
 export const OPENAI_API_KEY_REQUIRED_STARTUP =
-  'Cursor Whisper: OpenAI API key is required for voice-to-text transcription (Whisper). Run setup to configure your key.';
+  'Promptimize: OpenAI API key is required for voice-to-text transcription (Whisper). Run setup to configure your key.';
 
 export const OPTIMIZATION_PROVIDER_INTRO =
   'Prompt optimization turns transcribed speech into structured, LLM-ready prompts. This step is separate from Whisper transcription.';
@@ -29,7 +29,7 @@ export const OPTIMIZATION_PROVIDER_INTRO_DETAIL =
   'Transcription always uses OpenAI Whisper. Select a provider below and provide its API key or credentials when prompted.';
 
 export const OPTIMIZATION_PROVIDER_MISSING_KEY = (providerName: string): string =>
-  `Cursor Whisper: ${providerName} credentials are not configured for prompt optimization.`;
+  `Promptimize: ${providerName} credentials are not configured for prompt optimization.`;
 
 export const STATUS_BAR_SERVICES_TOOLTIP = (
   optimizationProvider: string,
@@ -38,7 +38,7 @@ export const STATUS_BAR_SERVICES_TOOLTIP = (
   const optimizationLine = optimizationEnabled
     ? `Optimization: ${optimizationProvider}`
     : 'Optimization: disabled (raw transcription only)';
-  return `Transcription: ${WHISPER_SERVICE_NAME}\n${optimizationLine}\n\nClick to start recording (Cmd/Ctrl+Alt+V)\nRun "Cursor Whisper: Open Configuration" to change settings`;
+  return `Transcription: ${WHISPER_SERVICE_NAME}\n${optimizationLine}\n\nClick to start recording (Cmd/Ctrl+Alt+V)\nRun "Promptimize: Open Configuration" to change settings`;
 };
 
 export const SETUP_CHECKLIST_TOOLTIP = (

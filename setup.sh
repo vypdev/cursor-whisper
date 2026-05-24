@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Cursor Whisper - Development Setup Script
+# Promptimize - Development Setup Script
 
-echo "🎤 Setting up Cursor Whisper development environment..."
+echo "🎤 Setting up Promptimize development environment..."
 
 # Use Node 22 via nvm
 source "$(dirname "$0")/scripts/ensure-node.sh"

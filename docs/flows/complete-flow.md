@@ -6,7 +6,7 @@
 
 ## Overview
 
-This document details all workflows in Cursor Whisper with sequence diagrams and step-by-step explanations.
+This document details all workflows in Promptimize with sequence diagrams and step-by-step explanations.
 
 ---
 
@@ -354,7 +354,7 @@ stateDiagram-v2
 
 ```mermaid
 flowchart TB
-    subgraph Extension["Cursor Whisper Extension"]
+    subgraph Extension["Promptimize Extension"]
         UC[Use Cases]
         Adapters[Infrastructure Adapters]
     end

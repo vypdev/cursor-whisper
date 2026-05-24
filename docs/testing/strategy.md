@@ -6,7 +6,7 @@
 
 ## Overview
 
-Cursor Whisper uses a focused testing strategy aligned with the **stop → transcribe → transform → insert** pipeline.
+Promptimize uses a focused testing strategy aligned with the **stop → transcribe → transform → insert** pipeline.
 
 **Testing philosophy**: Test behavior at integration boundaries, not implementation details.
 

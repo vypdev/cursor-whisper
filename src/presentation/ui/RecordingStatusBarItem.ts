@@ -38,7 +38,7 @@ export class RecordingStatusBarItem {
       vscode.StatusBarAlignment.Right,
       1001
     );
-    this.settingsStatusBarItem.command = 'cursor-whisper.openConfigurationPanel';
+    this.settingsStatusBarItem.command = 'promptimize.openConfigurationPanel';
     this.updateUI();
     this.transcribeStatusBarItem.show();
     this.promptimizeStatusBarItem.show();
@@ -90,7 +90,7 @@ export class RecordingStatusBarItem {
       return SETUP_CHECKLIST_TOOLTIP(this.setupChecklist);
     }
 
-    return 'Open Cursor Whisper configuration';
+    return 'Open Promptimize configuration';
   }
 
   private getSettingsText(): string {
@@ -127,7 +127,7 @@ export class RecordingStatusBarItem {
     if (mode === 'transcribe') {
       item.text = '$(mic) Transcribe';
       item.tooltip = this.getTranscribeIdleTooltip();
-      item.command = 'cursor-whisper.startTranscribeRecording';
+      item.command = 'promptimize.startTranscribeRecording';
       item.backgroundColor = !this.hasOpenAIKey
         ? new vscode.ThemeColor('statusBarItem.warningBackground')
         : undefined;
@@ -136,7 +136,7 @@ export class RecordingStatusBarItem {
 
     item.text = '$(sparkle) Promptimize';
     item.tooltip = this.getPromptimizeIdleTooltip();
-    item.command = 'cursor-whisper.startPromptimizeRecording';
+    item.command = 'promptimize.startPromptimizeRecording';
     item.backgroundColor =
       !this.optimizationEnabled || !this.hasOpenAIKey
         ? new vscode.ThemeColor('statusBarItem.warningBackground')
@@ -159,12 +159,12 @@ export class RecordingStatusBarItem {
   private applySessionState(item: vscode.StatusBarItem, mode: 'transcribe' | 'promptimize'): void {
     const stopCommand =
       mode === 'transcribe'
-        ? 'cursor-whisper.stopTranscribeRecording'
-        : 'cursor-whisper.stopPromptimizeRecording';
+        ? 'promptimize.stopTranscribeRecording'
+        : 'promptimize.stopPromptimizeRecording';
     const retryCommand =
       mode === 'transcribe'
-        ? 'cursor-whisper.startTranscribeRecording'
-        : 'cursor-whisper.startPromptimizeRecording';
+        ? 'promptimize.startTranscribeRecording'
+        : 'promptimize.startPromptimizeRecording';
 
     switch (this.currentState) {
       case RecordingState.RECORDING:

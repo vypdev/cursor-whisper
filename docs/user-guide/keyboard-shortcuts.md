@@ -1,6 +1,6 @@
 # Keyboard Shortcuts
 
-Complete reference for Cursor Whisper keyboard shortcuts and Command Palette commands.
+Complete reference for Promptimize keyboard shortcuts and Command Palette commands.
 
 ---
 
@@ -10,7 +10,7 @@ Complete reference for Cursor Whisper keyboard shortcuts and Command Palette com
 |----------|---------|----------|
 | `Cmd+Alt+V` (macOS) / `Ctrl+Alt+V` (Windows/Linux) | Start Transcribe Recording | Starts **Transcribe** mode (raw transcription) |
 | `Cmd+Alt+P` (macOS) / `Ctrl+Alt+P` (Windows/Linux) | Start Promptimize Recording | Starts **Promptimize** mode (optimized prompt) |
-| `Escape` | Cancel Recording | Cancels active recording (while `cursorWhisper.isRecording` is true) |
+| `Escape` | Cancel Recording | Cancels active recording (while `promptimize.isRecording` is true) |
 
 ### Important: Start-only shortcuts
 
@@ -25,42 +25,42 @@ To **stop** recording:
 
 ## Command Palette Reference
 
-Open with `Cmd/Ctrl+Shift+P`, then search for **Cursor Whisper**.
+Open with `Cmd/Ctrl+Shift+P`, then search for **Promptimize**.
 
 ### Recording
 
 | Command | Purpose |
 |---------|---------|
-| `Cursor Whisper: Start Transcribe Recording` | Start raw transcription mode |
-| `Cursor Whisper: Stop Transcribe Recording` | Stop and process Transcribe recording |
-| `Cursor Whisper: Start Promptimize Recording` | Start optimized prompt mode |
-| `Cursor Whisper: Stop Promptimize Recording` | Stop and process Promptimize recording |
-| `Cursor Whisper: Cancel Recording` | Discard recording without processing |
+| `Promptimize: Start Transcribe Recording` | Start raw transcription mode |
+| `Promptimize: Stop Transcribe Recording` | Stop and process Transcribe recording |
+| `Promptimize: Start Promptimize Recording` | Start optimized prompt mode |
+| `Promptimize: Stop Promptimize Recording` | Stop and process Promptimize recording |
+| `Promptimize: Cancel Recording` | Discard recording without processing |
 
 ### Configuration
 
 | Command | Purpose |
 |---------|---------|
-| `Cursor Whisper: Setup Wizard` | Opens the configuration panel |
-| `Cursor Whisper: Open Configuration` | Opens the configuration webview |
-| `Cursor Whisper: Configure OpenAI API Key (Whisper)` | Set OpenAI key for Whisper |
-| `Cursor Whisper: Configure Prompt Optimization Provider` | Interactive provider setup wizard |
-| `Cursor Whisper: Configure OpenAI Optimization Model` | Pick GPT model (OpenAI provider only) |
-| `Cursor Whisper: Test Configuration` | Test Whisper + optimization; opens results webview |
+| `Promptimize: Setup Wizard` | Opens the configuration panel |
+| `Promptimize: Open Configuration` | Opens the configuration webview |
+| `Promptimize: Configure OpenAI API Key (Whisper)` | Set OpenAI key for Whisper |
+| `Promptimize: Configure Prompt Optimization Provider` | Interactive provider setup wizard |
+| `Promptimize: Configure OpenAI Optimization Model` | Pick GPT model (OpenAI provider only) |
+| `Promptimize: Test Configuration` | Test Whisper + optimization; opens results webview |
 
 ### Deprecated (compatibility)
 
 | Command | Replacement |
 |---------|-------------|
-| `Cursor Whisper: (Deprecated) Start Recording` | Start Transcribe or Start Promptimize |
-| `Cursor Whisper: (Deprecated) Stop Recording` | Stop Transcribe or Stop Promptimize |
+| `Promptimize: (Deprecated) Start Recording` | Start Transcribe or Start Promptimize |
+| `Promptimize: (Deprecated) Stop Recording` | Stop Transcribe or Stop Promptimize |
 
 ---
 
 ## Customizing Keybindings
 
 1. Open **Keyboard Shortcuts** (`Cmd/Ctrl+K Cmd/Ctrl+S`)
-2. Search for **Cursor Whisper**
+2. Search for **Promptimize**
 3. Click the pencil icon to rebind
 
 Example `keybindings.json` override:
@@ -68,7 +68,7 @@ Example `keybindings.json` override:
 ```json
 {
   "key": "ctrl+shift+v",
-  "command": "cursor-whisper.startTranscribeRecording",
+  "command": "promptimize.startTranscribeRecording",
   "when": "editorTextFocus"
 }
 ```
@@ -79,7 +79,7 @@ Example `keybindings.json` override:
 
 | Context key | When true | Used by |
 |-------------|-----------|---------|
-| `cursorWhisper.isRecording` | Microphone is actively recording | `Escape` → Cancel Recording |
+| `promptimize.isRecording` | Microphone is actively recording | `Escape` → Cancel Recording |
 
 ---
 

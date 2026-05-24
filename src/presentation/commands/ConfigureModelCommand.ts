@@ -19,7 +19,7 @@ export function registerConfigureModelCommand(
   transformerFactory: PromptTransformerFactory,
   logger: ILogger
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.configureModel', async () => {
+  return vscode.commands.registerCommand('promptimize.configureModel', async () => {
     const config = await configRepo.getConfig();
     const provider = config.transformationProvider;
     const providerMeta = PROVIDER_METADATA[provider];
@@ -32,11 +32,11 @@ export function registerConfigureModelCommand(
       );
 
       if (switchProvider === 'Configure Provider') {
-        await vscode.commands.executeCommand('cursor-whisper.configureTransformationProvider');
+        await vscode.commands.executeCommand('promptimize.configureTransformationProvider');
       } else if (switchProvider === 'Open Settings') {
         await vscode.commands.executeCommand(
           'workbench.action.openSettings',
-          'cursorWhisper.transformationProvider'
+          'promptimize.transformationProvider'
         );
       }
       return;
@@ -49,7 +49,7 @@ export function registerConfigureModelCommand(
       );
 
       if (configureKey === 'Configure API Key') {
-        await vscode.commands.executeCommand('cursor-whisper.configureApiKey');
+        await vscode.commands.executeCommand('promptimize.configureApiKey');
       }
       return;
     }
@@ -87,7 +87,7 @@ export function registerConfigureModelCommand(
             })),
             {
               placeHolder: 'Select a GPT model for prompt transformation',
-              title: 'Cursor Whisper: Configure Model',
+              title: 'Promptimize: Configure Model',
             }
           );
 

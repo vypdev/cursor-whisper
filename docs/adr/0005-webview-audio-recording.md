@@ -220,7 +220,7 @@ export class RecordingPanel {
     }
 
     const panel = vscode.window.createWebviewPanel(
-      'cursorWhisperRecording',
+      'promptimizeRecording',
       'Voice Recording',
       vscode.ViewColumn.Beside,
       { enableScripts: true }

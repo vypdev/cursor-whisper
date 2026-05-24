@@ -49,7 +49,7 @@ Typical pipeline on version tag:
 1. Bump version: `pnpm version patch|minor|major`
 2. Push tag: `git push origin vX.Y.Z`
 3. Verify CI produces VSIX
-4. Test VSIX locally: `code --install-extension cursor-whisper-X.Y.Z.vsix`
+4. Test VSIX locally: `code --install-extension promptimize-X.Y.Z.vsix`
 5. Confirm marketplace listing (if published)
 
 ### Post-Release
@@ -77,7 +77,7 @@ Semantic versioning: `MAJOR.MINOR.PATCH`
 | Open VSX | VSCodium and forks |
 | GitHub Releases | Direct VSIX download |
 
-**Install from VSIX:** Extensions → `...` → Install from VSIX, or `code --install-extension cursor-whisper-X.Y.Z.vsix`
+**Install from VSIX:** Extensions → `...` → Install from VSIX, or `code --install-extension promptimize-X.Y.Z.vsix`
 
 ---
 
@@ -85,7 +85,7 @@ Semantic versioning: `MAJOR.MINOR.PATCH`
 
 If a critical bug ships:
 
-1. Unpublish broken version if possible (`vsce unpublish cursor-whisper@X.Y.Z`)
+1. Unpublish broken version if possible (`vsce unpublish promptimize@X.Y.Z`)
 2. Fix on a hotfix branch, test, release patch version
 3. Communicate via GitHub Release notes and Issues
 

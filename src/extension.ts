@@ -59,8 +59,8 @@ export function activate(context: vscode.ExtensionContext): void {
   // ========================================
 
   // Logging
-  const logger = new VSCodeOutputChannelLogger('Cursor Whisper');
-  logger.info('Cursor Whisper extension is activating...');
+  const logger = new VSCodeOutputChannelLogger('Promptimize');
+  logger.info('Promptimize extension is activating...');
 
   // Configuration
   const configRepository = new VSCodeConfigRepository(context, context.secrets);
@@ -142,7 +142,7 @@ export function activate(context: vscode.ExtensionContext): void {
     statusBar.setState(state);
     void vscode.commands.executeCommand(
       'setContext',
-      'cursorWhisper.isRecording',
+      'promptimize.isRecording',
       state === RecordingState.RECORDING
     );
   });
@@ -249,7 +249,7 @@ export function activate(context: vscode.ExtensionContext): void {
       if (selection === 'Configure Now') {
         await vscode.commands.executeCommand(issue.configureCommand);
       } else if (selection === 'Open Configuration') {
-        await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
+        await vscode.commands.executeCommand('promptimize.openConfigurationPanel');
       }
       return;
     }
@@ -257,8 +257,8 @@ export function activate(context: vscode.ExtensionContext): void {
     logger.info('Configuration loaded successfully');
   });
 
-  logger.info('Cursor Whisper extension fully activated');
-  logger.info('Cursor Whisper is ready');
+  logger.info('Promptimize extension fully activated');
+  logger.info('Promptimize is ready');
 }
 
 /**

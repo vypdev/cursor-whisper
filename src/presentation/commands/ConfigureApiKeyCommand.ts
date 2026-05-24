@@ -11,7 +11,7 @@ export function registerConfigureApiKeyCommand(
   _context: vscode.ExtensionContext,
   configRepo: IConfigRepository
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.configureApiKey', async () => {
+  return vscode.commands.registerCommand('promptimize.configureApiKey', async () => {
     const apiKey = await vscode.window.showInputBox({
       title: 'Configure OpenAI API Key (Required for Whisper)',
       prompt: OPENAI_API_KEY_PROMPT,

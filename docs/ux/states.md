@@ -92,7 +92,7 @@ $(sync~spin) Processing...    (both modes disabled)
 |----------|--------|---------|
 | `Cmd/Ctrl + Alt + V` | Start Transcribe recording | Global |
 | `Cmd/Ctrl + Alt + P` | Start Promptimize recording | Global |
-| `Escape` | Cancel recording | While `cursorWhisper.isRecording` |
+| `Escape` | Cancel recording | While `promptimize.isRecording` |
 
 **Note:** Start shortcuts do **not** stop recording. Stop by clicking the status bar **Recording...** item.
 

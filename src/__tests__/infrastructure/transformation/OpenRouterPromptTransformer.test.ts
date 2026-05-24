@@ -61,7 +61,7 @@ describe('OpenRouterPromptTransformer', () => {
         apiKey: TEST_API_KEY,
         baseURL: 'https://openrouter.ai/api/v1',
         defaultHeaders: expect.objectContaining({
-          'X-OpenRouter-Title': 'Cursor Whisper',
+          'X-OpenRouter-Title': 'Promptimize',
         }),
       })
     );

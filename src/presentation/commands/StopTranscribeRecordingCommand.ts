@@ -19,7 +19,7 @@ export function registerStopTranscribeRecordingCommand(
   _context: vscode.ExtensionContext,
   deps: StopTranscribeRecordingDependencies
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.stopTranscribeRecording', async () => {
+  return vscode.commands.registerCommand('promptimize.stopTranscribeRecording', async () => {
     try {
       await vscode.window.withProgress(
         {
@@ -52,7 +52,7 @@ export function registerStopTranscribeRecordingCommand(
           'Retry'
         );
         if (action === 'Retry') {
-          await vscode.commands.executeCommand('cursor-whisper.stopTranscribeRecording');
+          await vscode.commands.executeCommand('promptimize.stopTranscribeRecording');
         }
       } else if (error instanceof InsertionError) {
         await vscode.window.showErrorMessage(

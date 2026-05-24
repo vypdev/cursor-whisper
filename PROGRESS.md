@@ -8,7 +8,7 @@
 
 ## Current Status
 
-Cursor Whisper is a working VSCode/Cursor extension that records voice, transcribes with OpenAI Whisper, optionally transforms prompts with GPT-4, and inserts text into the active editor or chat.
+Promptimize is a working VSCode/Cursor extension that records voice, transcribes with OpenAI Whisper, optionally transforms prompts with GPT-4, and inserts text into the active editor or chat.
 
 | Phase | Status | Progress |
 |-------|--------|----------|
@@ -152,7 +152,7 @@ pnpm run compile
 
 1. Open the project in VSCode/Cursor
 2. Press `F5` to launch the Extension Development Host
-3. Run **Cursor Whisper: Configure API Key** from the Command Palette
+3. Run **Promptimize: Configure API Key** from the Command Palette
 4. Press `Cmd/Ctrl+Alt+V` to start recording, speak, then stop
 5. Wait for transcription and insertion into the active editor
 

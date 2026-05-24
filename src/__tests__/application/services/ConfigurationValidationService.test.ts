@@ -66,7 +66,7 @@ describe('ConfigurationValidationService', () => {
 
       expect(issue).toEqual({
         message: OPENAI_API_KEY_REQUIRED_RECORDING,
-        configureCommand: 'cursor-whisper.openConfigurationPanel',
+        configureCommand: 'promptimize.openConfigurationPanel',
       });
     });
 
@@ -88,7 +88,7 @@ describe('ConfigurationValidationService', () => {
 
       expect(issue).toEqual({
         message: 'Prompt optimization is disabled. Enable it in configuration to use Promptimize.',
-        configureCommand: 'cursor-whisper.openConfigurationPanel',
+        configureCommand: 'promptimize.openConfigurationPanel',
       });
     });
 
@@ -98,7 +98,7 @@ describe('ConfigurationValidationService', () => {
 
       const issue = await validateConfigurationForPromptimize(configRepo, validator);
 
-      expect(issue?.configureCommand).toBe('cursor-whisper.configureApiKey');
+      expect(issue?.configureCommand).toBe('promptimize.configureApiKey');
     });
   });
 
@@ -113,7 +113,7 @@ describe('ConfigurationValidationService', () => {
       expect(issue).toEqual({
         message:
           'OpenAI API key is required for voice-to-text transcription (Whisper). Prompt optimization uses a separate provider you can configure later.',
-        configureCommand: 'cursor-whisper.configureApiKey',
+        configureCommand: 'promptimize.configureApiKey',
       });
     });
 
@@ -142,7 +142,7 @@ describe('ConfigurationValidationService', () => {
       expect(validateProvider).toHaveBeenCalledWith(TransformationProvider.Anthropic);
       expect(issue).toEqual({
         message: 'Anthropic API key is not configured.',
-        configureCommand: 'cursor-whisper.openConfigurationPanel',
+        configureCommand: 'promptimize.openConfigurationPanel',
       });
     });
   });
@@ -156,7 +156,7 @@ describe('ConfigurationValidationService', () => {
       const issue = await validateConfigurationOnStartup(configRepo, validator);
 
       expect(issue?.message).toContain('OpenAI API key is required for voice-to-text transcription');
-      expect(issue?.configureCommand).toBe('cursor-whisper.openConfigurationPanel');
+      expect(issue?.configureCommand).toBe('promptimize.openConfigurationPanel');
     });
 
     it('does not warn about transformation provider keys when transformation is disabled', async () => {
@@ -186,8 +186,8 @@ describe('ConfigurationValidationService', () => {
       const issue = await validateConfigurationOnStartup(configRepo, validator);
 
       expect(issue).toEqual({
-        message: 'Cursor Whisper: Anthropic credentials are not configured for prompt optimization.',
-        configureCommand: 'cursor-whisper.openConfigurationPanel',
+        message: 'Promptimize: Anthropic credentials are not configured for prompt optimization.',
+        configureCommand: 'promptimize.openConfigurationPanel',
       });
     });
 
@@ -204,7 +204,7 @@ describe('ConfigurationValidationService', () => {
       const issue = await validateConfigurationOnStartup(configRepo, validator);
 
       expect(issue?.message).toContain('Ollama server is not reachable');
-      expect(issue?.configureCommand).toBe('cursor-whisper.openConfigurationPanel');
+      expect(issue?.configureCommand).toBe('promptimize.openConfigurationPanel');
     });
 
     it('warns about missing key for Cursor transformation provider', async () => {
@@ -221,8 +221,8 @@ describe('ConfigurationValidationService', () => {
       const issue = await validateConfigurationOnStartup(configRepo, validator);
 
       expect(issue).toEqual({
-        message: 'Cursor Whisper: Cursor credentials are not configured for prompt optimization.',
-        configureCommand: 'cursor-whisper.openConfigurationPanel',
+        message: 'Promptimize: Cursor credentials are not configured for prompt optimization.',
+        configureCommand: 'promptimize.openConfigurationPanel',
       });
     });
   });

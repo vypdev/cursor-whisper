@@ -1,12 +1,12 @@
 # Configuration Guide
 
-Complete reference for installing, configuring, and using Cursor Whisper.
+Complete reference for installing, configuring, and using Promptimize.
 
 ---
 
 ## Service Architecture
 
-Cursor Whisper uses two independent AI services:
+Promptimize uses two independent AI services:
 
 | Service | Provider | Required | Credentials |
 |---------|----------|----------|-------------|
@@ -36,7 +36,7 @@ flowchart TB
 **Always required** for voice-to-text.
 
 1. Create a key at https://platform.openai.com/api-keys
-2. Run **Cursor Whisper: Configure OpenAI API Key (Whisper)** or use the setup wizard
+2. Run **Promptimize: Configure OpenAI API Key (Whisper)** or use the setup wizard
 3. Paste your key (stored securely in VSCode SecretStorage)
 
 **Cost:** ~$0.006 per minute of audio
@@ -47,9 +47,9 @@ The same OpenAI key can be reused for OpenAI prompt optimization (Step 2, Option
 
 ## Step 2: Prompt Optimization (Optional)
 
-Enable in settings: `cursorWhisper.enablePromptTransformation`
+Enable in settings: `promptimize.enablePromptTransformation`
 
-Or run **Cursor Whisper: Configure Prompt Optimization Provider**.
+Or run **Promptimize: Configure Prompt Optimization Provider**.
 
 ### Provider comparison
 
@@ -66,7 +66,7 @@ Or run **Cursor Whisper: Configure Prompt Optimization Provider**.
 
 \*Plus Whisper transcription cost (~$0.006/min, always OpenAI)
 
-API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching providers does not delete saved keys.
+API keys are stored per provider (`promptimize.apiKey.{provider}`). Switching providers does not delete saved keys.
 
 ---
 
@@ -74,9 +74,9 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 
 ```json
 {
-  "cursorWhisper.enablePromptTransformation": true,
-  "cursorWhisper.transformationProvider": "openai",
-  "cursorWhisper.transformationModel": "gpt-4o"
+  "promptimize.enablePromptTransformation": true,
+  "promptimize.transformationProvider": "openai",
+  "promptimize.transformationModel": "gpt-4o"
 }
 ```
 
@@ -92,8 +92,8 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 
 ```json
 {
-  "cursorWhisper.transformationProvider": "anthropic",
-  "cursorWhisper.anthropicModel": "claude-3-5-sonnet-20241022"
+  "promptimize.transformationProvider": "anthropic",
+  "promptimize.anthropicModel": "claude-3-5-sonnet-20241022"
 }
 ```
 
@@ -109,8 +109,8 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 
 ```json
 {
-  "cursorWhisper.transformationProvider": "google",
-  "cursorWhisper.googleModel": "gemini-1.5-pro"
+  "promptimize.transformationProvider": "google",
+  "promptimize.googleModel": "gemini-1.5-pro"
 }
 ```
 
@@ -126,9 +126,9 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 
 ```json
 {
-  "cursorWhisper.transformationProvider": "azure",
-  "cursorWhisper.azureEndpoint": "https://my-resource.openai.azure.com",
-  "cursorWhisper.azureDeployment": "gpt-4o-deployment"
+  "promptimize.transformationProvider": "azure",
+  "promptimize.azureEndpoint": "https://my-resource.openai.azure.com",
+  "promptimize.azureDeployment": "gpt-4o-deployment"
 }
 ```
 
@@ -144,9 +144,9 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 
 ```json
 {
-  "cursorWhisper.transformationProvider": "ollama",
-  "cursorWhisper.ollamaBaseUrl": "http://localhost:11434",
-  "cursorWhisper.ollamaModel": "llama3.1:8b"
+  "promptimize.transformationProvider": "ollama",
+  "promptimize.ollamaBaseUrl": "http://localhost:11434",
+  "promptimize.ollamaModel": "llama3.1:8b"
 }
 ```
 
@@ -162,9 +162,9 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 
 ```json
 {
-  "cursorWhisper.transformationProvider": "opencode",
-  "cursorWhisper.openCodeBaseUrl": "http://127.0.0.1:4010/v1",
-  "cursorWhisper.openCodeModel": "anthropic/claude-sonnet-4-5"
+  "promptimize.transformationProvider": "opencode",
+  "promptimize.openCodeBaseUrl": "http://127.0.0.1:4010/v1",
+  "promptimize.openCodeModel": "anthropic/claude-sonnet-4-5"
 }
 ```
 
@@ -187,8 +187,8 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 
 ```json
 {
-  "cursorWhisper.transformationProvider": "openrouter",
-  "cursorWhisper.openRouterModel": "openai/gpt-4o"
+  "promptimize.transformationProvider": "openrouter",
+  "promptimize.openRouterModel": "openai/gpt-4o"
 }
 ```
 
@@ -204,8 +204,8 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 
 ```json
 {
-  "cursorWhisper.transformationProvider": "cursor",
-  "cursorWhisper.cursorModel": "composer-2.5"
+  "promptimize.transformationProvider": "cursor",
+  "promptimize.cursorModel": "composer-2.5"
 }
 ```
 
@@ -221,7 +221,7 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 
 ## Step 3: Verify Configuration
 
-Run **Cursor Whisper: Test Configuration**
+Run **Promptimize: Test Configuration**
 
 Expected toast:
 

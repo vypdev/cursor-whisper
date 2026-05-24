@@ -13,12 +13,12 @@ export function registerStartRecordingCommand(
   providerValidator: ITransformationProviderValidator,
   useCase: StartRecordingUseCase
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.startRecording', async () => {
+  return vscode.commands.registerCommand('promptimize.startRecording', async () => {
     try {
       const validationIssue = await validateConfigurationForPromptimize(configRepo, providerValidator);
 
       if (validationIssue) {
-        if (validationIssue.configureCommand === 'cursor-whisper.configureApiKey') {
+        if (validationIssue.configureCommand === 'promptimize.configureApiKey') {
           const selection = await vscode.window.showErrorMessage(
             'OpenAI API key is required for Whisper voice-to-text transcription.',
             { detail: 'Prompt optimization uses a separate provider you can configure later.' },
@@ -27,14 +27,14 @@ export function registerStartRecordingCommand(
           );
 
           if (selection === 'Configure Now') {
-            await vscode.commands.executeCommand('cursor-whisper.configureApiKey');
+            await vscode.commands.executeCommand('promptimize.configureApiKey');
           } else if (selection === 'Open Configuration') {
-            await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
+            await vscode.commands.executeCommand('promptimize.openConfigurationPanel');
           }
           return;
         }
 
-        await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
+        await vscode.commands.executeCommand('promptimize.openConfigurationPanel');
         return;
       }
 
@@ -42,7 +42,7 @@ export function registerStartRecordingCommand(
       await vscode.window.showInformationMessage('Recording started');
     } catch (error) {
       if (error instanceof MissingApiKeyError) {
-        await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
+        await vscode.commands.executeCommand('promptimize.openConfigurationPanel');
       } else if (error instanceof ConfigError) {
         await vscode.window.showErrorMessage(`Configuration error: ${error.message}`);
       } else if (error instanceof PermissionError) {

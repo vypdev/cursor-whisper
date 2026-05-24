@@ -1,6 +1,6 @@
 # Recording Modes
 
-Cursor Whisper provides **two distinct recording modes**. Each mode uses the same microphone capture and OpenAI Whisper transcription, but differs in what happens after transcription and which keyboard shortcut starts recording.
+Promptimize provides **two distinct recording modes**. Each mode uses the same microphone capture and OpenAI Whisper transcription, but differs in what happens after transcription and which keyboard shortcut starts recording.
 
 ---
 
@@ -68,19 +68,19 @@ flowchart LR
 |--------|------------|-------------|
 | Keyboard | `Cmd/Ctrl+Alt+V` | `Cmd/Ctrl+Alt+P` |
 | Status bar | Click **Transcribe** | Click **Promptimize** |
-| Command Palette | `Cursor Whisper: Start Transcribe Recording` | `Cursor Whisper: Start Promptimize Recording` |
+| Command Palette | `Promptimize: Start Transcribe Recording` | `Promptimize: Start Promptimize Recording` |
 
 **Note:** Keyboard shortcuts **start** recording only. They do not stop recording.
 
 ### Stop recording
 
 - Click the active mode's status bar item while it shows **Recording...**
-- Run `Cursor Whisper: Stop Transcribe Recording` or `Cursor Whisper: Stop Promptimize Recording` from the Command Palette
+- Run `Promptimize: Stop Transcribe Recording` or `Promptimize: Stop Promptimize Recording` from the Command Palette
 
 ### Cancel recording
 
 - Press `Escape` while recording (discards audio without transcribing)
-- Run `Cursor Whisper: Cancel Recording` from the Command Palette
+- Run `Promptimize: Cancel Recording` from the Command Palette
 
 ---
 
@@ -115,8 +115,8 @@ These legacy commands still work but are superseded by mode-specific commands:
 
 | Deprecated | Use instead |
 |------------|-------------|
-| `Cursor Whisper: (Deprecated) Start Recording` | Start Transcribe or Start Promptimize |
-| `Cursor Whisper: (Deprecated) Stop Recording` | Stop Transcribe or Stop Promptimize (routes by active session) |
+| `Promptimize: (Deprecated) Start Recording` | Start Transcribe or Start Promptimize |
+| `Promptimize: (Deprecated) Stop Recording` | Stop Transcribe or Stop Promptimize (routes by active session) |
 
 ---
 

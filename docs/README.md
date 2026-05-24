@@ -1,6 +1,6 @@
-# Cursor Whisper Documentation
+# Promptimize Documentation
 
-Documentation for the Cursor Whisper VSCode/Cursor extension.
+Documentation for the Promptimize VSCode/Cursor extension.
 
 ---
 

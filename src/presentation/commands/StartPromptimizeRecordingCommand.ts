@@ -12,7 +12,7 @@ export function registerStartPromptimizeRecordingCommand(
   providerValidator: ITransformationProviderValidator,
   useCase: StartRecordingUseCase
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.startPromptimizeRecording', async () => {
+  return vscode.commands.registerCommand('promptimize.startPromptimizeRecording', async () => {
     try {
       const validationIssue = await validateConfigurationForPromptimize(
         configRepo,
@@ -20,7 +20,7 @@ export function registerStartPromptimizeRecordingCommand(
       );
 
       if (validationIssue) {
-        await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
+        await vscode.commands.executeCommand('promptimize.openConfigurationPanel');
         return;
       }
 

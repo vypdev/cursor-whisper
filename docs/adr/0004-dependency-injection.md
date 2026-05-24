@@ -80,7 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
   // Register command
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      'cursor-whisper.startRecording',
+      'promptimize.startRecording',
       () => startRecordingUseCase.execute()
     )
   );

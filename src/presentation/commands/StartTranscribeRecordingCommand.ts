@@ -10,12 +10,12 @@ export function registerStartTranscribeRecordingCommand(
   configRepo: IConfigRepository,
   useCase: StartRecordingUseCase
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.startTranscribeRecording', async () => {
+  return vscode.commands.registerCommand('promptimize.startTranscribeRecording', async () => {
     try {
       const validationIssue = await validateConfigurationForTranscription(configRepo);
 
       if (validationIssue) {
-        await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
+        await vscode.commands.executeCommand('promptimize.openConfigurationPanel');
         return;
       }
 

@@ -12,7 +12,7 @@
 
 ## Context
 
-Cursor Whisper originally used OpenAI GPT models exclusively for prompt transformation after Whisper transcription. Users requested flexibility to choose alternative LLM providers based on cost, privacy, availability, or organizational requirements.
+Promptimize originally used OpenAI GPT models exclusively for prompt transformation after Whisper transcription. Users requested flexibility to choose alternative LLM providers based on cost, privacy, availability, or organizational requirements.
 
 Requirements:
 
@@ -41,8 +41,8 @@ Requirements:
 Key aspects:
 
 - `PromptTransformerFactory` resolves the active provider from configuration
-- Provider-specific API keys stored in VSCode SecretStorage (`cursor-whisper.apiKey.{provider}`)
-- Provider selection via settings (`cursorWhisper.transformationProvider`) and command palette
+- Provider-specific API keys stored in VSCode SecretStorage (`promptimize.apiKey.{provider}`)
+- Provider selection via settings (`promptimize.transformationProvider`) and command palette
 - Shared system prompt and improvement heuristics across providers
 - No automatic fallback to another provider on failure (user must opt in via settings in future)
 
@@ -98,10 +98,10 @@ Key aspects:
 
 - Factory: `src/infrastructure/transformation/PromptTransformerFactory.ts`
 - Value object: `src/domain/value-objects/TransformationProvider.ts`
-- Config: `cursorWhisper.transformationProvider` and provider-specific model settings
+- Config: `promptimize.transformationProvider` and provider-specific model settings
 - OpenCode and OpenRouter use the OpenAI SDK with custom `baseURL` (OpenAI-compatible APIs)
 - Cursor uses `@cursor/sdk` with `Agent.prompt()` for one-shot transformations
-- Commands: `cursor-whisper.configureTransformationProvider`, `cursor-whisper.testTransformation`
+- Commands: `promptimize.configureTransformationProvider`, `promptimize.testTransformation`
 
 ---
 

@@ -258,7 +258,7 @@ import * as vscode from 'vscode';
 
 // Register command
 const disposable = vscode.commands.registerCommand(
-  'cursor-whisper.startRecording',
+  'promptimize.startRecording',
   async () => {
     // Command logic
   }
@@ -276,7 +276,7 @@ const statusBar = vscode.window.createStatusBarItem(
 );
 
 statusBar.text = '$(mic) Voice';
-statusBar.command = 'cursor-whisper.startRecording';
+statusBar.command = 'promptimize.startRecording';
 statusBar.show();
 ```
 
@@ -284,13 +284,13 @@ statusBar.show();
 
 ```typescript
 // Store API key
-await context.secrets.store('cursor-whisper.openai.apiKey', apiKey);
+await context.secrets.store('promptimize.openai.apiKey', apiKey);
 
 // Retrieve API key
-const apiKey = await context.secrets.get('cursor-whisper.openai.apiKey');
+const apiKey = await context.secrets.get('promptimize.openai.apiKey');
 
 // Delete API key
-await context.secrets.delete('cursor-whisper.openai.apiKey');
+await context.secrets.delete('promptimize.openai.apiKey');
 ```
 
 **Platform Storage**:
@@ -302,7 +302,7 @@ await context.secrets.delete('cursor-whisper.openai.apiKey');
 
 ```typescript
 // Get configuration
-const config = vscode.workspace.getConfiguration('cursorWhisper');
+const config = vscode.workspace.getConfiguration('promptimize');
 const language = config.get<string>('transcriptionLanguage', 'auto');
 
 // Update configuration
@@ -314,7 +314,7 @@ await config.update(
 
 // Watch for changes
 vscode.workspace.onDidChangeConfiguration(event => {
-  if (event.affectsConfiguration('cursorWhisper')) {
+  if (event.affectsConfiguration('promptimize')) {
     // Configuration changed
   }
 });
@@ -347,8 +347,8 @@ if (editor) {
 ```typescript
 // Create webview panel
 const panel = vscode.window.createWebviewPanel(
-  'cursorWhisperRecorder',
-  'Cursor Whisper',
+  'promptimizeRecorder',
+  'Promptimize',
   vscode.ViewColumn.One,
   {
     enableScripts: true,

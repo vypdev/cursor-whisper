@@ -57,8 +57,8 @@ export class WebviewAudioRecorder implements IAudioRecorder {
       // Create or show webview panel
       if (!this.panel) {
         this.panel = vscode.window.createWebviewPanel(
-          'cursorWhisperRecorder',
-          'Cursor Whisper Recorder',
+          'promptimizeRecorder',
+          'Promptimize Recorder',
           vscode.ViewColumn.One,
           {
             enableScripts: true,

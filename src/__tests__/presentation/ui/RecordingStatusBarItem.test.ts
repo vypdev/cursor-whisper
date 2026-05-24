@@ -43,11 +43,11 @@ describe('RecordingStatusBarItem', () => {
       1001
     );
     expect(transcribeItem.text).toBe('$(mic) Transcribe');
-    expect(transcribeItem.command).toBe('cursor-whisper.startTranscribeRecording');
+    expect(transcribeItem.command).toBe('promptimize.startTranscribeRecording');
     expect(promptimizeItem.text).toBe('$(sparkle) Promptimize');
-    expect(promptimizeItem.command).toBe('cursor-whisper.startPromptimizeRecording');
+    expect(promptimizeItem.command).toBe('promptimize.startPromptimizeRecording');
     expect(settingsItem.text).toBe('$(gear) Settings');
-    expect(settingsItem.command).toBe('cursor-whisper.openConfigurationPanel');
+    expect(settingsItem.command).toBe('promptimize.openConfigurationPanel');
     statusBar.dispose();
   });
 
@@ -80,7 +80,7 @@ describe('RecordingStatusBarItem', () => {
     statusBar.setState(RecordingState.IDLE);
 
     expect(transcribeItem.text).toBe('$(mic) Transcribe');
-    expect(transcribeItem.command).toBe('cursor-whisper.startTranscribeRecording');
+    expect(transcribeItem.command).toBe('promptimize.startTranscribeRecording');
     expect(transcribeItem.tooltip).toContain('OpenAI API key required');
     expect(transcribeItem.backgroundColor).toEqual({
       id: 'statusBarItem.warningBackground',
@@ -99,7 +99,7 @@ describe('RecordingStatusBarItem', () => {
     statusBar.setState(RecordingState.IDLE);
 
     expect(promptimizeItem.text).toBe('$(sparkle) Promptimize');
-    expect(promptimizeItem.command).toBe('cursor-whisper.startPromptimizeRecording');
+    expect(promptimizeItem.command).toBe('promptimize.startPromptimizeRecording');
     expect(promptimizeItem.tooltip).toContain('Prompt optimization is disabled');
     statusBar.dispose();
   });
@@ -132,7 +132,7 @@ describe('RecordingStatusBarItem', () => {
     setRecordingSessionMode('transcribe');
     statusBar.setState(RecordingState.RECORDING);
 
-    expect(transcribeItem.command).toBe('cursor-whisper.stopTranscribeRecording');
+    expect(transcribeItem.command).toBe('promptimize.stopTranscribeRecording');
     expect(promptimizeItem.command).toBeUndefined();
     expect(getRecordingSessionMode()).toBe('transcribe');
     statusBar.dispose();

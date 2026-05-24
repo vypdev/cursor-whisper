@@ -1,5 +1,5 @@
 name: ✨ Feature Request
-description: Propose an idea or improvement for cursor whisper
+description: Propose an idea or improvement for promptimize
 title: '<YOUR TITLE HERE>'
 labels: ['enhancement', 'feature', 'priority: low']
 body:
@@ -92,9 +92,9 @@ body:
 
   - type: input
     attributes:
-      label: Version of cursor whisper
+      label: Version of promptimize
       description: |
-        What version of cursor whisper are you using, or does this proposal apply to all versions?
+        What version of promptimize are you using, or does this proposal apply to all versions?
       placeholder: 'master'
     validations:
       required: false

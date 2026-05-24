@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADRs)
 
-This directory contains Architecture Decision Records for Cursor Whisper.
+This directory contains Architecture Decision Records for Promptimize.
 
 ## What is an ADR?
 

@@ -6,7 +6,7 @@
 
 ## System Overview
 
-Cursor Whisper is a VSCode/Cursor extension that:
+Promptimize is a VSCode/Cursor extension that:
 
 1. **Captures audio** via native `@kstonekuan/audio-capture`
 2. **Transcribes** with OpenAI Whisper (always required)
@@ -64,7 +64,7 @@ flowchart TB
 
 ## Architectural Style
 
-Cursor Whisper follows **Clean/Hexagonal Architecture** (ports and adapters). Rationale and alternatives are documented in [ADR-0002](../adr/0002-clean-architecture.md).
+Promptimize follows **Clean/Hexagonal Architecture** (ports and adapters). Rationale and alternatives are documented in [ADR-0002](../adr/0002-clean-architecture.md).
 
 **Why this matters for this project:**
 - Multiple external integrations (Whisper, several LLM providers, VSCode APIs, native audio)

@@ -13,10 +13,10 @@ import {
 export interface ConfigurationValidationIssue {
   message: string;
   configureCommand:
-    | 'cursor-whisper.configureApiKey'
-    | 'cursor-whisper.configureTransformationProvider'
-    | 'cursor-whisper.openConfigurationPanel'
-    | 'cursor-whisper.firstTimeSetup';
+    | 'promptimize.configureApiKey'
+    | 'promptimize.configureTransformationProvider'
+    | 'promptimize.openConfigurationPanel'
+    | 'promptimize.firstTimeSetup';
 }
 
 /**
@@ -30,7 +30,7 @@ export async function validateConfigurationForTranscription(
   if (!openAiKey) {
     return {
       message: OPENAI_API_KEY_REQUIRED_RECORDING,
-      configureCommand: 'cursor-whisper.openConfigurationPanel',
+      configureCommand: 'promptimize.openConfigurationPanel',
     };
   }
 
@@ -49,7 +49,7 @@ export async function validateConfigurationForPromptimize(
   if (!config.enablePromptTransformation) {
     return {
       message: 'Prompt optimization is disabled. Enable it in configuration to use Promptimize.',
-      configureCommand: 'cursor-whisper.openConfigurationPanel',
+      configureCommand: 'promptimize.openConfigurationPanel',
     };
   }
 
@@ -71,7 +71,7 @@ export async function validateConfigurationForRecording(
   if (!openAiKey) {
     return {
       message: OPENAI_API_KEY_REQUIRED_RECORDING,
-      configureCommand: 'cursor-whisper.configureApiKey',
+      configureCommand: 'promptimize.configureApiKey',
     };
   }
 
@@ -83,7 +83,7 @@ export async function validateConfigurationForRecording(
   if (providerError) {
     return {
       message: providerError,
-      configureCommand: 'cursor-whisper.openConfigurationPanel',
+      configureCommand: 'promptimize.openConfigurationPanel',
     };
   }
 
@@ -104,7 +104,7 @@ export async function validateConfigurationOnStartup(
   if (!openAiKey) {
     return {
       message: OPENAI_API_KEY_REQUIRED_STARTUP,
-      configureCommand: 'cursor-whisper.openConfigurationPanel',
+      configureCommand: 'promptimize.openConfigurationPanel',
     };
   }
 
@@ -119,8 +119,8 @@ export async function validateConfigurationOnStartup(
     const providerError = await providerValidator.validateProvider(provider);
     if (providerError) {
       return {
-        message: `Cursor Whisper: ${providerError}`,
-        configureCommand: 'cursor-whisper.openConfigurationPanel',
+        message: `Promptimize: ${providerError}`,
+        configureCommand: 'promptimize.openConfigurationPanel',
       };
     }
     return undefined;
@@ -130,15 +130,15 @@ export async function validateConfigurationOnStartup(
   if (!providerApiKey) {
     return {
       message: OPTIMIZATION_PROVIDER_MISSING_KEY(metadata.displayName),
-      configureCommand: 'cursor-whisper.openConfigurationPanel',
+      configureCommand: 'promptimize.openConfigurationPanel',
     };
   }
 
   const providerError = await providerValidator.validateProvider(provider);
   if (providerError) {
     return {
-      message: `Cursor Whisper: ${providerError}`,
-      configureCommand: 'cursor-whisper.openConfigurationPanel',
+      message: `Promptimize: ${providerError}`,
+      configureCommand: 'promptimize.openConfigurationPanel',
     };
   }
 

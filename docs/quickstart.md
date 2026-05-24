@@ -1,12 +1,12 @@
 # Quick Start Guide
 
-Get Cursor Whisper running in a few minutes.
+Get Promptimize running in a few minutes.
 
 ---
 
-## What Cursor Whisper Does
+## What Promptimize Does
 
-Cursor Whisper has **two separate services** and **two recording modes**:
+Promptimize has **two separate services** and **two recording modes**:
 
 1. **Voice-to-text (required)** — Always uses **OpenAI Whisper**. Requires an **OpenAI API key**.
 2. **Prompt optimization (optional)** — Converts transcribed speech into structured prompts. Choose from 8 providers.
@@ -43,15 +43,15 @@ graph LR
 
 ### From Marketplace (coming soon)
 
-Search for **Cursor Whisper** in the Extensions view.
+Search for **Promptimize** in the Extensions view.
 
 ---
 
 ## First-Time Setup
 
-On first launch, Cursor Whisper prompts you to open the **Configuration panel**. You can also open it anytime:
+On first launch, Promptimize prompts you to open the **Configuration panel**. You can also open it anytime:
 
-**Command Palette** → `Cursor Whisper: Open Configuration` or click $(gear) **Settings** in the status bar.
+**Command Palette** → `Promptimize: Open Configuration` or click $(gear) **Settings** in the status bar.
 
 ### Configuration panel overview
 
@@ -100,12 +100,12 @@ Full details: [Configuration Webview Guide](configuration/webview-guide.md)
 
 | Command | Purpose |
 |---------|---------|
-| `Cursor Whisper: Open Configuration` | Configuration webview (primary) |
-| `Cursor Whisper: Setup Wizard` | Same as Open Configuration |
-| `Cursor Whisper: Configure OpenAI API Key (Whisper)` | Set or update OpenAI key |
-| `Cursor Whisper: Configure Prompt Optimization Provider` | Command Palette provider wizard |
-| `Cursor Whisper: Configure OpenAI Optimization Model` | Pick GPT model (OpenAI provider) |
-| `Cursor Whisper: Test Configuration` | Test setup; opens before/after webview |
+| `Promptimize: Open Configuration` | Configuration webview (primary) |
+| `Promptimize: Setup Wizard` | Same as Open Configuration |
+| `Promptimize: Configure OpenAI API Key (Whisper)` | Set or update OpenAI key |
+| `Promptimize: Configure Prompt Optimization Provider` | Command Palette provider wizard |
+| `Promptimize: Configure OpenAI Optimization Model` | Pick GPT model (OpenAI provider) |
+| `Promptimize: Test Configuration` | Test setup; opens before/after webview |
 
 ---
 
@@ -129,7 +129,7 @@ Tooltip when idle: `Transcription: OpenAI Whisper | Optimization: [Provider]`
 
 ## Test Configuration
 
-Run **Cursor Whisper: Test Configuration** to validate your setup. When optimization is enabled, a webview opens showing:
+Run **Promptimize: Test Configuration** to validate your setup. When optimization is enabled, a webview opens showing:
 
 - Original sample transcription
 - Transformed prompt from your provider

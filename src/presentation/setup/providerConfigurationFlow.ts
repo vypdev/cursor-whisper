@@ -386,7 +386,7 @@ export async function selectTransformationProvider(
     buildProviderQuickPickItems(currentProvider),
     {
       placeHolder: 'Select a provider for prompt optimization',
-      title: 'Cursor Whisper: Prompt Optimization Provider',
+      title: 'Promptimize: Prompt Optimization Provider',
     }
   );
 

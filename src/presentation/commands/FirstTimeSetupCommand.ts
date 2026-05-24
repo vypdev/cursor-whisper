@@ -18,8 +18,8 @@ export function registerFirstTimeSetupCommand(
   _logger: ILogger
 ): vscode.Disposable {
 
-  return vscode.commands.registerCommand('cursor-whisper.firstTimeSetup', async () => {
-    await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
+  return vscode.commands.registerCommand('promptimize.firstTimeSetup', async () => {
+    await vscode.commands.executeCommand('promptimize.openConfigurationPanel');
   });
 }
 

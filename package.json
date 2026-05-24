@@ -1,11 +1,11 @@
 {
-  "name": "cursor-whisper",
-  "displayName": "Cursor Whisper - Voice to Optimized Prompt",
-  "description": "Transform voice into optimized prompts using OpenAI Whisper and GPT-4",
+  "name": "promptimize",
+  "displayName": "Promptimize",
+  "description": "Transform voice into optimized prompts using OpenAI Whisper and AI providers",
   "version": "0.1.0",
-  "publisher": "cursor-whisper",
+  "publisher": "promptimize",
   "author": {
-    "name": "Cursor Whisper Team"
+    "name": "Promptimize Team"
   },
   "license": "MIT",
   "repository": {
@@ -28,7 +28,7 @@
     "speech-to-text",
     "whisper",
     "ai",
-    "cursor",
+    "promptimize",
     "productivity",
     "gpt-4",
     "openai"
@@ -40,79 +40,79 @@
   "contributes": {
     "commands": [
       {
-        "command": "cursor-whisper.startRecording",
-        "title": "Cursor Whisper: (Deprecated) Start Recording"
+        "command": "promptimize.startRecording",
+        "title": "Promptimize: (Deprecated) Start Recording"
       },
       {
-        "command": "cursor-whisper.stopRecording",
-        "title": "Cursor Whisper: (Deprecated) Stop Recording"
+        "command": "promptimize.stopRecording",
+        "title": "Promptimize: (Deprecated) Stop Recording"
       },
       {
-        "command": "cursor-whisper.startTranscribeRecording",
-        "title": "Cursor Whisper: Start Transcribe Recording"
+        "command": "promptimize.startTranscribeRecording",
+        "title": "Promptimize: Start Transcribe Recording"
       },
       {
-        "command": "cursor-whisper.stopTranscribeRecording",
-        "title": "Cursor Whisper: Stop Transcribe Recording"
+        "command": "promptimize.stopTranscribeRecording",
+        "title": "Promptimize: Stop Transcribe Recording"
       },
       {
-        "command": "cursor-whisper.startPromptimizeRecording",
-        "title": "Cursor Whisper: Start Promptimize Recording"
+        "command": "promptimize.startPromptimizeRecording",
+        "title": "Promptimize: Start Promptimize Recording"
       },
       {
-        "command": "cursor-whisper.stopPromptimizeRecording",
-        "title": "Cursor Whisper: Stop Promptimize Recording"
+        "command": "promptimize.stopPromptimizeRecording",
+        "title": "Promptimize: Stop Promptimize Recording"
       },
       {
-        "command": "cursor-whisper.cancelRecording",
-        "title": "Cursor Whisper: Cancel Recording"
+        "command": "promptimize.cancelRecording",
+        "title": "Promptimize: Cancel Recording"
       },
       {
-        "command": "cursor-whisper.configureApiKey",
-        "title": "Cursor Whisper: Configure OpenAI API Key (Whisper)"
+        "command": "promptimize.configureApiKey",
+        "title": "Promptimize: Configure OpenAI API Key (Whisper)"
       },
       {
-        "command": "cursor-whisper.configureModel",
-        "title": "Cursor Whisper: Configure OpenAI Optimization Model"
+        "command": "promptimize.configureModel",
+        "title": "Promptimize: Configure OpenAI Optimization Model"
       },
       {
-        "command": "cursor-whisper.configureTransformationProvider",
-        "title": "Cursor Whisper: Configure Prompt Optimization Provider"
+        "command": "promptimize.configureTransformationProvider",
+        "title": "Promptimize: Configure Prompt Optimization Provider"
       },
       {
-        "command": "cursor-whisper.testTransformation",
-        "title": "Cursor Whisper: Test Configuration"
+        "command": "promptimize.testTransformation",
+        "title": "Promptimize: Test Configuration"
       },
       {
-        "command": "cursor-whisper.firstTimeSetup",
-        "title": "Cursor Whisper: Setup Wizard"
+        "command": "promptimize.firstTimeSetup",
+        "title": "Promptimize: Setup Wizard"
       },
       {
-        "command": "cursor-whisper.openConfigurationPanel",
-        "title": "Cursor Whisper: Open Configuration"
+        "command": "promptimize.openConfigurationPanel",
+        "title": "Promptimize: Open Configuration"
       }
     ],
     "keybindings": [
       {
-        "command": "cursor-whisper.startTranscribeRecording",
+        "command": "promptimize.startTranscribeRecording",
         "key": "ctrl+alt+v",
         "mac": "cmd+alt+v"
       },
       {
-        "command": "cursor-whisper.startPromptimizeRecording",
+        "command": "promptimize.startPromptimizeRecording",
         "key": "ctrl+alt+p",
         "mac": "cmd+alt+p"
       },
       {
-        "command": "cursor-whisper.cancelRecording",
+        "command": "promptimize.cancelRecording",
         "key": "escape",
-        "when": "cursorWhisper.isRecording"
+        "when": "promptimize.isRecording"
       }
     ],
     "configuration": {
-      "title": "Cursor Whisper",
+      "title": "Promptimize",
       "properties": {
-        "cursorWhisper.transcriptionLanguage": {
+        "promptimize.transcriptionLanguage": {
           "type": "string",
           "default": "auto",
           "enum": [
@@ -129,17 +129,17 @@
           ],
           "markdownDescription": "**Transcription language** for OpenAI Whisper.\n\nWhisper transcription always uses your OpenAI API key. [Setup guide](https://github.com/vypdev/cursor-whisper/blob/master/docs/quickstart.md)"
         },
-        "cursorWhisper.transcriptionHint": {
+        "promptimize.transcriptionHint": {
           "type": "string",
           "default": "",
           "markdownDescription": "**Transcription hint** for OpenAI Whisper (optional).\n\nComma-separated vocabulary, acronyms, or technical terms to improve recognition accuracy. Passed to Whisper as the `prompt` parameter — not transcribed as content. Configure in VS Code Settings (not the configuration webview). [Advanced settings](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/advanced-settings.md)"
         },
-        "cursorWhisper.enablePromptTransformation": {
+        "promptimize.enablePromptTransformation": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "**Enable prompt optimization** after Whisper transcription.\n\nWhen disabled, raw transcription is inserted. When enabled, configure a provider below. [Compare providers](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/README.md)"
         },
-        "cursorWhisper.transformationProvider": {
+        "promptimize.transformationProvider": {
           "type": "string",
           "default": "openai",
           "enum": [
@@ -164,7 +164,7 @@
           ],
           "markdownDescription": "**Prompt optimization provider** (separate from Whisper transcription).\n\nWhisper always uses OpenAI. This setting chooses which AI service optimizes transcribed speech into structured prompts. [Configuration guide](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/README.md)"
         },
-        "cursorWhisper.transformationModel": {
+        "promptimize.transformationModel": {
           "type": "string",
           "default": "gpt-4o",
           "enum": [
@@ -181,9 +181,9 @@
             "GPT-4 — original GPT-4 model",
             "GPT-3.5 Turbo — cheapest option, lower quality"
           ],
-          "markdownDescription": "**OpenAI model for prompt optimization** when `transformationProvider` is `openai`.\n\nRun **Cursor Whisper: Configure OpenAI Optimization Model** to pick from models available on your API key."
+          "markdownDescription": "**OpenAI model for prompt optimization** when `transformationProvider` is `openai`.\n\nRun **Promptimize: Configure OpenAI Optimization Model** to pick from models available on your API key."
         },
-        "cursorWhisper.anthropicModel": {
+        "promptimize.anthropicModel": {
           "type": "string",
           "default": "claude-3-5-sonnet-20241022",
           "enum": [
@@ -195,7 +195,7 @@
           ],
           "markdownDescription": "**Anthropic model** for prompt optimization when `transformationProvider` is `anthropic`. Requires an Anthropic API key."
         },
-        "cursorWhisper.googleModel": {
+        "promptimize.googleModel": {
           "type": "string",
           "default": "gemini-1.5-pro",
           "enum": [
@@ -205,42 +205,42 @@
           ],
           "markdownDescription": "**Google Gemini model** for prompt optimization when `transformationProvider` is `google`. Requires a Google AI API key."
         },
-        "cursorWhisper.azureEndpoint": {
+        "promptimize.azureEndpoint": {
           "type": "string",
           "default": "",
           "markdownDescription": "**Azure OpenAI endpoint** for prompt optimization when `transformationProvider` is `azure` (e.g. `https://my-resource.openai.azure.com`)."
         },
-        "cursorWhisper.azureDeployment": {
+        "promptimize.azureDeployment": {
           "type": "string",
           "default": "",
           "markdownDescription": "**Azure OpenAI deployment name** for the chat model used in prompt optimization."
         },
-        "cursorWhisper.ollamaBaseUrl": {
+        "promptimize.ollamaBaseUrl": {
           "type": "string",
           "default": "http://localhost:11434",
           "markdownDescription": "**Ollama server URL** for local prompt optimization when `transformationProvider` is `ollama`."
         },
-        "cursorWhisper.ollamaModel": {
+        "promptimize.ollamaModel": {
           "type": "string",
           "default": "llama3.1:8b",
           "markdownDescription": "**Ollama model name/tag** for local prompt optimization."
         },
-        "cursorWhisper.openCodeBaseUrl": {
+        "promptimize.openCodeBaseUrl": {
           "type": "string",
           "default": "http://127.0.0.1:4010/v1",
           "markdownDescription": "**OpenCode LLM proxy base URL** for prompt optimization when `transformationProvider` is `opencode`."
         },
-        "cursorWhisper.openCodeModel": {
+        "promptimize.openCodeModel": {
           "type": "string",
           "default": "",
           "markdownDescription": "**OpenCode model identifier** (provider/model format) for prompt optimization when `transformationProvider` is `opencode`."
         },
-        "cursorWhisper.openRouterModel": {
+        "promptimize.openRouterModel": {
           "type": "string",
           "default": "openai/gpt-4o",
           "markdownDescription": "**OpenRouter model identifier** for prompt optimization when `transformationProvider` is `openrouter`. Requires an OpenRouter API key."
         },
-        "cursorWhisper.cursorModel": {
+        "promptimize.cursorModel": {
           "type": "string",
           "default": "composer-2.5",
           "enum": [
@@ -252,7 +252,7 @@
           ],
           "markdownDescription": "**Cursor model** for prompt optimization when `transformationProvider` is `cursor`. Works in any editor (VSCode, Cursor, etc.). Requires a Cursor API key from [Cursor Dashboard](https://cursor.com/dashboard/integrations)."
         },
-        "cursorWhisper.audioQuality": {
+        "promptimize.audioQuality": {
           "type": "string",
           "enum": [
             "low",
@@ -262,19 +262,19 @@
           "default": "high",
           "markdownDescription": "**Audio recording quality** sent to OpenAI Whisper for transcription.\n\n**Note:** Not yet applied at runtime — recording always uses 16 kHz mono (optimal for Whisper). Reserved for a future release. [Advanced settings](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/advanced-settings.md)"
         },
-        "cursorWhisper.maxRecordingDuration": {
+        "promptimize.maxRecordingDuration": {
           "type": "number",
           "default": 120,
           "minimum": 10,
           "maximum": 300,
           "markdownDescription": "**Maximum recording duration** in seconds before auto-stop.\n\n**Note:** Not yet applied at runtime — recording stops when you click stop or cancel. Reserved for a future release. [Advanced settings](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/advanced-settings.md)"
         },
-        "cursorWhisper.showNotifications": {
+        "promptimize.showNotifications": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "Show progress and status notifications during recording, transcription, and optimization.\n\n**Note:** Not yet applied at runtime — notifications always appear during processing. Reserved for a future release. [Advanced settings](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/advanced-settings.md)"
         },
-        "cursorWhisper.transformationSystemPrompt": {
+        "promptimize.transformationSystemPrompt": {
           "type": "string",
           "default": "You are an expert prompt engineer specialized in transforming raw developer voice transcriptions into highly effective prompts for AI coding assistants such as Cursor, Claude, Copilot, and ChatGPT.\n\nYour task is to convert spoken, unstructured developer input into a concise, technically precise, execution-oriented prompt.\n\nRules:\n\n1. Clean the transcription\n   - Remove filler words, hesitations, repetitions, and verbal noise\n   - Fix grammar and sentence structure\n   - Preserve the original intent\n   - Preserve all technical terminology, APIs, framework names, libraries, file names, variables, and code references exactly as spoken\n\n2. Infer developer intent\n   - Detect the actual engineering goal behind the transcription\n   - Resolve fragmented speech into coherent technical instructions\n   - Preserve implicit requirements when clearly inferred from context\n   - Do NOT invent features, requirements, or assumptions not supported by the transcription\n\n3. Optimize for AI coding assistants\n   - Make the prompt actionable and implementation-focused\n   - Convert vague requests into precise engineering tasks when possible\n   - Prioritize clarity, execution order, and technical accuracy\n   - Encourage maintainable, production-grade solutions unless explicitly stated otherwise\n\n4. Structure intelligently\n   - Only use sections when they improve clarity\n   - Possible sections include:\n     - Context\n     - Objective\n     - Requirements\n     - Constraints\n     - Expected Output\n     - Technical Notes\n\n5. Preserve important engineering constraints\n   - Maintain architecture preferences\n   - Preserve mentioned technologies and stack decisions\n   - Preserve performance, security, scalability, UX, DX, or maintainability concerns\n   - Preserve coding style preferences if mentioned\n\n6. Improve readability\n   - Remove redundancy\n   - Shorten unnecessary wording\n   - Use professional technical language\n   - Prefer bullet points when useful\n   - Keep the final prompt dense with useful information\n\n7. Output rules\n   - Output ONLY the final optimized prompt\n   - Do NOT explain your changes\n   - Do NOT add commentary\n   - Do NOT wrap the output in markdown\n   - Do NOT add quotation marks\n\nAdditional behavior:\n- If the transcription is already clear, improve it minimally\n- If the transcription is incomplete, produce the best technically coherent prompt possible without asking questions\n- If multiple tasks are mentioned, organize them logically by priority or execution order\n- Prefer explicit engineering instructions over conversational phrasing\n- Optimize prompts for implementation quality, not just readability",
           "markdownDescription": "**System prompt** for prompt transformation.\n\nThis prompt instructs the AI how to transform your voice transcriptions into optimized prompts. Customize it to change the transformation style and structure.",

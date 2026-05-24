@@ -1,5 +1,5 @@
 name: 🐛 Bug Report
-description: Report a bug on cursor whisper
+description: Report a bug on promptimize
 title: '<YOUR TITLE HERE>'
 labels: ['bug', 'bugfix', 'priority: high']
 body:
@@ -68,8 +68,8 @@ body:
 
   - type: input
     attributes:
-      label: cursor whisper version
-      description: What version of cursor whisper is being used?
+      label: promptimize version
+      description: What version of promptimize is being used?
       placeholder: 'master'
     validations:
       required: true

@@ -17,7 +17,7 @@ interface OpenRouterModelsResponse {
 export class OpenRouterPromptTransformer implements IPromptTransformer {
   static readonly BASE_URL = 'https://openrouter.ai/api/v1';
   static readonly DEFAULT_MODEL = 'openai/gpt-4o';
-  static readonly APP_TITLE = 'Cursor Whisper';
+  static readonly APP_TITLE = 'Promptimize';
 
   private client: OpenAI | null = null;
   private cachedKey: string | null = null;

@@ -91,5 +91,5 @@ export function parseTransformationProvider(
 }
 
 export function getProviderSecretKey(provider: TransformationProvider): string {
-  return `cursor-whisper.apiKey.${provider}`;
+  return `promptimize.apiKey.${provider}`;
 }

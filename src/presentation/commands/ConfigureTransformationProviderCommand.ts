@@ -24,7 +24,7 @@ export function registerConfigureTransformationProviderCommand(
   logger: ILogger
 ): vscode.Disposable {
   return vscode.commands.registerCommand(
-    'cursor-whisper.configureTransformationProvider',
+    'promptimize.configureTransformationProvider',
     async () => {
       const config = await configRepo.getConfig();
 
@@ -100,7 +100,7 @@ export function registerConfigureTransformationProviderCommand(
         )
         .then(async selection => {
           if (selection === 'Test Optimization') {
-            await vscode.commands.executeCommand('cursor-whisper.testTransformation');
+            await vscode.commands.executeCommand('promptimize.testTransformation');
           } else if (selection === 'Learn About Providers') {
             await vscode.env.openExternal(
               vscode.Uri.parse(

@@ -27,7 +27,7 @@ describe('TransformationProvider', () => {
 
   it('generates provider-specific secret keys', () => {
     expect(getProviderSecretKey(TransformationProvider.Anthropic)).toBe(
-      'cursor-whisper.apiKey.anthropic'
+      'promptimize.apiKey.anthropic'
     );
   });
 

@@ -14,7 +14,7 @@ export function registerOpenConfigurationPanelCommand(
   promptTransformer: IPromptTransformer,
   logger: ILogger
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('cursor-whisper.openConfigurationPanel', () => {
+  return vscode.commands.registerCommand('promptimize.openConfigurationPanel', () => {
     ConfigurationPanel.render(
       context,
       configRepo,

@@ -98,7 +98,7 @@ export class OpenAIPromptTransformer implements IPromptTransformer {
       if (error instanceof OpenAI.APIError) {
         if (error.status === 404 || error.code === 'model_not_found') {
           throw new TransformationError(
-            `Model '${model}' is not available for your API key. Use "Cursor Whisper: Configure Model" to choose another model.`,
+            `Model '${model}' is not available for your API key. Use "Promptimize: Configure Model" to choose another model.`,
             error
           );
         }

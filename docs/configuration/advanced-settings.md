@@ -1,12 +1,12 @@
 # Advanced Settings
 
-Settings available in VS Code Settings (`Cmd/Ctrl+,` → search **Cursor Whisper**) that are not exposed in the configuration webview, plus details on planned settings and test output.
+Settings available in VS Code Settings (`Cmd/Ctrl+,` → search **Promptimize**) that are not exposed in the configuration webview, plus details on planned settings and test output.
 
 ---
 
 ## Transcription
 
-### `cursorWhisper.transcriptionLanguage`
+### `promptimize.transcriptionLanguage`
 
 | | |
 |---|---|
@@ -19,13 +19,13 @@ When set to `auto`, Whisper auto-detects the spoken language.
 
 ```json
 {
-  "cursorWhisper.transcriptionLanguage": "en"
+  "promptimize.transcriptionLanguage": "en"
 }
 ```
 
 ---
 
-### `cursorWhisper.transcriptionHint`
+### `promptimize.transcriptionHint`
 
 | | |
 |---|---|
@@ -39,7 +39,7 @@ Optional hint text to improve Whisper accuracy for domain-specific vocabulary, a
 
 ```json
 {
-  "cursorWhisper.transcriptionHint": "Kubernetes, Helm, ArgoCD, TypeScript, NestJS"
+  "promptimize.transcriptionHint": "Kubernetes, Helm, ArgoCD, TypeScript, NestJS"
 }
 ```
 
@@ -53,7 +53,7 @@ Optional hint text to improve Whisper accuracy for domain-specific vocabulary, a
 
 ## Transformation
 
-### `cursorWhisper.transformationSystemPrompt`
+### `promptimize.transformationSystemPrompt`
 
 | | |
 |---|---|
@@ -108,9 +108,9 @@ These settings appear in VS Code Settings and are loaded by the extension, but *
 
 | Setting | Default | Planned behavior |
 |---------|---------|------------------|
-| `cursorWhisper.audioQuality` | `high` | Adjust recording sample rate / encoding |
-| `cursorWhisper.maxRecordingDuration` | `120` | Auto-stop recording after N seconds |
-| `cursorWhisper.showNotifications` | `true` | Suppress progress toasts when `false` |
+| `promptimize.audioQuality` | `high` | Adjust recording sample rate / encoding |
+| `promptimize.maxRecordingDuration` | `120` | Auto-stop recording after N seconds |
+| `promptimize.showNotifications` | `true` | Suppress progress toasts when `false` |
 
 **Current behavior:**
 
@@ -124,7 +124,7 @@ Configure these in Settings for forward compatibility; they will take effect in 
 
 ## Test Configuration Output
 
-**Cursor Whisper: Test Configuration** validates Whisper and optimization, then opens a **Configuration Test Result** webview when optimization succeeds.
+**Promptimize: Test Configuration** validates Whisper and optimization, then opens a **Configuration Test Result** webview when optimization succeeds.
 
 ### Webview contents
 
