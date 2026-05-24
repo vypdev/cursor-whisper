@@ -34,6 +34,8 @@ Requirements:
 | Google Gemini | Cost-effective cloud alternative |
 | Azure OpenAI | Enterprise deployments on Azure |
 | Ollama | Local/offline inference |
+| OpenCode | Local multi-provider gateway via opencode-llm-proxy |
+| OpenRouter | Cloud gateway to 200+ models with one API key |
 
 Key aspects:
 
@@ -78,7 +80,7 @@ Key aspects:
 
 ### Negative
 
-- Increased codebase complexity (5 provider adapters)
+- Increased codebase complexity (7 provider adapters)
 - More configuration surface area for users
 - Quality and latency vary by provider
 - Additional SDK dependencies to maintain
@@ -96,6 +98,7 @@ Key aspects:
 - Factory: `src/infrastructure/transformation/PromptTransformerFactory.ts`
 - Value object: `src/domain/value-objects/TransformationProvider.ts`
 - Config: `cursorWhisper.transformationProvider` and provider-specific model settings
+- OpenCode and OpenRouter use the OpenAI SDK with custom `baseURL` (OpenAI-compatible APIs)
 - Commands: `cursor-whisper.configureTransformationProvider`, `cursor-whisper.testTransformation`
 
 ---

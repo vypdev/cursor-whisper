@@ -142,14 +142,18 @@
             "anthropic",
             "google",
             "azure",
-            "ollama"
+            "ollama",
+            "opencode",
+            "openrouter"
           ],
           "enumDescriptions": [
             "OpenAI GPT models (requires OpenAI API key; can reuse Whisper key)",
             "Anthropic Claude models (requires Anthropic API key)",
             "Google Gemini models (requires Google AI API key)",
             "Azure OpenAI deployments (requires Azure API key and endpoint)",
-            "Local Ollama models (no API key required)"
+            "Local Ollama models (no API key required)",
+            "Local OpenCode multi-provider proxy via opencode-llm-proxy (no API key required)",
+            "OpenRouter unified gateway (requires OpenRouter API key)"
           ],
           "markdownDescription": "**Prompt optimization provider** (separate from Whisper transcription).\n\nWhisper always uses OpenAI. This setting chooses which AI service optimizes transcribed speech into structured prompts. [Configuration guide](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/README.md)"
         },
@@ -213,6 +217,21 @@
           "type": "string",
           "default": "llama3.1:8b",
           "markdownDescription": "**Ollama model name/tag** for local prompt optimization."
+        },
+        "cursorWhisper.openCodeBaseUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:4010/v1",
+          "markdownDescription": "**OpenCode LLM proxy base URL** for prompt optimization when `transformationProvider` is `opencode`."
+        },
+        "cursorWhisper.openCodeModel": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "**OpenCode model identifier** (provider/model format) for prompt optimization when `transformationProvider` is `opencode`."
+        },
+        "cursorWhisper.openRouterModel": {
+          "type": "string",
+          "default": "openai/gpt-4o",
+          "markdownDescription": "**OpenRouter model identifier** for prompt optimization when `transformationProvider` is `openrouter`. Requires an OpenRouter API key."
         },
         "cursorWhisper.audioQuality": {
           "type": "string",

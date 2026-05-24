@@ -60,6 +60,8 @@ Or run **Cursor Whisper: Configure Prompt Optimization Provider**.
 | Google Gemini | ~$0.001 | Very Fast | Cloud | Good | Cost-sensitive usage |
 | Azure OpenAI | Varies | Fast | Private Cloud | High | Enterprise deployments |
 | Ollama | Free | Medium | Local | Good | Privacy-first, offline |
+| OpenCode | Free | Medium | Local | High | Reuse OpenCode multi-provider setup |
+| OpenRouter | Varies | Fast | Cloud | High | 200+ models with one API key |
 
 \*Plus Whisper transcription cost (~$0.006/min, always OpenAI)
 
@@ -152,6 +154,46 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 **Recommended models:** `llama3.1:8b` (default), `mistral:latest`, `codellama:latest`
 
 **Troubleshooting:** Confirm Ollama is reachable at the configured base URL. Run `ollama pull <model-name>` if the model is missing. Whisper still sends audio to OpenAI — only optimization runs locally.
+
+---
+
+### Option F: OpenCode (local multi-provider)
+
+```json
+{
+  "cursorWhisper.transformationProvider": "opencode",
+  "cursorWhisper.openCodeBaseUrl": "http://127.0.0.1:4010/v1",
+  "cursorWhisper.openCodeModel": "anthropic/claude-sonnet-4-5"
+}
+```
+
+**Setup:**
+
+1. Install [OpenCode](https://opencode.ai/) and configure providers in `~/.config/opencode/opencode.json`
+2. Install the [opencode-llm-proxy](https://github.com/KochC/opencode-llm-proxy) plugin: `opencode plugin add opencode-llm-proxy`
+3. Start OpenCode (the proxy listens on `http://127.0.0.1:4010/v1` by default)
+4. Run **Configure Prompt Optimization Provider**, select OpenCode, set the base URL, and pick a model
+
+**Notes:** OpenCode acts as a local gateway to providers you have already configured (Anthropic, OpenAI, Ollama, GitHub Copilot, etc.). Model IDs use `provider/model` format (e.g. `ollama/qwen2.5-coder`). Optional proxy authentication token is stored in SecretStorage if `OPENCODE_LLM_PROXY_TOKEN` is enabled.
+
+**Troubleshooting:** Ensure opencode-llm-proxy is running and reachable. List available models with `GET http://127.0.0.1:4010/v1/models`.
+
+---
+
+### Option G: OpenRouter
+
+```json
+{
+  "cursorWhisper.transformationProvider": "openrouter",
+  "cursorWhisper.openRouterModel": "openai/gpt-4o"
+}
+```
+
+**Setup:** Configure OpenAI for Whisper first. Get an API key from [OpenRouter](https://openrouter.ai/settings/keys). Run **Configure Prompt Optimization Provider**, select OpenRouter, enter your key, and choose a model.
+
+**Recommended models:** `openai/gpt-4o` (default), `anthropic/claude-3.5-sonnet`, `google/gemini-2.0-flash-001`
+
+**Pitfalls:** OpenRouter only handles optimization — Whisper still needs OpenAI. Ensure your OpenRouter account has sufficient credits.
 
 ---
 

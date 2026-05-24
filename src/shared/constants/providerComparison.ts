@@ -57,6 +57,23 @@ export const PROVIDER_COMPARISON: ProviderComparisonEntry[] = [
     quality: 'Good',
     bestFor: 'Privacy-first or offline use (no API key)',
   },
+  {
+    provider: TransformationProvider.OpenCode,
+    costPerTransform: 'Free (local compute)',
+    speed: 'Medium',
+    privacy: 'Local',
+    quality: 'High',
+    bestFor: 'Reuse OpenCode provider setup (Anthropic, OpenAI, Ollama, etc.)',
+  },
+  {
+    provider: TransformationProvider.OpenRouter,
+    costPerTransform: 'Varies by model',
+    speed: 'Fast',
+    privacy: 'Cloud',
+    quality: 'High',
+    bestFor: 'Access 200+ models with one API key',
+    apiKeyUrl: 'https://openrouter.ai/settings/keys',
+  },
 ];
 
 export function formatProviderComparisonSummary(): string {

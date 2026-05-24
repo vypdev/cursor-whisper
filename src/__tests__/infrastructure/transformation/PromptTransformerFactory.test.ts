@@ -4,6 +4,8 @@ import { AnthropicPromptTransformer } from '../../../infrastructure/transformati
 import { GooglePromptTransformer } from '../../../infrastructure/transformation/GooglePromptTransformer';
 import { AzureOpenAIPromptTransformer } from '../../../infrastructure/transformation/AzureOpenAIPromptTransformer';
 import { OllamaPromptTransformer } from '../../../infrastructure/transformation/OllamaPromptTransformer';
+import { OpenCodePromptTransformer } from '../../../infrastructure/transformation/OpenCodePromptTransformer';
+import { OpenRouterPromptTransformer } from '../../../infrastructure/transformation/OpenRouterPromptTransformer';
 import { TransformationProvider } from '../../../domain/value-objects/TransformationProvider';
 import { IConfigRepository, Config } from '../../../application/ports/IConfigRepository';
 import { createMockLogger } from '../../helpers/mockLogger';
@@ -20,6 +22,9 @@ const baseConfig: Config = {
   azureDeployment: 'gpt-4o',
   ollamaBaseUrl: 'http://localhost:11434',
   ollamaModel: 'llama3.1:8b',
+  openCodeBaseUrl: 'http://127.0.0.1:4010/v1',
+  openCodeModel: 'anthropic/claude-sonnet-4-5',
+  openRouterModel: 'openai/gpt-4o',
   audioQuality: 'high',
   maxRecordingDuration: 120,
   showNotifications: true,
@@ -33,7 +38,10 @@ function createConfigRepo(overrides: Partial<Config> = {}): IConfigRepository {
     getConfig: jest.fn(async () => config),
     updateConfig: jest.fn(async () => undefined),
     getProviderApiKey: jest.fn(async provider => {
-      if (provider === TransformationProvider.Ollama) {
+      if (
+        provider === TransformationProvider.Ollama ||
+        provider === TransformationProvider.OpenCode
+      ) {
         return undefined;
       }
       return 'test-api-key';
@@ -67,6 +75,12 @@ describe('PromptTransformerFactory', () => {
     expect(await factory.createForProvider(TransformationProvider.Ollama)).toBeInstanceOf(
       OllamaPromptTransformer
     );
+    expect(await factory.createForProvider(TransformationProvider.OpenCode)).toBeInstanceOf(
+      OpenCodePromptTransformer
+    );
+    expect(await factory.createForProvider(TransformationProvider.OpenRouter)).toBeInstanceOf(
+      OpenRouterPromptTransformer
+    );
   });
 
   it('validates missing API keys', async () => {
@@ -87,5 +101,24 @@ describe('PromptTransformerFactory', () => {
 
     const error = await factory.validateProvider(TransformationProvider.Azure);
     expect(error).toContain('endpoint');
+  });
+
+  it('validates OpenCode configuration', async () => {
+    jest.spyOn(OpenCodePromptTransformer, 'isAvailable').mockResolvedValueOnce(false);
+
+    const factory = new PromptTransformerFactory(createConfigRepo(), logger);
+    const error = await factory.validateProvider(TransformationProvider.OpenCode);
+
+    expect(error).toContain('OpenCode proxy is not reachable');
+  });
+
+  it('validates missing OpenCode model', async () => {
+    const factory = new PromptTransformerFactory(
+      createConfigRepo({ openCodeModel: '' }),
+      logger
+    );
+    const error = await factory.validateProvider(TransformationProvider.OpenCode);
+
+    expect(error).toContain('OpenCode model is not configured');
   });
 });

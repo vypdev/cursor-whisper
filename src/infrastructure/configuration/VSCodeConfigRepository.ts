@@ -8,6 +8,7 @@ import {
   PROVIDER_METADATA,
 } from '../../domain/value-objects/TransformationProvider';
 import { TRANSFORMATION_SYSTEM_PROMPT } from '../transformation/transformationUtils';
+import { OpenCodePromptTransformer } from '../transformation/OpenCodePromptTransformer';
 
 export class VSCodeConfigRepository implements IConfigRepository {
   private static readonly SECTION = 'cursorWhisper';
@@ -60,6 +61,18 @@ export class VSCodeConfigRepository implements IConfigRepository {
       ollamaModel: config.get<string>(
         'ollamaModel',
         PROVIDER_METADATA[TransformationProvider.Ollama].defaultModel
+      ),
+      openCodeBaseUrl: config.get<string>(
+        'openCodeBaseUrl',
+        OpenCodePromptTransformer.DEFAULT_BASE_URL
+      ),
+      openCodeModel: config.get<string>(
+        'openCodeModel',
+        PROVIDER_METADATA[TransformationProvider.OpenCode].defaultModel
+      ),
+      openRouterModel: config.get<string>(
+        'openRouterModel',
+        PROVIDER_METADATA[TransformationProvider.OpenRouter].defaultModel
       ),
       audioQuality: config.get<'low' | 'medium' | 'high'>('audioQuality', 'high'),
       maxRecordingDuration: config.get<number>('maxRecordingDuration', 120),
@@ -139,6 +152,9 @@ export class VSCodeConfigRepository implements IConfigRepository {
       'azureDeployment',
       'ollamaBaseUrl',
       'ollamaModel',
+      'openCodeBaseUrl',
+      'openCodeModel',
+      'openRouterModel',
       'transformationSystemPrompt',
     ];
 

@@ -7,6 +7,8 @@ import { IPromptTransformer } from '../../application/ports/IPromptTransformer';
 import { PromptTransformerFactory } from '../../infrastructure/transformation/PromptTransformerFactory';
 import { OpenAIModelService } from '../../infrastructure/openai/OpenAIModelService';
 import { OllamaPromptTransformer } from '../../infrastructure/transformation/OllamaPromptTransformer';
+import { OpenCodePromptTransformer } from '../../infrastructure/transformation/OpenCodePromptTransformer';
+import { OpenRouterPromptTransformer } from '../../infrastructure/transformation/OpenRouterPromptTransformer';
 import {
   TransformationProvider,
   PROVIDER_METADATA,
@@ -58,6 +60,7 @@ export interface ConfigurationWebviewState {
   azureEndpoint: string;
   azureDeployment: string;
   ollamaBaseUrl: string;
+  openCodeBaseUrl: string;
   providerApiKeyMasked: string;
   providerConfigured: boolean;
   setupCompleted: boolean;
@@ -76,6 +79,7 @@ type WebviewToExtensionMessage =
       azureEndpoint?: string;
       azureDeployment?: string;
       ollamaBaseUrl?: string;
+      openCodeBaseUrl?: string;
       model?: string;
     }
   | { type: 'getModels'; provider: string }
@@ -115,6 +119,10 @@ function getModelForProvider(
       return config.azureDeployment;
     case TransformationProvider.Ollama:
       return config.ollamaModel;
+    case TransformationProvider.OpenCode:
+      return config.openCodeModel;
+    case TransformationProvider.OpenRouter:
+      return config.openRouterModel;
   }
 }
 
@@ -293,6 +301,9 @@ export class ConfigurationPanel {
     if (provider === TransformationProvider.Ollama) {
       providerConfigured = Boolean(config.ollamaBaseUrl.trim() && config.ollamaModel.trim());
     }
+    if (provider === TransformationProvider.OpenCode) {
+      providerConfigured = Boolean(config.openCodeBaseUrl.trim() && config.openCodeModel.trim());
+    }
 
     return {
       whisperConfigured: Boolean(openAiKey),
@@ -317,6 +328,7 @@ export class ConfigurationPanel {
       azureEndpoint: config.azureEndpoint,
       azureDeployment: config.azureDeployment,
       ollamaBaseUrl: config.ollamaBaseUrl,
+      openCodeBaseUrl: config.openCodeBaseUrl,
       providerApiKeyMasked: maskApiKey(typeof providerKey === 'string' ? providerKey : undefined),
       providerConfigured,
       setupCompleted: this._isSetupCompleted(),
@@ -438,6 +450,9 @@ export class ConfigurationPanel {
     if (settings.ollamaBaseUrl !== undefined) {
       updates.ollamaBaseUrl = settings.ollamaBaseUrl;
     }
+    if (settings.openCodeBaseUrl !== undefined) {
+      updates.openCodeBaseUrl = settings.openCodeBaseUrl;
+    }
 
     if (settings.model) {
       switch (provider) {
@@ -455,6 +470,12 @@ export class ConfigurationPanel {
           break;
         case TransformationProvider.Ollama:
           updates.ollamaModel = settings.model;
+          break;
+        case TransformationProvider.OpenCode:
+          updates.openCodeModel = settings.model;
+          break;
+        case TransformationProvider.OpenRouter:
+          updates.openRouterModel = settings.model;
           break;
       }
     }
@@ -518,6 +539,30 @@ export class ConfigurationPanel {
         }
         const models = await OllamaPromptTransformer.listModels(baseUrl);
         return models.length > 0 ? models : [config.ollamaModel || OllamaPromptTransformer.DEFAULT_MODEL];
+      }
+      case TransformationProvider.OpenCode: {
+        const baseUrl = config.openCodeBaseUrl || OpenCodePromptTransformer.DEFAULT_BASE_URL;
+        const apiKey = await this.configRepo.getProviderApiKey(TransformationProvider.OpenCode);
+        const available = await OpenCodePromptTransformer.isAvailable(baseUrl, apiKey);
+        if (!available) {
+          throw new Error('OpenCode proxy is not reachable. Check the base URL.');
+        }
+        const models = await OpenCodePromptTransformer.listModels(baseUrl, apiKey);
+        return models.length > 0
+          ? models
+          : config.openCodeModel
+            ? [config.openCodeModel]
+            : [];
+      }
+      case TransformationProvider.OpenRouter: {
+        const apiKey = await this.configRepo.getProviderApiKey(TransformationProvider.OpenRouter);
+        if (!apiKey) {
+          throw new Error('OpenRouter API key is not configured.');
+        }
+        const models = await OpenRouterPromptTransformer.listModels(apiKey);
+        return models.length > 0
+          ? models
+          : [config.openRouterModel || OpenRouterPromptTransformer.DEFAULT_MODEL];
       }
       default:
         return [];

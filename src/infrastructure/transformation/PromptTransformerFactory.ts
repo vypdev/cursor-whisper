@@ -12,6 +12,8 @@ import { AnthropicPromptTransformer } from './AnthropicPromptTransformer';
 import { GooglePromptTransformer } from './GooglePromptTransformer';
 import { AzureOpenAIPromptTransformer } from './AzureOpenAIPromptTransformer';
 import { OllamaPromptTransformer } from './OllamaPromptTransformer';
+import { OpenCodePromptTransformer } from './OpenCodePromptTransformer';
+import { OpenRouterPromptTransformer } from './OpenRouterPromptTransformer';
 import { TransformationError, getSystemPrompt } from './transformationUtils';
 
 export class PromptTransformerFactory implements ITransformationProviderValidator {
@@ -81,6 +83,28 @@ export class PromptTransformerFactory implements ITransformationProviderValidato
           this.logger
         );
 
+      case TransformationProvider.OpenCode:
+        return new OpenCodePromptTransformer(
+          async () => {
+            const config = await this.configRepo.getConfig();
+            return {
+              baseUrl: config.openCodeBaseUrl,
+              model: config.openCodeModel,
+            };
+          },
+          () => this.configRepo.getProviderApiKey(TransformationProvider.OpenCode),
+          resolveSystemPrompt,
+          this.logger
+        );
+
+      case TransformationProvider.OpenRouter:
+        return new OpenRouterPromptTransformer(
+          () => this.configRepo.getProviderApiKey(TransformationProvider.OpenRouter),
+          () => this.configRepo.getConfig().then(c => c.openRouterModel),
+          resolveSystemPrompt,
+          this.logger
+        );
+
       default: {
         const exhaustiveCheck: never = provider;
         throw new TransformationError(
@@ -116,6 +140,24 @@ export class PromptTransformerFactory implements ITransformationProviderValidato
       );
       if (!available) {
         return 'Ollama server is not reachable. Ensure Ollama is running locally.';
+      }
+    }
+
+    if (provider === TransformationProvider.OpenCode) {
+      const config = await this.configRepo.getConfig();
+      if (!config.openCodeBaseUrl.trim()) {
+        return 'OpenCode proxy base URL is not configured.';
+      }
+      if (!config.openCodeModel.trim()) {
+        return 'OpenCode model is not configured.';
+      }
+      const apiKey = await this.configRepo.getProviderApiKey(TransformationProvider.OpenCode);
+      const available = await OpenCodePromptTransformer.isAvailable(
+        config.openCodeBaseUrl,
+        apiKey
+      );
+      if (!available) {
+        return 'OpenCode proxy is not reachable. Ensure opencode-llm-proxy is installed and running.';
       }
     }
 

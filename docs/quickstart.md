@@ -9,7 +9,7 @@ Get Cursor Whisper running in a few minutes.
 Cursor Whisper has **two separate services**:
 
 1. **Voice-to-text (required)** — Always uses **OpenAI Whisper**. Requires an **OpenAI API key**.
-2. **Prompt optimization (optional)** — Converts transcribed speech into structured prompts. You choose the provider (OpenAI, Anthropic, Google, Azure, or Ollama) and supply credentials when required.
+2. **Prompt optimization (optional)** — Converts transcribed speech into structured prompts. You choose the provider (OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, or OpenRouter) and supply credentials when required.
 
 ```mermaid
 graph LR
@@ -53,7 +53,7 @@ On first launch, Cursor Whisper opens the **Setup Wizard**. You can also run it 
    - Get a key: https://platform.openai.com/api-keys
 3. **Test OpenAI connection** — Verifies your key works
 4. **Enable optimization?** — Choose yes or transcription-only mode
-5. **Select provider** (if enabled) — OpenAI, Anthropic, Google, Azure, or Ollama
+5. **Select provider** (if enabled) — OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, or OpenRouter
 6. **Provider credentials** — Enter API key or endpoint when required
 7. **Select model** — Pick the model for optimization
 8. **Test optimization** — Optional validation before finishing
@@ -116,7 +116,7 @@ Tooltip shows: `Transcription: OpenAI Whisper | Optimization: [Provider]`
 
 ### Optimization provider errors
 
-- Each provider needs its own API key (except Ollama)
+- Each provider needs its own API key (except Ollama and OpenCode)
 - OpenAI for Whisper and OpenAI for optimization can use the **same key**
 - Run **Cursor Whisper: Configure Prompt Optimization Provider**
 

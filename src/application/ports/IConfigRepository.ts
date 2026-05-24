@@ -58,6 +58,21 @@ export interface Config {
   ollamaModel: string;
 
   /**
+   * OpenCode LLM proxy base URL.
+   */
+  openCodeBaseUrl: string;
+
+  /**
+   * OpenCode model identifier (provider/model format).
+   */
+  openCodeModel: string;
+
+  /**
+   * OpenRouter model identifier.
+   */
+  openRouterModel: string;
+
+  /**
    * Audio recording quality ('low' | 'medium' | 'high').
    */
   audioQuality: 'low' | 'medium' | 'high';

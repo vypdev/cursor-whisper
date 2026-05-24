@@ -4,6 +4,8 @@ export enum TransformationProvider {
   Google = 'google',
   Azure = 'azure',
   Ollama = 'ollama',
+  OpenCode = 'opencode',
+  OpenRouter = 'openrouter',
 }
 
 export interface ProviderMetadata {
@@ -49,6 +51,20 @@ export const PROVIDER_METADATA: Record<TransformationProvider, ProviderMetadata>
     description: 'Local LLMs via Ollama (Llama, Mistral, etc.)',
     requiresApiKey: false,
     defaultModel: 'llama3.1:8b',
+  },
+  [TransformationProvider.OpenCode]: {
+    id: TransformationProvider.OpenCode,
+    displayName: 'OpenCode (Local Multi-Provider)',
+    description: 'Local OpenCode instance via opencode-llm-proxy (Anthropic, OpenAI, Ollama, etc.)',
+    requiresApiKey: false,
+    defaultModel: '',
+  },
+  [TransformationProvider.OpenRouter]: {
+    id: TransformationProvider.OpenRouter,
+    displayName: 'OpenRouter',
+    description: 'Unified gateway to 200+ models from multiple providers',
+    requiresApiKey: true,
+    defaultModel: 'openai/gpt-4o',
   },
 };
 

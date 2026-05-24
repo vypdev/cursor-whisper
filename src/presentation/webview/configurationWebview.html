@@ -76,6 +76,12 @@
             </vscode-text-field>
           </div>
 
+          <div id="openCodeFields" class="field-stack hidden">
+            <vscode-text-field id="openCodeBaseUrl" placeholder="http://127.0.0.1:4010/v1">
+              OpenCode Proxy Base URL
+            </vscode-text-field>
+          </div>
+
           <div class="field-row">
             <vscode-dropdown id="modelSelect">
               <span slot="label">Model</span>
@@ -170,6 +176,8 @@
       azureDeployment: document.getElementById('azureDeployment'),
       ollamaFields: document.getElementById('ollamaFields'),
       ollamaBaseUrl: document.getElementById('ollamaBaseUrl'),
+      openCodeFields: document.getElementById('openCodeFields'),
+      openCodeBaseUrl: document.getElementById('openCodeBaseUrl'),
       modelSelect: document.getElementById('modelSelect'),
       refreshModelsBtn: document.getElementById('refreshModelsBtn'),
       optimizationStatus: document.getElementById('optimizationStatus'),
@@ -393,6 +401,7 @@
       elements.providerApiKeyRow.classList.toggle('hidden', !providerMeta || !providerMeta.requiresApiKey);
       elements.azureFields.classList.toggle('hidden', provider !== 'azure');
       elements.ollamaFields.classList.toggle('hidden', provider !== 'ollama');
+      elements.openCodeFields.classList.toggle('hidden', provider !== 'opencode');
 
       if (providerMeta && providerMeta.requiresApiKey) {
         elements.providerApiKey.setAttribute('placeholder', providerMeta.displayName + ' API key');
@@ -451,6 +460,7 @@
         setFieldValue(requireElement('azureEndpoint'), state.azureEndpoint || '');
         setFieldValue(requireElement('azureDeployment'), state.azureDeployment || '');
         setFieldValue(requireElement('ollamaBaseUrl'), state.ollamaBaseUrl || 'http://localhost:11434');
+        setFieldValue(requireElement('openCodeBaseUrl'), state.openCodeBaseUrl || 'http://127.0.0.1:4010/v1');
         setFieldValue(requireElement('providerApiKey'), state.providerApiKeyMasked || '');
 
         updateProviderFields(state);
@@ -547,6 +557,15 @@
           sendMessage({
             type: 'saveProviderSettings',
             ollamaBaseUrl: elements.ollamaBaseUrl.value.trim(),
+          });
+        });
+      });
+
+      elements.openCodeBaseUrl.addEventListener('change', function () {
+        debounceSave('openCodeBaseUrl', function () {
+          sendMessage({
+            type: 'saveProviderSettings',
+            openCodeBaseUrl: elements.openCodeBaseUrl.value.trim(),
           });
         });
       });
@@ -765,6 +784,8 @@
           elements.openAiApiKey,
           elements.providerSelect,
           elements.enableOptimization,
+          elements.openCodeFields,
+          elements.openCodeBaseUrl,
         ];
 
         return Promise.all(

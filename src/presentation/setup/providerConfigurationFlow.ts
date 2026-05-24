@@ -7,6 +7,8 @@ import {
   OpenAIModelServiceError,
 } from '../../infrastructure/openai/OpenAIModelService';
 import { OllamaPromptTransformer } from '../../infrastructure/transformation/OllamaPromptTransformer';
+import { OpenCodePromptTransformer } from '../../infrastructure/transformation/OpenCodePromptTransformer';
+import { OpenRouterPromptTransformer } from '../../infrastructure/transformation/OpenRouterPromptTransformer';
 import {
   TransformationProvider,
   PROVIDER_METADATA,
@@ -190,6 +192,81 @@ export async function selectModelForProvider(
       });
     }
 
+    case TransformationProvider.OpenCode: {
+      const baseUrl = config.openCodeBaseUrl || OpenCodePromptTransformer.DEFAULT_BASE_URL;
+      const apiKey = await configRepo.getProviderApiKey(TransformationProvider.OpenCode);
+      const available = await OpenCodePromptTransformer.isAvailable(baseUrl, apiKey);
+
+      if (!available) {
+        await vscode.window.showWarningMessage(
+          'Cannot connect to OpenCode proxy. Ensure opencode-llm-proxy is installed and running.'
+        );
+      } else {
+        try {
+          const models = await OpenCodePromptTransformer.listModels(baseUrl, apiKey);
+          if (models.length > 0) {
+            const selection = await vscode.window.showQuickPick(
+              models.map(modelId => ({
+                label: modelId,
+                picked: modelId === config.openCodeModel,
+              })),
+              { placeHolder: 'Select an OpenCode model for prompt optimization' }
+            );
+            if (selection) {
+              return selection.label;
+            }
+          }
+        } catch (error) {
+          logger.warn('Failed to list OpenCode models', {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
+        }
+      }
+
+      return vscode.window.showInputBox({
+        prompt: 'Enter the OpenCode model identifier (provider/model format)',
+        value: config.openCodeModel,
+        placeHolder: 'anthropic/claude-sonnet-4-5',
+        validateInput: value => (value.trim() ? null : 'Model identifier is required'),
+      });
+    }
+
+    case TransformationProvider.OpenRouter: {
+      const apiKey = await configRepo.getProviderApiKey(TransformationProvider.OpenRouter);
+      if (!apiKey) {
+        await vscode.window.showWarningMessage(
+          'OpenRouter API key is required before selecting a model.'
+        );
+        return config.openRouterModel || OpenRouterPromptTransformer.DEFAULT_MODEL;
+      }
+
+      try {
+        const models = await OpenRouterPromptTransformer.listModels(apiKey);
+        if (models.length > 0) {
+          const currentModel = config.openRouterModel || OpenRouterPromptTransformer.DEFAULT_MODEL;
+          const selection = await vscode.window.showQuickPick(
+            models.map(modelId => ({
+              label: modelId,
+              picked: modelId === currentModel,
+            })),
+            { placeHolder: 'Select an OpenRouter model for prompt optimization' }
+          );
+          if (selection) {
+            return selection.label;
+          }
+        }
+      } catch (error) {
+        logger.warn('Failed to list OpenRouter models', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
+        await vscode.window.showWarningMessage(
+          'Could not load OpenRouter models. Check your API key and try again.'
+        );
+      }
+
+      return config.openRouterModel || OpenRouterPromptTransformer.DEFAULT_MODEL;
+    }
+
     default:
       return undefined;
   }
@@ -224,6 +301,42 @@ export async function configureProviderSpecificSettings(
 
     if (baseUrl) {
       await configRepo.updateConfig({ ollamaBaseUrl: baseUrl.trim() });
+    }
+  }
+
+  if (provider === TransformationProvider.OpenCode) {
+    const config = await configRepo.getConfig();
+    const baseUrl = await vscode.window.showInputBox({
+      prompt: 'Enter your OpenCode LLM proxy base URL',
+      value: config.openCodeBaseUrl,
+      placeHolder: OpenCodePromptTransformer.DEFAULT_BASE_URL,
+      validateInput: value => (value.trim() ? null : 'Base URL is required'),
+    });
+
+    if (baseUrl) {
+      await configRepo.updateConfig({ openCodeBaseUrl: baseUrl.trim() });
+    }
+
+    const authChoice = await vscode.window.showQuickPick(
+      [
+        { label: 'Skip authentication', value: 'skip' as const },
+        { label: 'Set proxy authentication token', value: 'token' as const },
+      ],
+      { placeHolder: 'OpenCode proxy authentication (optional)' }
+    );
+
+    if (authChoice?.value === 'token') {
+      const existingKey = await configRepo.getProviderApiKey(TransformationProvider.OpenCode);
+      const token = await vscode.window.showInputBox({
+        prompt: 'Enter your OpenCode proxy authentication token (OPENCODE_LLM_PROXY_TOKEN)',
+        value: existingKey,
+        password: true,
+        validateInput: value => (value.trim() ? null : 'Token cannot be empty'),
+      });
+
+      if (token) {
+        await configRepo.setProviderApiKey(TransformationProvider.OpenCode, token.trim());
+      }
     }
   }
 }
@@ -294,6 +407,12 @@ export async function applyProviderConfiguration(
         break;
       case TransformationProvider.Ollama:
         updates.ollamaModel = selectedModel;
+        break;
+      case TransformationProvider.OpenCode:
+        updates.openCodeModel = selectedModel;
+        break;
+      case TransformationProvider.OpenRouter:
+        updates.openRouterModel = selectedModel;
         break;
     }
   }

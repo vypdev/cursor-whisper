@@ -10,6 +10,8 @@ describe('TransformationProvider', () => {
   it('parses valid provider values', () => {
     expect(parseTransformationProvider('anthropic')).toBe(TransformationProvider.Anthropic);
     expect(parseTransformationProvider('ollama')).toBe(TransformationProvider.Ollama);
+    expect(parseTransformationProvider('opencode')).toBe(TransformationProvider.OpenCode);
+    expect(parseTransformationProvider('openrouter')).toBe(TransformationProvider.OpenRouter);
   });
 
   it('falls back to OpenAI for invalid values', () => {
