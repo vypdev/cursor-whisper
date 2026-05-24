@@ -23,9 +23,14 @@ body:
       label: Which actions are affected?
       multiple: true
       options:
-        - Issue
-        - Pull Request
-        - Commits
+        - Audio recording / microphone
+        - Transcription (Whisper)
+        - Prompt optimization
+        - Text insertion (editor / chat)
+        - Configuration / setup wizard
+        - Configuration panel (webview)
+        - Keyboard shortcuts / commands
+        - Other
 
   - type: dropdown
     id: platforms
@@ -36,6 +41,8 @@ body:
         - macOS
         - Windows
         - Linux
+        - VS Code
+        - Cursor
 
   - type: markdown
     attributes:
