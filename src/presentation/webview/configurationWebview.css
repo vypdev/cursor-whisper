@@ -129,8 +129,10 @@ body {
   background: var(--vscode-editor-inactiveSelectionBackground);
 }
 
-.comparison-toggle {
-  margin-bottom: 12px;
+.realtime-badge {
+  color: var(--vscode-testing-iconPassed);
+  font-size: 0.8em;
+  margin-left: 4px;
 }
 
 .footer-actions {

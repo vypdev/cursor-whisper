@@ -307,7 +307,8 @@
     "@kstonekuan/audio-capture": "^0.0.3",
     "@vscode/webview-ui-toolkit": "1.4.0",
     "axios": "^1.7.9",
-    "openai": "^4.20.0"
+    "openai": "^4.20.0",
+    "token-costs": "^3.5.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",

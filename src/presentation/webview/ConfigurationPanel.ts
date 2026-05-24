@@ -17,6 +17,7 @@ import {
 } from '../../domain/value-objects/TransformationProvider';
 import { ApiKey } from '../../domain/value-objects/ApiKey';
 import { PROVIDER_COMPARISON } from '../../shared/constants/providerComparison';
+import { ProviderPricingService } from '../../application/services/ProviderPricingService';
 import { getNonce } from '../../shared/utils/getNonce';
 import {
   applyProviderConfiguration,
@@ -55,6 +56,7 @@ export interface ConfigurationWebviewState {
     speed: string;
     privacy: string;
     bestFor: string;
+    isRealTime: boolean;
   }>;
   model: string;
   azureEndpoint: string;
@@ -128,6 +130,7 @@ function getModelForProvider(
 
 export class ConfigurationPanel {
   public static currentPanel: ConfigurationPanel | undefined;
+  private static readonly pricingService = new ProviderPricingService();
 
   private readonly _panel: vscode.WebviewPanel;
   private readonly _extensionUri: vscode.Uri;
@@ -314,13 +317,7 @@ export class ConfigurationPanel {
         requiresApiKey: meta.requiresApiKey,
         defaultModel: meta.defaultModel,
       })),
-      providerComparison: PROVIDER_COMPARISON.map(entry => ({
-        displayName: PROVIDER_METADATA[entry.provider].displayName,
-        costPerTransform: entry.costPerTransform,
-        speed: entry.speed,
-        privacy: entry.privacy,
-        bestFor: entry.bestFor,
-      })),
+      providerComparison: await this._getProviderComparisonData(),
       model: getModelForProvider(config, provider),
       azureEndpoint: config.azureEndpoint,
       azureDeployment: config.azureDeployment,
@@ -330,6 +327,33 @@ export class ConfigurationPanel {
       providerConfigured,
       transformationSystemPrompt: config.transformationSystemPrompt,
     };
+  }
+
+  private async _getProviderComparisonData(): Promise<ConfigurationWebviewState['providerComparison']> {
+    try {
+      const pricingData = await ConfigurationPanel.pricingService.getProviderComparison();
+      return pricingData.map(entry => ({
+        displayName: PROVIDER_METADATA[entry.provider].displayName,
+        costPerTransform: entry.costPerTransform,
+        speed: entry.speed,
+        privacy: entry.privacy,
+        bestFor: entry.bestFor,
+        isRealTime: entry.isRealTime,
+      }));
+    } catch (error) {
+      this.logger.warn('Failed to fetch provider pricing, using static data', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+
+      return PROVIDER_COMPARISON.map(entry => ({
+        displayName: PROVIDER_METADATA[entry.provider].displayName,
+        costPerTransform: entry.costPerTransform,
+        speed: entry.speed,
+        privacy: entry.privacy,
+        bestFor: entry.bestFor,
+        isRealTime: false,
+      }));
+    }
   }
 
   private async _sendConfigState(): Promise<void> {

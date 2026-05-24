@@ -16,7 +16,10 @@ module.exports = {
     '@cursor/sdk': 'commonjs @cursor/sdk',
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
+    alias: {
+      'token-costs': path.resolve(__dirname, 'node_modules/token-costs/dist/npm/index.js'),
+    },
   },
   module: {
     rules: [

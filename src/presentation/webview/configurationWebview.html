@@ -129,10 +129,10 @@
       <div class="section-header">
         <h2 id="comparison-heading">Provider Comparison</h2>
       </div>
-      <vscode-button id="toggleComparisonBtn" class="comparison-toggle" appearance="secondary">
-        Show provider comparison
-      </vscode-button>
-      <div id="comparisonContainer" class="hidden">
+      <p class="section-description">
+        Estimated cost per prompt optimization (~500 input + 200 output tokens). Cloud provider prices update daily when online.
+      </p>
+      <div id="comparisonContainer">
         <table class="comparison-table" id="comparisonTable">
           <thead>
             <tr>
@@ -185,7 +185,6 @@
       resetSystemPromptBtn: document.getElementById('resetSystemPromptBtn'),
       saveSystemPromptBtn: document.getElementById('saveSystemPromptBtn'),
       systemPromptStatus: document.getElementById('systemPromptStatus'),
-      toggleComparisonBtn: document.getElementById('toggleComparisonBtn'),
       comparisonContainer: document.getElementById('comparisonContainer'),
       comparisonBody: document.getElementById('comparisonBody'),
       openDocsBtn: document.getElementById('openDocsBtn'),
@@ -382,9 +381,13 @@
       elements.comparisonBody.innerHTML = '';
       comparison.forEach(function (entry) {
         const row = document.createElement('tr');
+        const costCell = entry.isRealTime
+          ? entry.costPerTransform + ' <span class="realtime-badge" title="Updated daily from token-costs">●</span>'
+          : entry.costPerTransform;
+
         row.innerHTML =
           '<td>' + entry.displayName + '</td>' +
-          '<td>' + entry.costPerTransform + '</td>' +
+          '<td>' + costCell + '</td>' +
           '<td>' + entry.speed + '</td>' +
           '<td>' + entry.privacy + '</td>' +
           '<td>' + entry.bestFor + '</td>';
@@ -595,14 +598,6 @@
 
       elements.resetSystemPromptBtn.addEventListener('click', function () {
         sendMessage({ type: 'resetSystemPrompt' });
-      });
-
-      elements.toggleComparisonBtn.addEventListener('click', function () {
-        const hidden = elements.comparisonContainer.classList.contains('hidden');
-        elements.comparisonContainer.classList.toggle('hidden', !hidden);
-        elements.toggleComparisonBtn.textContent = hidden
-          ? 'Hide provider comparison'
-          : 'Show provider comparison';
       });
 
       elements.openDocsBtn.addEventListener('click', function () {

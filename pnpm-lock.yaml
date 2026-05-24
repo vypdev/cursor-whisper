@@ -29,6 +29,9 @@ importers:
       openai:
         specifier: ^4.20.0
         version: 4.104.0(encoding@0.1.13)(zod@3.25.76)
+      token-costs:
+        specifier: ^3.5.0
+        version: 3.5.0
     devDependencies:
       '@types/jest':
         specifier: ^29.5.11
@@ -2662,6 +2665,10 @@ packages:
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
+
+  token-costs@3.5.0:
+    resolution: {integrity: sha512-mBMc8sv6BlqW22psMtBjWVli4Qmyeu2ratU2u5Zm7Sf9v2lSFDPYdcAzcW8iKy7YwWX+Dq6J5TA54vy7QudaAw==}
+    engines: {node: '>=20.0.0'}
 
   tr46@0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
@@ -5922,6 +5929,8 @@ snapshots:
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
+
+  token-costs@3.5.0: {}
 
   tr46@0.0.3: {}
 

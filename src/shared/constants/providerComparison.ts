@@ -1,5 +1,30 @@
 import { TransformationProvider } from '../../domain/value-objects/TransformationProvider';
 
+/**
+ * Provider cost comparison static fallback data.
+ *
+ * PRICING STRATEGY:
+ *
+ * 1. Primary source: token-costs npm package
+ *    - Fetches pricing from https://mikkotikkanen.github.io/token-costs/
+ *    - Daily updates at 00:01 UTC
+ *    - Covers: OpenAI, Anthropic, Google, OpenRouter
+ *    - 0 runtime dependencies, automatic caching in ProviderPricingService
+ *
+ * 2. Fallback: This static data
+ *    - Used when token-costs fetch fails (no internet, timeout, service down)
+ *    - Used for local/custom providers (Ollama, OpenCode, Azure, Cursor)
+ *    - Manually updated when major pricing changes occur
+ *
+ * ARCHITECTURE:
+ * - ProviderPricingService attempts token-costs fetch with 3s timeout
+ * - On success: Uses calculated per-transform cost (~500 input + 200 output tokens)
+ * - On failure: Falls back to these static values
+ * - Cache TTL: 1 hour
+ *
+ * Last manual update: 2026-05-24
+ * Sources: openai.com/api/pricing, anthropic.com/pricing, ai.google.dev/pricing
+ */
 export interface ProviderComparisonEntry {
   provider: TransformationProvider;
   costPerTransform: string;
