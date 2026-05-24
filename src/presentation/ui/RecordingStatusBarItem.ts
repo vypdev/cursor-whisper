@@ -25,19 +25,17 @@ export class RecordingStatusBarItem {
   constructor() {
     this.transcribeStatusBarItem = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Right,
-      101
+      1000
     );
     this.promptimizeStatusBarItem = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Right,
-      100
+      999
     );
     this.settingsStatusBarItem = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Right,
-      99
+      998
     );
-    this.settingsStatusBarItem.text = '$(gear)';
     this.settingsStatusBarItem.command = 'cursor-whisper.openConfigurationPanel';
-    this.settingsStatusBarItem.tooltip = 'Cursor Whisper configuration';
     this.updateUI();
     this.transcribeStatusBarItem.show();
     this.promptimizeStatusBarItem.show();
@@ -92,7 +90,16 @@ export class RecordingStatusBarItem {
     return 'Open Cursor Whisper configuration';
   }
 
+  private getSettingsText(): string {
+    if (this.setupChecklist.some(item => !item.complete)) {
+      return '$(warning) Setup';
+    }
+
+    return '$(gear) Settings';
+  }
+
   private updateUI(): void {
+    this.settingsStatusBarItem.text = this.getSettingsText();
     this.settingsStatusBarItem.tooltip = this.getSettingsTooltip();
 
     const sessionMode = getRecordingSessionMode();

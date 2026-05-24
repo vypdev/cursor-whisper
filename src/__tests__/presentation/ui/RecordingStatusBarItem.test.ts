@@ -28,7 +28,8 @@ describe('RecordingStatusBarItem', () => {
     expect(transcribeItem.command).toBe('cursor-whisper.startTranscribeRecording');
     expect(promptimizeItem.text).toBe('$(sparkle) Promptimize');
     expect(promptimizeItem.command).toBe('cursor-whisper.startPromptimizeRecording');
-    expect(settingsItem.text).toBe('$(gear)');
+    expect(settingsItem.text).toBe('$(gear) Settings');
+    expect(settingsItem.command).toBe('cursor-whisper.openConfigurationPanel');
     statusBar.dispose();
   });
 
@@ -82,6 +83,23 @@ describe('RecordingStatusBarItem', () => {
     expect(promptimizeItem.text).toBe('$(sparkle) Promptimize');
     expect(promptimizeItem.command).toBe('cursor-whisper.startPromptimizeRecording');
     expect(promptimizeItem.tooltip).toContain('Prompt optimization is disabled');
+    statusBar.dispose();
+  });
+
+  it('shows setup label when configuration checklist is incomplete', () => {
+    const statusBar = new RecordingStatusBarItem();
+    const settingsItem = getStatusBarItems()[2];
+
+    statusBar.setSetupState({
+      optimizationEnabled: true,
+      hasOpenAIKey: false,
+      setupChecklist: [
+        { label: 'OpenAI API key', complete: false },
+        { label: 'Optimization provider', complete: true },
+      ],
+    });
+
+    expect(settingsItem.text).toBe('$(warning) Setup');
     statusBar.dispose();
   });
 
