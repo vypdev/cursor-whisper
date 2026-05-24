@@ -257,7 +257,7 @@ export class ConfigurationPanel {
         break;
       case 'openDocs':
         await vscode.env.openExternal(
-          vscode.Uri.parse('https://github.com/vypdev/cursor-whisper/blob/main/docs/quickstart.md')
+          vscode.Uri.parse('https://github.com/vypdev/cursor-whisper/tree/master/docs')
         );
         break;
     }
@@ -591,11 +591,14 @@ export class ConfigurationPanel {
     await this.context.globalState.update(SETUP_WIZARD_GLOBAL_STATE_KEY, true);
     await this._panel.webview.postMessage({
       type: 'notification',
-      message: 'Setup complete! Press Cmd/Ctrl+Alt+V to start recording.',
+      message: 'Configuration saved! Press Cmd/Ctrl+Alt+V to start recording.',
       notificationKind: 'success',
     });
     await this._postConfigUpdated();
     this.logger.info('Configuration setup marked complete from webview panel');
+    
+    // Close the configuration panel
+    this.dispose();
   }
 
   private _isSetupCompleted(): boolean {

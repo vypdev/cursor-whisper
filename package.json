@@ -127,12 +127,12 @@
             "ko",
             "zh"
           ],
-          "markdownDescription": "**Transcription language** for OpenAI Whisper.\n\nWhisper transcription always uses your OpenAI API key. [Setup guide](https://github.com/vypdev/cursor-whisper/blob/main/docs/quickstart.md)"
+          "markdownDescription": "**Transcription language** for OpenAI Whisper.\n\nWhisper transcription always uses your OpenAI API key. [Setup guide](https://github.com/vypdev/cursor-whisper/blob/master/docs/quickstart.md)"
         },
         "cursorWhisper.enablePromptTransformation": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "**Enable prompt optimization** after Whisper transcription.\n\nWhen disabled, raw transcription is inserted. When enabled, configure a provider below. [Compare providers](https://github.com/vypdev/cursor-whisper/blob/main/docs/configuration/README.md)"
+          "markdownDescription": "**Enable prompt optimization** after Whisper transcription.\n\nWhen disabled, raw transcription is inserted. When enabled, configure a provider below. [Compare providers](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/README.md)"
         },
         "cursorWhisper.transformationProvider": {
           "type": "string",
@@ -151,7 +151,7 @@
             "Azure OpenAI deployments (requires Azure API key and endpoint)",
             "Local Ollama models (no API key required)"
           ],
-          "markdownDescription": "**Prompt optimization provider** (separate from Whisper transcription).\n\nWhisper always uses OpenAI. This setting chooses which AI service optimizes transcribed speech into structured prompts. [Provider guide](https://github.com/vypdev/cursor-whisper/blob/main/docs/providers/README.md)"
+          "markdownDescription": "**Prompt optimization provider** (separate from Whisper transcription).\n\nWhisper always uses OpenAI. This setting chooses which AI service optimizes transcribed speech into structured prompts. [Provider guide](https://github.com/vypdev/cursor-whisper/blob/master/docs/providers/README.md)"
         },
         "cursorWhisper.transformationModel": {
           "type": "string",

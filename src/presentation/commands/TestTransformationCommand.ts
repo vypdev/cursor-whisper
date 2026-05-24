@@ -123,7 +123,7 @@ export function registerTestTransformationCommand(
               } else if (selection === 'Troubleshooting') {
                 await vscode.env.openExternal(
                   vscode.Uri.parse(
-                    'https://github.com/vypdev/cursor-whisper/blob/main/docs/quickstart.md#troubleshooting'
+                    'https://github.com/vypdev/cursor-whisper/blob/master/docs/quickstart.md#troubleshooting'
                   )
                 );
               }
