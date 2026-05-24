@@ -107,5 +107,5 @@ Key aspects:
 
 ## References
 
-- [GitHub Issue #1](https://github.com/vypdev/cursor-whisper/issues/1)
+- [GitHub Issue #1](https://github.com/vypdev/promptimize/issues/1)
 - [Configuration guide](../configuration/README.md)

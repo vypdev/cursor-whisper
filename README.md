@@ -166,7 +166,7 @@ See [`docs/architecture/`](docs/architecture/) for detailed architecture documen
 
 ### Manual Installation (Current)
 
-1. Download the latest `.vsix` file from [Releases](https://github.com/vypdev/cursor-whisper/releases)
+1. Download the latest `.vsix` file from [Releases](https://github.com/vypdev/promptimize/releases)
 2. Open VSCode/Cursor
 3. Go to Extensions
 4. Click "..." menu → "Install from VSIX..."
@@ -267,8 +267,8 @@ Use **Promptimize: Configure Prompt Optimization Provider** to set up interactiv
 
 ```bash
 # Clone the repository
-git clone https://github.com/vypdev/cursor-whisper
-cd cursor-whisper
+git clone https://github.com/vypdev/promptimize
+cd promptimize
 
 # Install dependencies (requires Node 22 — run `nvm use` first)
 pnpm install
@@ -522,8 +522,8 @@ The extension requests microphone access:
 
 ```bash
 # Clone the repository
-git clone https://github.com/vypdev/cursor-whisper.git
-cd cursor-whisper
+git clone https://github.com/vypdev/promptimize.git
+cd promptimize
 
 # Install dependencies (requires Node 22 — run `nvm use` first)
 pnpm install
@@ -725,9 +725,9 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 📬 Contact & Support
 
-- **Issues**: [GitHub Issues](https://github.com/vypdev/cursor-whisper/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/vypdev/cursor-whisper/discussions)
-- **Email**: support@cursor-whisper.dev
+- **Issues**: [GitHub Issues](https://github.com/vypdev/promptimize/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/vypdev/promptimize/discussions)
+- **Email**: support@promptimize.dev
 
 ---
 

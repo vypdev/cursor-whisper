@@ -46,7 +46,7 @@ export class OpenRouterPromptTransformer implements IPromptTransformer {
       apiKey: apiKeyStr,
       baseURL: OpenRouterPromptTransformer.BASE_URL,
       defaultHeaders: {
-        'HTTP-Referer': 'https://github.com/vypdev/cursor-whisper',
+        'HTTP-Referer': 'https://github.com/vypdev/promptimize',
         'X-OpenRouter-Title': OpenRouterPromptTransformer.APP_TITLE,
       },
     });

@@ -287,7 +287,7 @@ try {
   ).then(selection => {
     if (selection === 'Troubleshooting') {
       vscode.env.openExternal(vscode.Uri.parse(
-        'https://github.com/vypdev/cursor-whisper#-configuration'
+        'https://github.com/vypdev/promptimize#-configuration'
       ));
     }
   });

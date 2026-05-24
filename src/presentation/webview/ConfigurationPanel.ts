@@ -276,7 +276,7 @@ export class ConfigurationPanel {
         break;
       case 'openDocs':
         await vscode.env.openExternal(
-          vscode.Uri.parse('https://github.com/vypdev/cursor-whisper/tree/master/docs')
+          vscode.Uri.parse('https://github.com/vypdev/promptimize/tree/master/docs')
         );
         break;
     }

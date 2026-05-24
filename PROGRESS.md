@@ -142,8 +142,8 @@ These options are exposed in `package.json` and documented in README for forward
 ### Setup
 
 ```bash
-git clone https://github.com/vypdev/cursor-whisper
-cd cursor-whisper
+git clone https://github.com/vypdev/promptimize
+cd promptimize
 pnpm install
 pnpm run compile
 ```

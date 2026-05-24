@@ -179,6 +179,6 @@ For chat insertion in Cursor, focus the Composer input before stopping recording
 
 - [Configuration Guide](configuration/README.md)
 - [Configuration Webview Guide](configuration/webview-guide.md)
-- [GitHub Issues](https://github.com/vypdev/cursor-whisper/issues)
+- [GitHub Issues](https://github.com/vypdev/promptimize/issues)
 
 Enable the **Promptimize** output channel for operational logs (timestamps, durations, error types). Transcriptions and optimized prompts are **never** written to logs.
