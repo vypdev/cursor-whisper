@@ -24,6 +24,7 @@ const baseConfig: Config = {
   openCodeBaseUrl: 'http://127.0.0.1:4010/v1',
   openCodeModel: 'anthropic/claude-sonnet-4-5',
   openRouterModel: 'openai/gpt-4o',
+  cursorModel: 'composer-2.5',
   audioQuality: 'high',
   maxRecordingDuration: 120,
   showNotifications: true,

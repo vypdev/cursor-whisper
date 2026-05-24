@@ -6,6 +6,7 @@ export enum TransformationProvider {
   Ollama = 'ollama',
   OpenCode = 'opencode',
   OpenRouter = 'openrouter',
+  Cursor = 'cursor',
 }
 
 export interface ProviderMetadata {
@@ -65,6 +66,13 @@ export const PROVIDER_METADATA: Record<TransformationProvider, ProviderMetadata>
     description: 'Unified gateway to 200+ models from multiple providers',
     requiresApiKey: true,
     defaultModel: 'openai/gpt-4o',
+  },
+  [TransformationProvider.Cursor]: {
+    id: TransformationProvider.Cursor,
+    displayName: 'Cursor',
+    description: 'Native Cursor AI models via Cursor SDK (composer-2.5, etc.)',
+    requiresApiKey: true,
+    defaultModel: 'composer-2.5',
   },
 };
 

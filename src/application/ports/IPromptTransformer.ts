@@ -26,6 +26,7 @@ export interface PromptContext {
  * - GooglePromptTransformer: Uses Gemini
  * - AzureOpenAIPromptTransformer: Uses Azure OpenAI
  * - OllamaPromptTransformer: Uses local Ollama models
+ * - CursorPromptTransformer: Uses Cursor SDK
  */
 export interface IPromptTransformer {
   /**

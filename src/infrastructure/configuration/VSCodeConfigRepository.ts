@@ -74,6 +74,10 @@ export class VSCodeConfigRepository implements IConfigRepository {
         'openRouterModel',
         PROVIDER_METADATA[TransformationProvider.OpenRouter].defaultModel
       ),
+      cursorModel: config.get<string>(
+        'cursorModel',
+        PROVIDER_METADATA[TransformationProvider.Cursor].defaultModel
+      ),
       audioQuality: config.get<'low' | 'medium' | 'high'>('audioQuality', 'high'),
       maxRecordingDuration: config.get<number>('maxRecordingDuration', 120),
       showNotifications: config.get<boolean>('showNotifications', true),
@@ -155,6 +159,7 @@ export class VSCodeConfigRepository implements IConfigRepository {
       'openCodeBaseUrl',
       'openCodeModel',
       'openRouterModel',
+      'cursorModel',
       'transformationSystemPrompt',
     ];
 

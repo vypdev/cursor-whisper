@@ -9,6 +9,7 @@ import {
 import { OllamaPromptTransformer } from '../../infrastructure/transformation/OllamaPromptTransformer';
 import { OpenCodePromptTransformer } from '../../infrastructure/transformation/OpenCodePromptTransformer';
 import { OpenRouterPromptTransformer } from '../../infrastructure/transformation/OpenRouterPromptTransformer';
+import { CURSOR_MODELS } from '../../infrastructure/transformation/CursorPromptTransformer';
 import {
   TransformationProvider,
   PROVIDER_METADATA,
@@ -267,6 +268,17 @@ export async function selectModelForProvider(
       return config.openRouterModel || OpenRouterPromptTransformer.DEFAULT_MODEL;
     }
 
+    case TransformationProvider.Cursor: {
+      const selection = await vscode.window.showQuickPick(
+        [...CURSOR_MODELS].map(modelId => ({
+          label: modelId,
+          picked: modelId === config.cursorModel,
+        })),
+        { placeHolder: 'Select a Cursor model for prompt optimization' }
+      );
+      return selection?.label;
+    }
+
     default:
       return undefined;
   }
@@ -413,6 +425,9 @@ export async function applyProviderConfiguration(
         break;
       case TransformationProvider.OpenRouter:
         updates.openRouterModel = selectedModel;
+        break;
+      case TransformationProvider.Cursor:
+        updates.cursorModel = selectedModel;
         break;
     }
   }

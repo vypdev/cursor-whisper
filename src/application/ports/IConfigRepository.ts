@@ -73,6 +73,11 @@ export interface Config {
   openRouterModel: string;
 
   /**
+   * Cursor model identifier for SDK-based transformation.
+   */
+  cursorModel: string;
+
+  /**
    * Audio recording quality ('low' | 'medium' | 'high').
    */
   audioQuality: 'low' | 'medium' | 'high';

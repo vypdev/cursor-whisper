@@ -9,6 +9,7 @@ import { OpenAIModelService } from '../../infrastructure/openai/OpenAIModelServi
 import { OllamaPromptTransformer } from '../../infrastructure/transformation/OllamaPromptTransformer';
 import { OpenCodePromptTransformer } from '../../infrastructure/transformation/OpenCodePromptTransformer';
 import { OpenRouterPromptTransformer } from '../../infrastructure/transformation/OpenRouterPromptTransformer';
+import { CURSOR_MODELS } from '../../infrastructure/transformation/CursorPromptTransformer';
 import {
   TransformationProvider,
   PROVIDER_METADATA,
@@ -123,6 +124,8 @@ function getModelForProvider(
       return config.openCodeModel;
     case TransformationProvider.OpenRouter:
       return config.openRouterModel;
+    case TransformationProvider.Cursor:
+      return config.cursorModel;
   }
 }
 
@@ -477,6 +480,9 @@ export class ConfigurationPanel {
         case TransformationProvider.OpenRouter:
           updates.openRouterModel = settings.model;
           break;
+        case TransformationProvider.Cursor:
+          updates.cursorModel = settings.model;
+          break;
       }
     }
 
@@ -564,6 +570,8 @@ export class ConfigurationPanel {
           ? models
           : [config.openRouterModel || OpenRouterPromptTransformer.DEFAULT_MODEL];
       }
+      case TransformationProvider.Cursor:
+        return [...CURSOR_MODELS];
       default:
         return [];
     }

@@ -36,6 +36,7 @@ Requirements:
 | Ollama | Local/offline inference |
 | OpenCode | Local multi-provider gateway via opencode-llm-proxy |
 | OpenRouter | Cloud gateway to 200+ models with one API key |
+| Cursor | Native Cursor AI models via Cursor SDK |
 
 Key aspects:
 
@@ -80,7 +81,7 @@ Key aspects:
 
 ### Negative
 
-- Increased codebase complexity (7 provider adapters)
+- Increased codebase complexity (8 provider adapters)
 - More configuration surface area for users
 - Quality and latency vary by provider
 - Additional SDK dependencies to maintain
@@ -99,6 +100,7 @@ Key aspects:
 - Value object: `src/domain/value-objects/TransformationProvider.ts`
 - Config: `cursorWhisper.transformationProvider` and provider-specific model settings
 - OpenCode and OpenRouter use the OpenAI SDK with custom `baseURL` (OpenAI-compatible APIs)
+- Cursor uses `@cursor/sdk` with `Agent.prompt()` for one-shot transformations
 - Commands: `cursor-whisper.configureTransformationProvider`, `cursor-whisper.testTransformation`
 
 ---

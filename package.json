@@ -144,7 +144,8 @@
             "azure",
             "ollama",
             "opencode",
-            "openrouter"
+            "openrouter",
+            "cursor"
           ],
           "enumDescriptions": [
             "OpenAI GPT models (requires OpenAI API key; can reuse Whisper key)",
@@ -153,7 +154,8 @@
             "Azure OpenAI deployments (requires Azure API key and endpoint)",
             "Local Ollama models (no API key required)",
             "Local OpenCode multi-provider proxy via opencode-llm-proxy (no API key required)",
-            "OpenRouter unified gateway (requires OpenRouter API key)"
+            "OpenRouter unified gateway (requires OpenRouter API key)",
+            "Native Cursor AI via Cursor SDK (works in any editor - requires Cursor API key)"
           ],
           "markdownDescription": "**Prompt optimization provider** (separate from Whisper transcription).\n\nWhisper always uses OpenAI. This setting chooses which AI service optimizes transcribed speech into structured prompts. [Configuration guide](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/README.md)"
         },
@@ -233,6 +235,18 @@
           "default": "openai/gpt-4o",
           "markdownDescription": "**OpenRouter model identifier** for prompt optimization when `transformationProvider` is `openrouter`. Requires an OpenRouter API key."
         },
+        "cursorWhisper.cursorModel": {
+          "type": "string",
+          "default": "composer-2.5",
+          "enum": [
+            "composer-2.5",
+            "composer-2.5-fast",
+            "claude-4.5-sonnet",
+            "gpt-5.1",
+            "gpt-5.2-codex"
+          ],
+          "markdownDescription": "**Cursor model** for prompt optimization when `transformationProvider` is `cursor`. Works in any editor (VSCode, Cursor, etc.). Requires a Cursor API key from [Cursor Dashboard](https://cursor.com/dashboard/integrations)."
+        },
         "cursorWhisper.audioQuality": {
           "type": "string",
           "enum": [
@@ -283,6 +297,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.1",
+    "@cursor/sdk": "^1.0.13",
     "@google/generative-ai": "^0.21.0",
     "@kstonekuan/audio-capture": "^0.0.3",
     "@vscode/webview-ui-toolkit": "1.4.0",

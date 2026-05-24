@@ -12,6 +12,7 @@ describe('TransformationProvider', () => {
     expect(parseTransformationProvider('ollama')).toBe(TransformationProvider.Ollama);
     expect(parseTransformationProvider('opencode')).toBe(TransformationProvider.OpenCode);
     expect(parseTransformationProvider('openrouter')).toBe(TransformationProvider.OpenRouter);
+    expect(parseTransformationProvider('cursor')).toBe(TransformationProvider.Cursor);
   });
 
   it('falls back to OpenAI for invalid values', () => {

@@ -62,6 +62,7 @@ Or run **Cursor Whisper: Configure Prompt Optimization Provider**.
 | Ollama | Free | Medium | Local | Good | Privacy-first, offline |
 | OpenCode | Free | Medium | Local | High | Reuse OpenCode multi-provider setup |
 | OpenRouter | Varies | Fast | Cloud | High | 200+ models with one API key |
+| Cursor | ~$0.01 | Fast | Cloud | High | Cursor Composer and frontier models with one API key |
 
 \*Plus Whisper transcription cost (~$0.006/min, always OpenAI)
 
@@ -194,6 +195,25 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 **Recommended models:** `openai/gpt-4o` (default), `anthropic/claude-3.5-sonnet`, `google/gemini-2.0-flash-001`
 
 **Pitfalls:** OpenRouter only handles optimization — Whisper still needs OpenAI. Ensure your OpenRouter account has sufficient credits.
+
+---
+
+### Option H: Cursor (SDK)
+
+```json
+{
+  "cursorWhisper.transformationProvider": "cursor",
+  "cursorWhisper.cursorModel": "composer-2.5"
+}
+```
+
+**Setup:** Configure OpenAI for Whisper first. Get a Cursor API key from [Cursor Dashboard → Integrations](https://cursor.com/dashboard/integrations). Run **Configure Prompt Optimization Provider**, select Cursor, enter your key, and choose a model.
+
+**Recommended models:** `composer-2.5` (default), `composer-2.5-fast`, `claude-4.5-sonnet`, `gpt-5.1`, `gpt-5.2-codex`
+
+**Notes:** Works in any editor (VSCode, Cursor, VSCodium, etc.). Uses the `@cursor/sdk` package to connect to Cursor's agent API. No Cursor IDE installation required — only a Cursor API key and internet access.
+
+**Pitfalls:** Cursor only handles optimization — Whisper still needs OpenAI. Ensure your Cursor account has sufficient credits.
 
 ---
 

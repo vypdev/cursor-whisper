@@ -6,6 +6,7 @@ import { AzureOpenAIPromptTransformer } from '../../../infrastructure/transforma
 import { OllamaPromptTransformer } from '../../../infrastructure/transformation/OllamaPromptTransformer';
 import { OpenCodePromptTransformer } from '../../../infrastructure/transformation/OpenCodePromptTransformer';
 import { OpenRouterPromptTransformer } from '../../../infrastructure/transformation/OpenRouterPromptTransformer';
+import { CursorPromptTransformer } from '../../../infrastructure/transformation/CursorPromptTransformer';
 import { TransformationProvider } from '../../../domain/value-objects/TransformationProvider';
 import { IConfigRepository, Config } from '../../../application/ports/IConfigRepository';
 import { createMockLogger } from '../../helpers/mockLogger';
@@ -25,6 +26,7 @@ const baseConfig: Config = {
   openCodeBaseUrl: 'http://127.0.0.1:4010/v1',
   openCodeModel: 'anthropic/claude-sonnet-4-5',
   openRouterModel: 'openai/gpt-4o',
+  cursorModel: 'composer-2.5',
   audioQuality: 'high',
   maxRecordingDuration: 120,
   showNotifications: true,
@@ -80,6 +82,9 @@ describe('PromptTransformerFactory', () => {
     );
     expect(await factory.createForProvider(TransformationProvider.OpenRouter)).toBeInstanceOf(
       OpenRouterPromptTransformer
+    );
+    expect(await factory.createForProvider(TransformationProvider.Cursor)).toBeInstanceOf(
+      CursorPromptTransformer
     );
   });
 

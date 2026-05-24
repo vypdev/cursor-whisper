@@ -14,6 +14,7 @@ import { AzureOpenAIPromptTransformer } from './AzureOpenAIPromptTransformer';
 import { OllamaPromptTransformer } from './OllamaPromptTransformer';
 import { OpenCodePromptTransformer } from './OpenCodePromptTransformer';
 import { OpenRouterPromptTransformer } from './OpenRouterPromptTransformer';
+import { CursorPromptTransformer } from './CursorPromptTransformer';
 import { TransformationError, getSystemPrompt } from './transformationUtils';
 
 export class PromptTransformerFactory implements ITransformationProviderValidator {
@@ -101,6 +102,14 @@ export class PromptTransformerFactory implements ITransformationProviderValidato
         return new OpenRouterPromptTransformer(
           () => this.configRepo.getProviderApiKey(TransformationProvider.OpenRouter),
           () => this.configRepo.getConfig().then(c => c.openRouterModel),
+          resolveSystemPrompt,
+          this.logger
+        );
+
+      case TransformationProvider.Cursor:
+        return new CursorPromptTransformer(
+          () => this.configRepo.getProviderApiKey(TransformationProvider.Cursor),
+          () => this.configRepo.getConfig().then(c => c.cursorModel),
           resolveSystemPrompt,
           this.logger
         );

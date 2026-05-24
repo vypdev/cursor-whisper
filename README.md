@@ -16,7 +16,7 @@ A professional VSCode/Cursor extension that captures audio from your microphone,
 1. **Install** the extension (VSIX or Marketplace when available)
 2. **Run Setup Wizard** — Command Palette → `Cursor Whisper: Setup Wizard`
 3. **Configure OpenAI API key** — Required for Whisper voice-to-text
-4. **Optionally choose optimization provider** — OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, or OpenRouter
+4. **Optionally choose optimization provider** — OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, OpenRouter, or Cursor
 5. **Press `Cmd+Alt+V`** and speak
 
 See the full [Quick Start Guide](docs/quickstart.md).
@@ -90,7 +90,7 @@ Developers often have complex architectural ideas, detailed requirements, or int
 ### Coming Soon
 
 - 🔄 **Prompt Transformation** - AI-powered optimization of transcribed text
-- 🔄 **Multiple AI Providers** - OpenAI, Anthropic, Google Gemini, Azure OpenAI, Ollama, OpenCode, and OpenRouter for prompt transformation
+- 🔄 **Multiple AI Providers** - OpenAI, Anthropic, Google Gemini, Azure OpenAI, Ollama, OpenCode, OpenRouter, and Cursor for prompt transformation
 - 🔄 **Chat Integration** - Direct insertion into Cursor chat input
 - 🔄 **Real-time Streaming** - See transcription as you speak
 - 🔄 **Multi-language Support** - Auto-detect or manually configure language
@@ -220,6 +220,7 @@ Prompt optimization converts transcribed speech into structured prompts. Choose 
 | `ollamaBaseUrl` / `ollamaModel` | Local Ollama server settings |
 | `openCodeBaseUrl` / `openCodeModel` | Local OpenCode proxy settings |
 | `openRouterModel` | OpenRouter model (when provider is `openrouter`) |
+| `cursorModel` | Cursor model (when provider is `cursor`) |
 
 Use **Cursor Whisper: Configure Prompt Optimization Provider** to set up interactively. See [`docs/configuration/`](docs/configuration/) for provider setup.
 
@@ -229,7 +230,7 @@ Use **Cursor Whisper: Configure Prompt Optimization Provider** to set up interac
 |---------|------|---------|-------------|
 | `transcriptionLanguage` | string | `"en"` | Language for transcription (`en`, `es`, `fr`, `de`, `auto`) |
 | `enablePromptTransformation` | boolean | `true` | Transform transcription into optimized prompts |
-| `transformationProvider` | string | `"openai"` | LLM provider for transformation (`openai`, `anthropic`, `google`, `azure`, `ollama`, `opencode`, `openrouter`) |
+| `transformationProvider` | string | `"openai"` | LLM provider for transformation (`openai`, `anthropic`, `google`, `azure`, `ollama`, `opencode`, `openrouter`, `cursor`) |
 | `transformationModel` | string | `"gpt-4o"` | OpenAI model for transformation |
 | `audioQuality` | string | `"high"` | Audio recording quality (`low`, `medium`, `high`) |
 | `maxRecordingDuration` | number | `120` | Maximum recording duration in seconds |

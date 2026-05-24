@@ -74,6 +74,15 @@ export const PROVIDER_COMPARISON: ProviderComparisonEntry[] = [
     bestFor: 'Access 200+ models with one API key',
     apiKeyUrl: 'https://openrouter.ai/settings/keys',
   },
+  {
+    provider: TransformationProvider.Cursor,
+    costPerTransform: '~$0.01',
+    speed: 'Fast',
+    privacy: 'Cloud',
+    quality: 'High',
+    bestFor: 'Access Cursor Composer and frontier models with one API key',
+    apiKeyUrl: 'https://cursor.com/dashboard/integrations',
+  },
 ];
 
 export function formatProviderComparisonSummary(): string {

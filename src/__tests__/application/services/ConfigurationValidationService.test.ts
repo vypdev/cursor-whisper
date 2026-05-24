@@ -24,6 +24,7 @@ const baseConfig: Config = {
   openCodeBaseUrl: 'http://127.0.0.1:4010/v1',
   openCodeModel: 'anthropic/claude-sonnet-4-5',
   openRouterModel: 'openai/gpt-4o',
+  cursorModel: 'composer-2.5',
   audioQuality: 'high',
   maxRecordingDuration: 120,
   showNotifications: true,
@@ -204,6 +205,25 @@ describe('ConfigurationValidationService', () => {
 
       expect(issue?.message).toContain('Ollama server is not reachable');
       expect(issue?.configureCommand).toBe('cursor-whisper.openConfigurationPanel');
+    });
+
+    it('warns about missing key for Cursor transformation provider', async () => {
+      const configRepo = createConfigRepo(
+        { transformationProvider: TransformationProvider.Cursor },
+        {
+          [TransformationProvider.OpenAI]: 'openai-key',
+          [TransformationProvider.Cursor]: undefined,
+        }
+      );
+      const validateProvider = jest.fn(async (_provider: TransformationProvider) => undefined);
+      const validator = createProviderValidator(validateProvider);
+
+      const issue = await validateConfigurationOnStartup(configRepo, validator);
+
+      expect(issue).toEqual({
+        message: 'Cursor Whisper: Cursor credentials are not configured for prompt optimization.',
+        configureCommand: 'cursor-whisper.openConfigurationPanel',
+      });
     });
   });
 });
