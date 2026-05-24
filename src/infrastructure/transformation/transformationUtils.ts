@@ -91,6 +91,44 @@ export function buildUserPrompt(transcription: string, context?: PromptContext):
   return userPrompt;
 }
 
+/** Normalizes provider-prefixed model IDs (e.g. "openai/gpt-5" → "gpt-5"). */
+export function normalizeModelId(model: string): string {
+  const trimmed = model.trim();
+  const slashIndex = trimmed.lastIndexOf('/');
+  return slashIndex >= 0 ? trimmed.slice(slashIndex + 1) : trimmed;
+}
+
+/** GPT-5 reasoning and o-series models; excludes gpt-5-chat* chat variants. */
+export function isOpenAIReasoningModel(model: string): boolean {
+  const id = normalizeModelId(model).toLowerCase();
+
+  if (id.startsWith('gpt-5-chat')) {
+    return false;
+  }
+
+  if (id.startsWith('gpt-5')) {
+    return true;
+  }
+
+  return /^o[1349]/.test(id);
+}
+
+export type OpenAIChatCompletionOptions =
+  | { max_tokens: number; temperature: number }
+  | { max_completion_tokens: number };
+
+/** Builds chat completion options compatible with the model family. */
+export function buildOpenAIChatCompletionOptions(
+  model: string,
+  tokenLimit = 2000
+): OpenAIChatCompletionOptions {
+  if (isOpenAIReasoningModel(model)) {
+    return { max_completion_tokens: tokenLimit };
+  }
+
+  return { max_tokens: tokenLimit, temperature: 0.3 };
+}
+
 export function calculateImprovements(original: string, transformed: string): string[] {
   const improvements: string[] = [];
 
