@@ -14,7 +14,7 @@ Cursor Whisper is a working VSCode/Cursor extension that records voice, transcri
 |-------|--------|----------|
 | Documentation | Complete | 100% |
 | MVP Implementation | Complete | 100% |
-| Testing | In progress | Strategy defined; automated tests pending |
+| Testing | In progress | 12+ automated tests; expanding coverage |
 | Publication | Pending | Not published |
 
 **Build**: Successful (`out/extension.js`, ~579 KB)  
@@ -38,11 +38,11 @@ Cursor Whisper is a working VSCode/Cursor extension that records voice, transcri
 
 | Category | Files | Location |
 |----------|-------|----------|
-| ADRs | 13 + template | `docs/adr/` |
-| Architecture, domain, flows, UX, etc. | 13 | `docs/*/` |
+| ADRs | 14 + template | `docs/adr/` |
+| User guides, architecture, ops | 12 | `docs/*/` |
 | Documentation index | 1 | `docs/README.md` |
 
-Layer-specific implementation details live in `src/` with TypeScript types and JSDoc comments. See [`docs/api/README.md`](docs/api/README.md) and [`docs/application/ports.md`](docs/application/ports.md) for interface contracts.
+Layer-specific implementation details live in `src/` with TypeScript types and JSDoc comments. Port interfaces: [`src/application/ports/`](src/application/ports/).
 
 ---
 
@@ -50,10 +50,8 @@ Layer-specific implementation details live in `src/` with TypeScript types and J
 
 ### Phase 1 — Documentation
 
-- Architecture overview and Clean Architecture guide
-- 13 Architecture Decision Records (ADRs)
-- Domain, application, flows, UX, security, testing, roadmap, deployment, and research docs
-- API reference structure
+- Architecture overview, configuration guide, and ADRs
+- Flows, UX, security, testing, deployment, and research docs
 
 ### Phase 2 — MVP Implementation
 

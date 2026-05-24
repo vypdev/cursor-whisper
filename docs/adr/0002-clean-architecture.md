@@ -182,7 +182,7 @@ Application Layer (StartRecordingUseCase)
     ↓ depends on
 Application Layer Port (IAudioRecorder interface)
     ↑ implemented by
-Infrastructure Layer (WebviewAudioRecorder)
+Infrastructure Layer (NativeAudioRecorder)
 ```
 
 ### Port/Adapter Pattern
@@ -195,13 +195,7 @@ export interface IAudioRecorder {
 }
 
 // Infrastructure layer provides adapter (implementation)
-export class WebviewAudioRecorder implements IAudioRecorder {
-  async startRecording(): Promise<void> { /* ... */ }
-  async stopRecording(): Promise<AudioData> { /* ... */ }
-}
-
-// Alternative implementation can be swapped
-export class NodeAudioRecorder implements IAudioRecorder {
+export class NativeAudioRecorder implements IAudioRecorder {
   async startRecording(): Promise<void> { /* ... */ }
   async stopRecording(): Promise<AudioData> { /* ... */ }
 }

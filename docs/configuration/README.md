@@ -63,6 +63,10 @@ Or run **Cursor Whisper: Configure Prompt Optimization Provider**.
 
 \*Plus Whisper transcription cost (~$0.006/min, always OpenAI)
 
+API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching providers does not delete saved keys.
+
+---
+
 ### Option A: OpenAI (default)
 
 ```json
@@ -73,8 +77,13 @@ Or run **Cursor Whisper: Configure Prompt Optimization Provider**.
 }
 ```
 
-- Can reuse the same OpenAI key as Whisper
-- See [OpenAI provider guide](../providers/openai.md)
+**Setup:** Get a key from [OpenAI Platform](https://platform.openai.com/api-keys). Run the setup wizard or **Configure Prompt Optimization Provider** and select OpenAI. The same key used for Whisper works for optimization.
+
+**Recommended models:** `gpt-4o` (default), `gpt-4o-mini`, `gpt-4-turbo`
+
+**Pitfalls:** Keys must start with `sk-`. Whisper and GPT share the same OpenAI account balance. Whisper key is required even if you use another provider for optimization.
+
+---
 
 ### Option B: Anthropic
 
@@ -85,8 +94,13 @@ Or run **Cursor Whisper: Configure Prompt Optimization Provider**.
 }
 ```
 
-- Requires Anthropic API key (separate from OpenAI)
-- See [Anthropic provider guide](../providers/anthropic.md)
+**Setup:** Configure OpenAI for Whisper first. Get an Anthropic key from [Anthropic Console](https://console.anthropic.com/). Run **Configure Prompt Optimization Provider**, select Anthropic, and enter your key.
+
+**Recommended models:** `claude-3-5-sonnet-20241022` (default), `claude-3-5-haiku-20241022`, `claude-3-opus-20240229`
+
+**Pitfalls:** Anthropic only handles optimization — Whisper still needs OpenAI. Use Anthropic keys from console.anthropic.com, not OpenAI keys.
+
+---
 
 ### Option C: Google Gemini
 
@@ -97,8 +111,13 @@ Or run **Cursor Whisper: Configure Prompt Optimization Provider**.
 }
 ```
 
-- Requires Google AI API key
-- See [Google provider guide](../providers/google-gemini.md)
+**Setup:** Configure OpenAI for Whisper first. Get a key from [Google AI Studio](https://aistudio.google.com/app/apikey). Run **Configure Prompt Optimization Provider**, select Google Gemini, and enter your key.
+
+**Recommended models:** `gemini-1.5-pro`, `gemini-1.5-flash`, `gemini-2.0-flash`
+
+**Pitfalls:** Gemini only handles optimization. Use Google AI Studio keys, not GCP service account keys unless configured for the Generative Language API.
+
+---
 
 ### Option D: Azure OpenAI
 
@@ -110,8 +129,13 @@ Or run **Cursor Whisper: Configure Prompt Optimization Provider**.
 }
 ```
 
-- Requires Azure API key, endpoint, and deployment name
-- See [Azure provider guide](../providers/azure-openai.md)
+**Setup:** Configure OpenAI for Whisper first. Create an Azure OpenAI resource and deploy a chat model. Run **Configure Prompt Optimization Provider**, select Azure OpenAI, and enter your Azure API key, endpoint URL, and deployment name.
+
+**Notes:** The **deployment name** (not the model name) is used for API calls. Endpoint should be the resource URL without a trailing slash. Azure API key is stored separately from your OpenAI Whisper key.
+
+**Pitfalls:** Azure cannot be used for Whisper — transcription uses the public OpenAI API only. Use the deployment name from the Azure portal, not the model ID.
+
+---
 
 ### Option E: Ollama (local)
 
@@ -123,9 +147,11 @@ Or run **Cursor Whisper: Configure Prompt Optimization Provider**.
 }
 ```
 
-- No API key; runs locally
-- Whisper still requires OpenAI
-- See [Ollama provider guide](../providers/ollama.md)
+**Setup:** Configure OpenAI for Whisper first. Install [Ollama](https://ollama.com/), pull a model (`ollama pull llama3.1:8b`), ensure Ollama is running, then select Ollama in **Configure Prompt Optimization Provider**. No API key required for Ollama.
+
+**Recommended models:** `llama3.1:8b` (default), `mistral:latest`, `codellama:latest`
+
+**Troubleshooting:** Confirm Ollama is reachable at the configured base URL. Run `ollama pull <model-name>` if the model is missing. Whisper still sends audio to OpenAI — only optimization runs locally.
 
 ---
 
@@ -152,14 +178,6 @@ Expected result:
 
 ---
 
-## Credential Storage
-
-- All API keys stored in VSCode **SecretStorage** (OS keychain)
-- Keys stored per provider: `cursor-whisper.apiKey.{provider}`
-- Switching providers does not delete saved keys
-
----
-
 ## Common Questions
 
 ### Do I need two OpenAI keys?
@@ -176,4 +194,4 @@ Yes. Set `enablePromptTransformation` to `false` or choose **transcription only*
 
 ---
 
-**See also:** [Quick Start](../quickstart.md) · [Providers](../providers/README.md)
+**See also:** [Quick Start](../quickstart.md)

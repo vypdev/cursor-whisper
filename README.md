@@ -219,7 +219,7 @@ Prompt optimization converts transcribed speech into structured prompts. Choose 
 | `azureEndpoint` / `azureDeployment` | Azure OpenAI resource settings |
 | `ollamaBaseUrl` / `ollamaModel` | Local Ollama server settings |
 
-Use **Cursor Whisper: Configure Prompt Optimization Provider** to set up interactively. See [`docs/providers/`](docs/providers/) and [`docs/configuration/`](docs/configuration/) for provider-specific setup.
+Use **Cursor Whisper: Configure Prompt Optimization Provider** to set up interactively. See [`docs/configuration/`](docs/configuration/) for provider setup.
 
 ### Configuration Options
 
@@ -563,7 +563,7 @@ See [`docs/testing/strategy.md`](docs/testing/strategy.md) for critical test pri
 - 🔄 Performance optimization
 - 🔄 Extensive testing
 
-See [`docs/roadmap/`](docs/roadmap/) for detailed roadmap.
+See [`PROGRESS.md`](PROGRESS.md) for current project status.
 
 ---
 
@@ -669,9 +669,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 - [Documentation](docs/)
 - [Architecture Docs](docs/architecture/)
-- [API Reference](docs/api/)
+- [Configuration Guide](docs/configuration/)
 - [Project Progress](PROGRESS.md)
-- [Roadmap](docs/roadmap/versions.md)
 
 ---
 

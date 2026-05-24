@@ -103,4 +103,4 @@ Key aspects:
 ## References
 
 - [GitHub Issue #1](https://github.com/vypdev/cursor-whisper/issues/1)
-- [Provider documentation](../providers/README.md)
+- [Configuration guide](../configuration/README.md)

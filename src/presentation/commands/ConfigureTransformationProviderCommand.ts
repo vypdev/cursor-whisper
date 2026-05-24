@@ -104,7 +104,7 @@ export function registerConfigureTransformationProviderCommand(
           } else if (selection === 'Learn About Providers') {
             await vscode.env.openExternal(
               vscode.Uri.parse(
-                'https://github.com/vypdev/cursor-whisper/blob/master/docs/providers/README.md'
+                'https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/README.md'
               )
             );
           }

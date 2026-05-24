@@ -151,7 +151,7 @@
             "Azure OpenAI deployments (requires Azure API key and endpoint)",
             "Local Ollama models (no API key required)"
           ],
-          "markdownDescription": "**Prompt optimization provider** (separate from Whisper transcription).\n\nWhisper always uses OpenAI. This setting chooses which AI service optimizes transcribed speech into structured prompts. [Provider guide](https://github.com/vypdev/cursor-whisper/blob/master/docs/providers/README.md)"
+          "markdownDescription": "**Prompt optimization provider** (separate from Whisper transcription).\n\nWhisper always uses OpenAI. This setting chooses which AI service optimizes transcribed speech into structured prompts. [Configuration guide](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/README.md)"
         },
         "cursorWhisper.transformationModel": {
           "type": "string",

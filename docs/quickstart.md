@@ -135,7 +135,6 @@ Tooltip shows: `Transcription: OpenAI Whisper | Optimization: [Provider]`
 ### Need more help?
 
 - [Configuration guide](configuration/README.md)
-- [Provider setup](providers/README.md)
 - [GitHub Issues](https://github.com/vypdev/cursor-whisper/issues)
 
 ---

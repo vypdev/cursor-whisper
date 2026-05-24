@@ -99,54 +99,6 @@ stateDiagram-v2
 └────────────────┘
 ```
 
-### Webview Panel (Deprecated)
-
-> **Not in production**: A dedicated webview panel with React UI was planned in [ADR-0010](../adr/0010-react-for-ui.md) but superseded by native capture ([ADR-0013](../adr/0013-native-audio-capture.md)). The MVP uses status bar feedback only.
-
-For reference, the planned webview layout was:
-
-```
-┌─────────────────────────────────┐
-│  Cursor Whisper                 │
-├─────────────────────────────────┤
-│                                 │
-│         ┌───────────┐          │
-│         │           │          │  ← Large mic button
-│         │     🎤     │          │
-│         │           │          │
-│         └───────────┘          │
-│                                 │
-│     Click to start recording    │
-│                                 │
-│  Status: Idle                   │
-│  Duration: 0:00                 │
-│                                 │
-└─────────────────────────────────┘
-```
-
-During recording:
-```
-┌─────────────────────────────────┐
-│  Cursor Whisper                 │
-├─────────────────────────────────┤
-│                                 │
-│         ┌───────────┐          │
-│         │           │          │
-│         │     🔴     │          │  ← Pulsing red
-│         │           │          │
-│         └───────────┘          │
-│                                 │
-│        ⏹️  Stop Recording        │
-│                                 │
-│  Status: Recording              │
-│  Duration: 0:23                 │
-│  ▓▓▓▓▓▓▓▓▓░░░░░░░░  (waveform) │
-│                                 │
-└─────────────────────────────────┘
-```
-
----
-
 ## Keyboard Shortcuts
 
 | Shortcut | Action | Context |
