@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
 import { IAudioRecorder } from '../../application/ports/IAudioRecorder';
 import { AudioData } from '../../domain/value-objects/AudioData';
 import { getAudioFormatFromMimeType } from '../../domain/value-objects/AudioFormat';
@@ -19,6 +20,15 @@ type WebviewMessage =
     }
   | { type: 'cancelled' }
   | { type: 'error'; error: string };
+
+function isWebviewMessage(value: unknown): value is WebviewMessage {
+  if (typeof value !== 'object' || value === null || !('type' in value)) {
+    return false;
+  }
+
+  const messageType = (value as { type: unknown }).type;
+  return typeof messageType === 'string';
+}
 
 /**
  * @deprecated Superseded by {@link NativeAudioRecorder} (ADR-0013). Retained as an
@@ -47,15 +57,17 @@ export class WebviewAudioRecorder implements IAudioRecorder {
       // Create or show webview panel
       if (!this.panel) {
         this.panel = vscode.window.createWebviewPanel(
-          'cursorWhisperRecorder',
-          'Cursor Whisper Recorder',
+          'promptimizeRecorder',
+          'Promptimize Recorder',
           vscode.ViewColumn.One,
           {
             enableScripts: true,
             retainContextWhenHidden: true,
             localResourceRoots: [
-              vscode.Uri.file(path.join(this.context.extensionPath, 'out', 'infrastructure', 'audio', 'webview'))
-            ]
+              vscode.Uri.file(
+                path.join(this.context.extensionPath, 'out', 'infrastructure', 'audio', 'webview')
+              ),
+            ],
           }
         );
 
@@ -64,7 +76,11 @@ export class WebviewAudioRecorder implements IAudioRecorder {
 
         // Handle messages from webview
         this.panel.webview.onDidReceiveMessage(
-          message => this.handleWebviewMessage(message),
+          message => {
+            if (isWebviewMessage(message)) {
+              this.handleWebviewMessage(message);
+            }
+          },
           undefined,
           this.context.subscriptions
         );
@@ -97,7 +113,6 @@ export class WebviewAudioRecorder implements IAudioRecorder {
 
       // Send start command to webview
       await this.panel.webview.postMessage({ type: 'start' });
-
     } catch (error) {
       this.logger.error('Failed to start recording', error as Error);
       throw new RecordingError(
@@ -150,7 +165,7 @@ export class WebviewAudioRecorder implements IAudioRecorder {
     }
 
     this.setState(RecordingState.CANCELLED);
-    
+
     // Auto-reset after brief delay
     setTimeout(() => {
       if (this.state === RecordingState.CANCELLED) {
@@ -176,7 +191,7 @@ export class WebviewAudioRecorder implements IAudioRecorder {
     this.stateListeners.forEach(listener => listener(newState));
   }
 
-  private async handleWebviewMessage(message: WebviewMessage): Promise<void> {
+  private handleWebviewMessage(message: WebviewMessage): void {
     switch (message.type) {
       case 'ready':
         this.logger.debug('Webview ready');
@@ -188,7 +203,7 @@ export class WebviewAudioRecorder implements IAudioRecorder {
         break;
 
       case 'audioData':
-        await this.handleAudioData(message);
+        this.handleAudioData(message);
         break;
 
       case 'cancelled':
@@ -221,7 +236,7 @@ export class WebviewAudioRecorder implements IAudioRecorder {
     }
   }
 
-  private async handleAudioData(message: Extract<WebviewMessage, { type: 'audioData' }>): Promise<void> {
+  private handleAudioData(message: Extract<WebviewMessage, { type: 'audioData' }>): void {
     try {
       const maxBytes = 30 * 1024 * 1024;
       if (message.data.length > maxBytes) {
@@ -231,7 +246,7 @@ export class WebviewAudioRecorder implements IAudioRecorder {
       this.logger.info('Received audio data from webview', {
         size: message.data.length,
         mimeType: message.mimeType,
-        duration: message.duration
+        duration: message.duration,
       });
 
       this.setState(RecordingState.PROCESSING);
@@ -248,12 +263,12 @@ export class WebviewAudioRecorder implements IAudioRecorder {
         buffer,
         format,
         16000, // Sample rate
-        1      // Mono
+        1 // Mono
       );
 
       this.logger.info('Audio data processed successfully', {
         size: audioData.getSizeInMB().toFixed(2) + 'MB',
-        duration: audioData.getDurationInSeconds().toFixed(2) + 's'
+        duration: audioData.getDurationInSeconds().toFixed(2) + 's',
       });
 
       if (this.resolveAudioData) {
@@ -263,7 +278,6 @@ export class WebviewAudioRecorder implements IAudioRecorder {
       }
 
       this.setState(RecordingState.IDLE);
-
     } catch (error) {
       this.logger.error('Failed to process audio data', error as Error);
       if (this.rejectAudioData) {
@@ -286,8 +300,8 @@ export class WebviewAudioRecorder implements IAudioRecorder {
         reject(new Error('Webview initialization timeout'));
       }, 5000);
 
-      const disposable = this.panel!.webview.onDidReceiveMessage(message => {
-        if (message.type === 'ready') {
+      const disposable = this.panel!.webview.onDidReceiveMessage((message: unknown) => {
+        if (isWebviewMessage(message) && message.type === 'ready') {
           clearTimeout(timeout);
           disposable.dispose();
           resolve();
@@ -307,7 +321,6 @@ export class WebviewAudioRecorder implements IAudioRecorder {
       'recorder.html'
     );
 
-    const fs = require('fs');
     return fs.readFileSync(htmlPath, 'utf8');
   }
 

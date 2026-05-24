@@ -247,7 +247,7 @@ Add to [`docs/security/privacy.md`](../security/privacy.md):
 
 ### No Persistent Storage
 
-Cursor Whisper does **NOT** store your audio recordings:
+Promptimize does **NOT** store your audio recordings:
 
 - Audio exists only in memory during processing
 - Never written to disk

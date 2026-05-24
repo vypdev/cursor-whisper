@@ -12,7 +12,7 @@
 
 ## Context
 
-VSCode extensions can be written in JavaScript or TypeScript. We need to decide which language to use for Cursor Whisper.
+VSCode extensions can be written in JavaScript or TypeScript. We need to decide which language to use for Promptimize.
 
 Key considerations:
 - **Type safety**: Complex business logic around audio, transcription, and transformations

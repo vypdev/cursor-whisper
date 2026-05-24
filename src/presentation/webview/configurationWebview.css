@@ -1,0 +1,161 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-editor-background);
+}
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0 0 8px;
+  font-size: 1.5em;
+  font-weight: 600;
+}
+
+.page-header p {
+  margin: 0;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.5;
+}
+
+.section {
+  margin-bottom: 28px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.section-description {
+  margin: 0 0 16px;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.5;
+}
+
+.field-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.field-row vscode-text-field,
+.field-row vscode-dropdown {
+  flex: 1;
+}
+
+.field-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.field-stack vscode-text-area {
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  min-height: 24px;
+}
+
+.status-text {
+  color: var(--vscode-descriptionForeground);
+  font-size: 0.95em;
+}
+
+.status-text.ok {
+  color: var(--vscode-testing-iconPassed);
+}
+
+.status-text.error {
+  color: var(--vscode-errorForeground);
+}
+
+.provider-fields {
+  margin-top: 12px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+.comparison-table th,
+.comparison-table td {
+  border: 1px solid var(--vscode-panel-border);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.comparison-table th {
+  background: var(--vscode-editor-inactiveSelectionBackground);
+}
+
+.realtime-badge {
+  color: var(--vscode-testing-iconPassed);
+  font-size: 0.8em;
+  margin-left: 4px;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--vscode-panel-border);
+}
+
+.notification {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--vscode-panel-border);
+  background: var(--vscode-textBlockQuote-background);
+}
+
+.notification.success {
+  border-color: var(--vscode-testing-iconPassed);
+}
+
+.notification.error {
+  border-color: var(--vscode-errorForeground);
+}

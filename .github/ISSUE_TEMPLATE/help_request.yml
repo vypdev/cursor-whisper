@@ -23,8 +23,12 @@ body:
       label: What area do you need help with?
       multiple: false
       options:
-        - Code or implementation
-        - Build or setup
+        - Setup and configuration (API keys, wizard)
+        - Recording (microphone, permissions)
+        - Transcription (Whisper)
+        - Prompt optimization / providers
+        - Text insertion (editor / Cursor chat)
+        - Build from source / development
         - Documentation or usage
         - Workflow or CI/CD
         - Other

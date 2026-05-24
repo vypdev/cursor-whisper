@@ -1,3 +1,4 @@
+/* eslint-disable no-console -- ConsoleLogger intentionally writes to the console. */
 import { ILogger, LogLevel } from '../../application/ports/ILogger';
 
 /**

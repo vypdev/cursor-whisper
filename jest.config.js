@@ -31,6 +31,7 @@ module.exports = {
   },
   setupFilesAfterEnv: ['<rootDir>/__tests__/setup.ts'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1'
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^token-costs$': '<rootDir>/__tests__/__mocks__/token-costs.ts',
   }
 };

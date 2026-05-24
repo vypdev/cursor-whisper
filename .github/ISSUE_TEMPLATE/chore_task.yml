@@ -25,8 +25,10 @@ body:
       options:
         - CI/CD
         - Dependencies
-        - Code Refactoring
-        - Repository Configuration
+        - Code refactoring
+        - Tests
+        - Documentation maintenance
+        - Repository configuration
         - Other
 
   - type: markdown

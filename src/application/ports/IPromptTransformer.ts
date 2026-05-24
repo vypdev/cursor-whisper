@@ -21,8 +21,12 @@ export interface PromptContext {
  * Port for prompt transformation functionality.
  *
  * Implementations:
- * - OpenAIPromptTransformer (primary): Uses GPT-4
- * - RuleBasedTransformer (future): Uses regex/NLP rules
+ * - OpenAIPromptTransformer: Uses GPT-4
+ * - AnthropicPromptTransformer: Uses Claude
+ * - GooglePromptTransformer: Uses Gemini
+ * - AzureOpenAIPromptTransformer: Uses Azure OpenAI
+ * - OllamaPromptTransformer: Uses local Ollama models
+ * - CursorPromptTransformer: Uses Cursor SDK
  */
 export interface IPromptTransformer {
   /**

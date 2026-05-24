@@ -12,7 +12,7 @@
 
 ## Context
 
-We need to decide on the architectural pattern for Cursor Whisper. The extension has significant complexity:
+We need to decide on the architectural pattern for Promptimize. The extension has significant complexity:
 
 - **Multiple external integrations**: OpenAI Whisper, GPT-4, VSCode APIs, Audio APIs
 - **Complex business logic**: Recording state management, transcription, transformation
@@ -182,7 +182,7 @@ Application Layer (StartRecordingUseCase)
     ↓ depends on
 Application Layer Port (IAudioRecorder interface)
     ↑ implemented by
-Infrastructure Layer (WebviewAudioRecorder)
+Infrastructure Layer (NativeAudioRecorder)
 ```
 
 ### Port/Adapter Pattern
@@ -195,13 +195,7 @@ export interface IAudioRecorder {
 }
 
 // Infrastructure layer provides adapter (implementation)
-export class WebviewAudioRecorder implements IAudioRecorder {
-  async startRecording(): Promise<void> { /* ... */ }
-  async stopRecording(): Promise<AudioData> { /* ... */ }
-}
-
-// Alternative implementation can be swapped
-export class NodeAudioRecorder implements IAudioRecorder {
+export class NativeAudioRecorder implements IAudioRecorder {
   async startRecording(): Promise<void> { /* ... */ }
   async stopRecording(): Promise<AudioData> { /* ... */ }
 }

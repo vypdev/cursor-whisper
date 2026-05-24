@@ -258,7 +258,7 @@ import * as vscode from 'vscode';
 
 // Register command
 const disposable = vscode.commands.registerCommand(
-  'cursor-whisper.startRecording',
+  'promptimize.startRecording',
   async () => {
     // Command logic
   }
@@ -276,7 +276,7 @@ const statusBar = vscode.window.createStatusBarItem(
 );
 
 statusBar.text = '$(mic) Voice';
-statusBar.command = 'cursor-whisper.startRecording';
+statusBar.command = 'promptimize.startRecording';
 statusBar.show();
 ```
 
@@ -284,13 +284,13 @@ statusBar.show();
 
 ```typescript
 // Store API key
-await context.secrets.store('cursor-whisper.openai.apiKey', apiKey);
+await context.secrets.store('promptimize.openai.apiKey', apiKey);
 
 // Retrieve API key
-const apiKey = await context.secrets.get('cursor-whisper.openai.apiKey');
+const apiKey = await context.secrets.get('promptimize.openai.apiKey');
 
 // Delete API key
-await context.secrets.delete('cursor-whisper.openai.apiKey');
+await context.secrets.delete('promptimize.openai.apiKey');
 ```
 
 **Platform Storage**:
@@ -302,7 +302,7 @@ await context.secrets.delete('cursor-whisper.openai.apiKey');
 
 ```typescript
 // Get configuration
-const config = vscode.workspace.getConfiguration('cursorWhisper');
+const config = vscode.workspace.getConfiguration('promptimize');
 const language = config.get<string>('transcriptionLanguage', 'auto');
 
 // Update configuration
@@ -314,7 +314,7 @@ await config.update(
 
 // Watch for changes
 vscode.workspace.onDidChangeConfiguration(event => {
-  if (event.affectsConfiguration('cursorWhisper')) {
+  if (event.affectsConfiguration('promptimize')) {
     // Configuration changed
   }
 });
@@ -347,8 +347,8 @@ if (editor) {
 ```typescript
 // Create webview panel
 const panel = vscode.window.createWebviewPanel(
-  'cursorWhisperRecorder',
-  'Cursor Whisper',
+  'promptimizeRecorder',
+  'Promptimize',
   vscode.ViewColumn.One,
   {
     enableScripts: true,
@@ -372,105 +372,6 @@ panel.webview.onDidReceiveMessage(message => {
 panel.webview.postMessage({
   type: 'startRecording'
 });
-```
-
----
-
-## Browser APIs (Webview)
-
-### MediaRecorder API
-
-```typescript
-// Request microphone permission
-const stream = await navigator.mediaDevices.getUserMedia({
-  audio: {
-    channelCount: 1,
-    sampleRate: 16000,
-    echoCancellation: true,
-    noiseSuppression: true,
-    autoGainControl: true
-  }
-});
-
-// Create MediaRecorder
-const mimeType = MediaRecorder.isTypeSupported('audio/webm')
-  ? 'audio/webm'
-  : 'audio/ogg';
-
-const recorder = new MediaRecorder(stream, {
-  mimeType,
-  audioBitsPerSecond: 128000
-});
-
-// Collect audio chunks
-const chunks: Blob[] = [];
-
-recorder.ondataavailable = (event) => {
-  if (event.data.size > 0) {
-    chunks.push(event.data);
-  }
-};
-
-recorder.onstop = () => {
-  const audioBlob = new Blob(chunks, { type: mimeType });
-  // Convert to WAV...
-};
-
-// Start recording
-recorder.start(100); // Chunk every 100ms
-
-// Stop recording
-recorder.stop();
-
-// Release microphone
-stream.getTracks().forEach(track => track.stop());
-```
-
-### Web Audio API (WAV Conversion)
-
-```typescript
-async function convertToWav(blob: Blob): Promise<Blob> {
-  // Decode audio
-  const arrayBuffer = await blob.arrayBuffer();
-  const audioContext = new AudioContext();
-  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-  // Convert to WAV
-  const wavBuffer = audioBufferToWav(audioBuffer);
-  return new Blob([wavBuffer], { type: 'audio/wav' });
-}
-
-function audioBufferToWav(buffer: AudioBuffer): ArrayBuffer {
-  const length = buffer.length * buffer.numberOfChannels * 2;
-  const wavBuffer = new ArrayBuffer(44 + length);
-  const view = new DataView(wavBuffer);
-
-  // WAV header
-  writeString(view, 0, 'RIFF');
-  view.setUint32(4, 36 + length, true);
-  writeString(view, 8, 'WAVE');
-  writeString(view, 12, 'fmt ');
-  view.setUint32(16, 16, true); // Subchunk1Size
-  view.setUint16(20, 1, true); // AudioFormat (PCM)
-  view.setUint16(22, buffer.numberOfChannels, true);
-  view.setUint32(24, buffer.sampleRate, true);
-  view.setUint32(28, buffer.sampleRate * buffer.numberOfChannels * 2, true);
-  view.setUint16(32, buffer.numberOfChannels * 2, true);
-  view.setUint16(34, 16, true); // BitsPerSample
-  writeString(view, 36, 'data');
-  view.setUint32(40, length, true);
-
-  // Write audio data
-  const offset = 44;
-  const channelData = buffer.getChannelData(0);
-  
-  for (let i = 0; i < channelData.length; i++) {
-    const sample = Math.max(-1, Math.min(1, channelData[i]));
-    view.setInt16(offset + i * 2, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
-  }
-
-  return wavBuffer;
-}
 ```
 
 ---
@@ -590,14 +491,14 @@ Size = (16000 * 16 * 1 * 60) / 8 / 1024 / 1024
 **Key Research Findings**:
 
 1. ✅ **Whisper API**: Reliable, fast, accurate for English speech
-2. ✅ **GPT-4o**: Cost-effective for transformation (~$0.01 per use)
+2. ✅ **LLM providers**: Multiple cloud and local options for transformation
 3. ✅ **VSCode API**: Mature, well-documented, stable
 4. ⚠️ **Cursor Chat**: Limited extension API access
-5. ✅ **Browser APIs**: MediaRecorder works reliably
-6. ✅ **Security**: SecretStorage is best option
+5. ✅ **Native audio capture**: Cross-platform via `@kstonekuan/audio-capture` ([ADR-0013](../adr/0013-native-audio-capture.md))
+6. ✅ **Security**: SecretStorage is best option for API keys
 
-**Technical Feasibility**: ✅ All MVP features are feasible
+**Technical Feasibility**: ✅ All core features are feasible
 
 ---
 
-**Next**: See [API Reference](../api/README.md).
+**Related:** [Cursor Compatibility ADR](../adr/0007-cursor-compatibility.md) · [Configuration Guide](../configuration/README.md)

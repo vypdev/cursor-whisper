@@ -6,7 +6,7 @@
 
 ## Overview
 
-Cursor Whisper takes security and privacy seriously. This document outlines our security model, data handling practices, and privacy guarantees.
+Promptimize takes security and privacy seriously. This document outlines our security model, data handling practices, and privacy guarantees.
 
 ---
 
@@ -275,7 +275,7 @@ For EU users:
 **Immediate actions**:
 1. Revoke compromised key in [OpenAI dashboard](https://platform.openai.com/api-keys)
 2. Generate new API key
-3. Update key in Cursor Whisper settings
+3. Update key in Promptimize settings
 4. Review OpenAI usage logs for unauthorized activity
 5. Consider reporting to OpenAI if abuse detected
 

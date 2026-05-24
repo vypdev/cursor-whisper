@@ -3,7 +3,10 @@ import { ApiKey } from '../../domain/value-objects/ApiKey';
 import { ILogger } from '../../application/ports/ILogger';
 
 export class OpenAIModelServiceError extends Error {
-  constructor(message: string, public readonly cause?: Error) {
+  constructor(
+    message: string,
+    public readonly cause?: Error
+  ) {
     super(message);
     this.name = 'OpenAIModelServiceError';
   }

@@ -50,7 +50,7 @@ Key aspects:
 
 ```typescript
 export class SecretStorage {
-  private static readonly API_KEY_KEY = 'cursor-whisper.openai.apiKey';
+  private static readonly API_KEY_KEY = 'promptimize.openai.apiKey';
 
   constructor(private context: vscode.ExtensionContext) {}
 

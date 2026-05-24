@@ -6,7 +6,7 @@
 
 ## Overview
 
-This document details all workflows in Cursor Whisper with sequence diagrams and step-by-step explanations.
+This document details all workflows in Promptimize with sequence diagrams and step-by-step explanations.
 
 ---
 
@@ -263,6 +263,17 @@ sequenceDiagram
 
 ## 3. Alternative Flows
 
+### Transcribe vs Promptimize
+
+Two recording modes share the same audio capture and Whisper transcription but differ after transcription:
+
+| Mode | Start | Stop pipeline |
+|------|-------|---------------|
+| **Transcribe** | `Cmd/Ctrl+Alt+V` or status bar | Stop → Whisper → insert **raw** text |
+| **Promptimize** | `Cmd/Ctrl+Alt+P` or status bar | Stop → Whisper → transform → insert **optimized** text |
+
+See [Recording Modes](../user-guide/recording-modes.md).
+
 ### Skip Transformation (Direct Transcription)
 
 User can disable prompt transformation in settings:
@@ -343,7 +354,7 @@ stateDiagram-v2
 
 ```mermaid
 flowchart TB
-    subgraph Extension["Cursor Whisper Extension"]
+    subgraph Extension["Promptimize Extension"]
         UC[Use Cases]
         Adapters[Infrastructure Adapters]
     end
