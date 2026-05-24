@@ -175,7 +175,9 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 3. Start OpenCode (the proxy listens on `http://127.0.0.1:4010/v1` by default)
 4. Run **Configure Prompt Optimization Provider**, select OpenCode, set the base URL, and pick a model
 
-**Notes:** OpenCode acts as a local gateway to providers you have already configured (Anthropic, OpenAI, Ollama, GitHub Copilot, etc.). Model IDs use `provider/model` format (e.g. `ollama/qwen2.5-coder`). Optional proxy authentication token is stored in SecretStorage if `OPENCODE_LLM_PROXY_TOKEN` is enabled.
+**Notes:** OpenCode acts as a local gateway to providers you have already configured (Anthropic, OpenAI, Ollama, GitHub Copilot, etc.). Model IDs use `provider/model` format (e.g. `ollama/qwen2.5-coder`). Optional proxy authentication token is stored in SecretStorage if `OPENCODE_LLM_PROXY_TOKEN` is enabled on the proxy.
+
+**Optional token authentication:** If your opencode-llm-proxy requires a token, the extension stores it in SecretStorage when configured. Most local setups do not require a token.
 
 **Troubleshooting:** Ensure opencode-llm-proxy is running and reachable. List available models with `GET http://127.0.0.1:4010/v1/models`.
 
@@ -221,22 +223,38 @@ API keys are stored per provider (`cursor-whisper.apiKey.{provider}`). Switching
 
 Run **Cursor Whisper: Test Configuration**
 
-Expected result:
+Expected toast:
 
 ```
 ✓ Whisper: Working | ✓ Optimization (Provider): Working
 ```
 
+When optimization is enabled, a **Configuration Test Result** webview opens showing:
+
+- Original sample transcription (developer ramble about JWT refactor)
+- Transformed prompt from your configured provider
+- **Improvements** list — heuristic analysis (filler removal, conciseness, structure)
+
+See [Advanced Settings — Test Configuration](advanced-settings.md#test-configuration-output) for improvement heuristics.
+
+You can also test inline in the [Configuration Webview](webview-guide.md) using **Test** and **Test optimization** buttons.
+
 ---
 
 ## Advanced Settings
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `transcriptionLanguage` | `auto` | Whisper language (ISO 639-1 or auto) |
-| `audioQuality` | `high` | Recording quality |
-| `maxRecordingDuration` | `120` | Max seconds per recording |
-| `showNotifications` | `true` | Progress notifications |
+| Setting | Default | Applied | Description |
+|---------|---------|---------|-------------|
+| `transcriptionLanguage` | `auto` | Yes | Whisper language (ISO 639-1 or auto) |
+| `transcriptionHint` | `""` | Yes | Optional vocabulary hint for Whisper |
+| `transformationSystemPrompt` | (built-in) | Yes | Custom transformation instructions |
+| `audioQuality` | `high` | **Planned** | Recording quality — not yet applied (always 16 kHz mono) |
+| `maxRecordingDuration` | `120` | **Planned** | Auto-stop — not yet applied |
+| `showNotifications` | `true` | **Planned** | Hide toasts — not yet applied |
+
+Settings marked **Planned** appear in VS Code Settings but do not change runtime behavior yet.
+
+Full reference: [Advanced Settings](advanced-settings.md)
 
 ---
 
@@ -256,4 +274,4 @@ Yes. Set `enablePromptTransformation` to `false` or choose **transcription only*
 
 ---
 
-**See also:** [Quick Start](../quickstart.md)
+**See also:** [Quick Start](../quickstart.md) · [Configuration Webview Guide](webview-guide.md) · [Provider Selection](provider-selection.md) · [Advanced Settings](advanced-settings.md)

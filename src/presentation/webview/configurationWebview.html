@@ -149,7 +149,6 @@
     </section>
 
     <div class="footer-actions">
-      <vscode-button id="completeSetupBtn">Save & Close</vscode-button>
       <vscode-button id="openDocsBtn" appearance="secondary">Open documentation</vscode-button>
     </div>
   </div>
@@ -189,7 +188,6 @@
       toggleComparisonBtn: document.getElementById('toggleComparisonBtn'),
       comparisonContainer: document.getElementById('comparisonContainer'),
       comparisonBody: document.getElementById('comparisonBody'),
-      completeSetupBtn: document.getElementById('completeSetupBtn'),
       openDocsBtn: document.getElementById('openDocsBtn'),
     };
 
@@ -605,10 +603,6 @@
         elements.toggleComparisonBtn.textContent = hidden
           ? 'Hide provider comparison'
           : 'Show provider comparison';
-      });
-
-      elements.completeSetupBtn.addEventListener('click', function () {
-        sendMessage({ type: 'completeSetup' });
       });
 
       elements.openDocsBtn.addEventListener('click', function () {

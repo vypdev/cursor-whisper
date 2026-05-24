@@ -129,6 +129,11 @@
           ],
           "markdownDescription": "**Transcription language** for OpenAI Whisper.\n\nWhisper transcription always uses your OpenAI API key. [Setup guide](https://github.com/vypdev/cursor-whisper/blob/master/docs/quickstart.md)"
         },
+        "cursorWhisper.transcriptionHint": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "**Transcription hint** for OpenAI Whisper (optional).\n\nComma-separated vocabulary, acronyms, or technical terms to improve recognition accuracy. Passed to Whisper as the `prompt` parameter — not transcribed as content. Configure in VS Code Settings (not the configuration webview). [Advanced settings](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/advanced-settings.md)"
+        },
         "cursorWhisper.enablePromptTransformation": {
           "type": "boolean",
           "default": true,
@@ -255,19 +260,19 @@
             "high"
           ],
           "default": "high",
-          "markdownDescription": "**Audio recording quality** sent to OpenAI Whisper for transcription."
+          "markdownDescription": "**Audio recording quality** sent to OpenAI Whisper for transcription.\n\n**Note:** Not yet applied at runtime — recording always uses 16 kHz mono (optimal for Whisper). Reserved for a future release. [Advanced settings](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/advanced-settings.md)"
         },
         "cursorWhisper.maxRecordingDuration": {
           "type": "number",
           "default": 120,
           "minimum": 10,
           "maximum": 300,
-          "markdownDescription": "**Maximum recording duration** in seconds before auto-stop."
+          "markdownDescription": "**Maximum recording duration** in seconds before auto-stop.\n\n**Note:** Not yet applied at runtime — recording stops when you click stop or cancel. Reserved for a future release. [Advanced settings](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/advanced-settings.md)"
         },
         "cursorWhisper.showNotifications": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "Show progress and status notifications during recording, transcription, and optimization."
+          "markdownDescription": "Show progress and status notifications during recording, transcription, and optimization.\n\n**Note:** Not yet applied at runtime — notifications always appear during processing. Reserved for a future release. [Advanced settings](https://github.com/vypdev/cursor-whisper/blob/master/docs/configuration/advanced-settings.md)"
         },
         "cursorWhisper.transformationSystemPrompt": {
           "type": "string",

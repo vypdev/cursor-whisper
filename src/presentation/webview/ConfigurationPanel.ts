@@ -17,7 +17,6 @@ import {
 } from '../../domain/value-objects/TransformationProvider';
 import { ApiKey } from '../../domain/value-objects/ApiKey';
 import { PROVIDER_COMPARISON } from '../../shared/constants/providerComparison';
-import { SETUP_WIZARD_GLOBAL_STATE_KEY } from '../../shared/constants/uxMessages';
 import { getNonce } from '../../shared/utils/getNonce';
 import {
   applyProviderConfiguration,
@@ -64,7 +63,6 @@ export interface ConfigurationWebviewState {
   openCodeBaseUrl: string;
   providerApiKeyMasked: string;
   providerConfigured: boolean;
-  setupCompleted: boolean;
   transformationSystemPrompt: string;
 }
 
@@ -88,7 +86,6 @@ type WebviewToExtensionMessage =
   | { type: 'testOptimization' }
   | { type: 'saveSystemPrompt'; systemPrompt: string }
   | { type: 'resetSystemPrompt' }
-  | { type: 'completeSetup' }
   | { type: 'openDocs' };
 
 function isWebviewMessage(value: unknown): value is WebviewToExtensionMessage {
@@ -273,9 +270,6 @@ export class ConfigurationPanel {
       case 'resetSystemPrompt':
         await this._resetSystemPrompt();
         break;
-      case 'completeSetup':
-        await this._completeSetup();
-        break;
       case 'openDocs':
         await vscode.env.openExternal(
           vscode.Uri.parse('https://github.com/vypdev/cursor-whisper/tree/master/docs')
@@ -334,7 +328,6 @@ export class ConfigurationPanel {
       openCodeBaseUrl: config.openCodeBaseUrl,
       providerApiKeyMasked: maskApiKey(typeof providerKey === 'string' ? providerKey : undefined),
       providerConfigured,
-      setupCompleted: this._isSetupCompleted(),
       transformationSystemPrompt: config.transformationSystemPrompt,
     };
   }
@@ -659,44 +652,6 @@ export class ConfigurationPanel {
       const message = error instanceof Error ? error.message : 'Failed to reset system prompt';
       await this._postSaveResult(false, message);
     }
-  }
-
-  private async _completeSetup(): Promise<void> {
-    const state = await this._buildConfigState();
-
-    if (!state.whisperConfigured) {
-      await this._panel.webview.postMessage({
-        type: 'notification',
-        message: 'Configure your OpenAI API key for Whisper before completing setup.',
-        notificationKind: 'error',
-      });
-      return;
-    }
-
-    if (state.enablePromptTransformation && !state.providerConfigured) {
-      await this._panel.webview.postMessage({
-        type: 'notification',
-        message: 'Finish optimization provider configuration or disable optimization.',
-        notificationKind: 'error',
-      });
-      return;
-    }
-
-    await this.context.globalState.update(SETUP_WIZARD_GLOBAL_STATE_KEY, true);
-    await this._panel.webview.postMessage({
-      type: 'notification',
-      message: 'Configuration saved! Press Cmd/Ctrl+Alt+V to start recording.',
-      notificationKind: 'success',
-    });
-    await this._postConfigUpdated();
-    this.logger.info('Configuration setup marked complete from webview panel');
-    
-    // Close the configuration panel
-    this.dispose();
-  }
-
-  private _isSetupCompleted(): boolean {
-    return this.context.globalState.get<boolean>(SETUP_WIZARD_GLOBAL_STATE_KEY) === true;
   }
 
   private async _postSaveResult(ok: boolean, message: string): Promise<void> {

@@ -8,7 +8,6 @@ import {
   TransformationProvider,
   PROVIDER_METADATA,
 } from '../../domain/value-objects/TransformationProvider';
-import { SETUP_WIZARD_GLOBAL_STATE_KEY } from '../../shared/constants/uxMessages';
 
 export function registerFirstTimeSetupCommand(
   _context: vscode.ExtensionContext,
@@ -24,17 +23,11 @@ export function registerFirstTimeSetupCommand(
   });
 }
 
-export function isSetupCompleted(context: vscode.ExtensionContext): boolean {
-  return context.globalState.get<boolean>(SETUP_WIZARD_GLOBAL_STATE_KEY) === true;
-}
-
 export async function getSetupChecklist(
-  context: vscode.ExtensionContext,
   configRepo: IConfigRepository
 ): Promise<Array<{ label: string; complete: boolean }>> {
   const config = await configRepo.getConfig();
   const openAiKey = await configRepo.getProviderApiKey(TransformationProvider.OpenAI);
-  const setupCompleted = isSetupCompleted(context);
 
   const items: Array<{ label: string; complete: boolean }> = [
     { label: 'Extension installed', complete: true },
@@ -53,8 +46,6 @@ export async function getSetupChecklist(
   } else {
     items.push({ label: 'Prompt optimization configured (disabled)', complete: true });
   }
-
-  items.push({ label: 'Configuration completed', complete: setupCompleted });
 
   return items;
 }

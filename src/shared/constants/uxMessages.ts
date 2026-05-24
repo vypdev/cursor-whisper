@@ -47,5 +47,3 @@ export const SETUP_CHECKLIST_TOOLTIP = (
   const lines = items.map(item => `${item.complete ? '✓' : '✗'} ${item.label}`);
   return `Setup checklist:\n${lines.join('\n')}\n\nClick to open configuration`;
 };
-
-export const SETUP_WIZARD_GLOBAL_STATE_KEY = 'cursor-whisper.setupCompleted';

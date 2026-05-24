@@ -11,7 +11,13 @@ Documentation for the Cursor Whisper VSCode/Cursor extension.
 | Document | Purpose |
 |----------|---------|
 | [Quick Start](quickstart.md) | Install, first recording, troubleshooting |
+| [Recording Modes](user-guide/recording-modes.md) | Transcribe vs Promptimize workflows |
+| [Keyboard Shortcuts](user-guide/keyboard-shortcuts.md) | Keybindings and Command Palette reference |
+| [Troubleshooting](user-guide/troubleshooting.md) | Decision trees for common issues |
 | [Configuration Guide](configuration/README.md) | Whisper setup, optimization providers, settings |
+| [Configuration Webview](configuration/webview-guide.md) | Interactive setup panel features |
+| [Provider Selection](configuration/provider-selection.md) | When to use which provider |
+| [Advanced Settings](configuration/advanced-settings.md) | Transcription hints, planned settings, test output |
 
 ### Architecture & design
 
@@ -46,8 +52,10 @@ Implementation details live in [`src/`](../src/) with TypeScript types and JSDoc
 ### For users
 
 1. [Quick Start](quickstart.md)
-2. [Configuration Guide](configuration/README.md)
-3. [Security & Privacy](security/privacy.md)
+2. [Recording Modes](user-guide/recording-modes.md)
+3. [Configuration Webview](configuration/webview-guide.md)
+4. [Configuration Guide](configuration/README.md)
+5. [Troubleshooting](user-guide/troubleshooting.md)
 
 ### For contributors
 
@@ -70,8 +78,8 @@ Implementation details live in [`src/`](../src/) with TypeScript types and JSDoc
 | Change type | Update |
 |-------------|--------|
 | Architecture | `architecture/overview.md` + new ADR |
-| User-facing features | `configuration/`, `quickstart.md`, root `README.md` |
-| Bug fixes (user-facing) | Root `README.md` troubleshooting |
+| User-facing features | `user-guide/`, `configuration/`, `quickstart.md`, root `README.md` |
+| Bug fixes (user-facing) | `user-guide/troubleshooting.md`, root `README.md` |
 | Release process | `deployment/release-process.md` |
 
 Documentation changes belong in the same PR as code changes when behavior changes.

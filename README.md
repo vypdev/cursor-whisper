@@ -17,9 +17,9 @@ A professional VSCode/Cursor extension that captures audio from your microphone,
 2. **Run Setup Wizard** — Command Palette → `Cursor Whisper: Setup Wizard`
 3. **Configure OpenAI API key** — Required for Whisper voice-to-text
 4. **Optionally choose optimization provider** — OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, OpenRouter, or Cursor
-5. **Press `Cmd+Alt+V`** and speak
+5. **Press `Cmd+Alt+V`** (Transcribe) or **`Cmd+Alt+P`** (Promptimize) and speak
 
-See the full [Quick Start Guide](docs/quickstart.md).
+See the full [Quick Start Guide](docs/quickstart.md) and [Recording Modes](docs/user-guide/recording-modes.md).
 
 ### Two Services, Clear Roles
 
@@ -78,24 +78,25 @@ Developers often have complex architectural ideas, detailed requirements, or int
 
 ## ✨ Features
 
-### Current (v0.1.0-alpha)
+### Current (v0.1.0)
 
-- ✅ **One-Click Recording** - Status bar button or keyboard shortcut
-- ✅ **High-Quality Transcription** - OpenAI Whisper API integration
-- ✅ **Smart Insertion** - Automatically inserts into active editor
-- ✅ **Visual Feedback** - Clear state indicators (idle, recording, processing)
-- ✅ **Secure Configuration** - API keys stored securely in VSCode SecretStorage
-- ✅ **Cross-Platform** - Works on macOS, Windows, and Linux
+- ✅ **Two Recording Modes** — Transcribe (raw text) and Promptimize (optimized prompts)
+- ✅ **One-Click Recording** — Dual status bar buttons or keyboard shortcuts
+- ✅ **High-Quality Transcription** — OpenAI Whisper API integration
+- ✅ **Prompt Transformation** — AI-powered optimization via 8 providers
+- ✅ **Multiple AI Providers** — OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, OpenRouter, and Cursor
+- ✅ **Configuration Webview** — Interactive setup panel with provider comparison and system prompt editor
+- ✅ **Smart Insertion** — Chat → editor → clipboard fallback chain
+- ✅ **Visual Feedback** — Status bar states and progress notifications
+- ✅ **Secure Configuration** — API keys stored in VSCode SecretStorage
+- ✅ **Cross-Platform** — Works on macOS, Windows, and Linux
 
 ### Coming Soon
 
-- 🔄 **Prompt Transformation** - AI-powered optimization of transcribed text
-- 🔄 **Multiple AI Providers** - OpenAI, Anthropic, Google Gemini, Azure OpenAI, Ollama, OpenCode, OpenRouter, and Cursor for prompt transformation
-- 🔄 **Chat Integration** - Direct insertion into Cursor chat input
-- 🔄 **Real-time Streaming** - See transcription as you speak
-- 🔄 **Multi-language Support** - Auto-detect or manually configure language
-- 🔄 **Custom Vocabulary** - Project-specific terms and acronyms
-- 🔄 **Recording History** - Review and re-use past transcriptions
+- 🔄 **Real-time Streaming** — See transcription as you speak
+- 🔄 **Custom Vocabulary UI** — Project-specific terms in configuration webview
+- 🔄 **Recording History** — Review and re-use past transcriptions
+- 🔄 **Planned settings** — `audioQuality`, `maxRecordingDuration`, `showNotifications` (defined but not yet applied)
 
 ---
 
@@ -212,7 +213,7 @@ Prompt optimization converts transcribed speech into structured prompts. Choose 
 | Setting | Description |
 |---------|-------------|
 | `enablePromptTransformation` | Enable/disable optimization |
-| `transformationProvider` | `openai`, `anthropic`, `google`, `azure`, or `ollama` |
+| `transformationProvider` | `openai`, `anthropic`, `google`, `azure`, `ollama`, `opencode`, `openrouter`, `cursor` |
 | `transformationModel` | OpenAI model (when provider is `openai`) |
 | `anthropicModel` | Claude model (when provider is `anthropic`) |
 | `googleModel` | Gemini model (when provider is `google`) |
@@ -228,13 +229,14 @@ Use **Cursor Whisper: Configure Prompt Optimization Provider** to set up interac
 
 | Setting | Type | Default | Description |
 |---------|------|---------|-------------|
-| `transcriptionLanguage` | string | `"en"` | Language for transcription (`en`, `es`, `fr`, `de`, `auto`) |
+| `transcriptionLanguage` | string | `"auto"` | Language for transcription (`en`, `es`, `fr`, `de`, `auto`) |
 | `enablePromptTransformation` | boolean | `true` | Transform transcription into optimized prompts |
 | `transformationProvider` | string | `"openai"` | LLM provider for transformation (`openai`, `anthropic`, `google`, `azure`, `ollama`, `opencode`, `openrouter`, `cursor`) |
 | `transformationModel` | string | `"gpt-4o"` | OpenAI model for transformation |
-| `audioQuality` | string | `"high"` | Audio recording quality (`low`, `medium`, `high`) |
-| `maxRecordingDuration` | number | `120` | Maximum recording duration in seconds |
-| `showNotifications` | boolean | `true` | Show status notifications |
+| `transcriptionHint` | string | `""` | Optional Whisper vocabulary hint (Settings only) |
+| `audioQuality` | string | `"high"` | Planned — not yet applied (always 16 kHz mono) |
+| `maxRecordingDuration` | number | `120` | Planned — not yet applied |
+| `showNotifications` | boolean | `true` | Planned — not yet applied |
 
 ---
 
@@ -349,20 +351,34 @@ Expected output:
 
 ## 🚀 Usage
 
+### Recording Modes
+
+Cursor Whisper has two modes — see [Recording Modes](docs/user-guide/recording-modes.md) for full details.
+
+| Mode | Shortcut | Output |
+|------|----------|--------|
+| **Transcribe** | `Cmd/Ctrl+Alt+V` | Raw Whisper transcription |
+| **Promptimize** | `Cmd/Ctrl+Alt+P` | Optimized structured prompt |
+
 ### Quick Start
 
 1. **Open your editor or Cursor chat**
-2. **Press `Cmd+Alt+V` (macOS) or `Ctrl+Alt+V` (Windows/Linux)**
+2. **Press `Cmd+Alt+V`** (Transcribe) or **`Cmd+Alt+P`** (Promptimize)
 3. **Speak naturally about your requirements**
-4. **Press the same shortcut or click the status bar to stop**
-5. **Transcribed and optimized text appears automatically**
+4. **Click the status bar** (Recording...) to stop
+5. **Transcribed or optimized text appears automatically**
 
-### Alternative: Status Bar Button
+### Status Bar
 
-Click the microphone icon (🎤) in the status bar:
-- **Idle state**: Click to start recording
-- **Recording**: Click to stop
-- **Processing**: Wait for transcription
+Three items appear in the status bar (right side):
+
+| Item | Idle | Recording |
+|------|------|-----------|
+| **Transcribe** | $(mic) Transcribe | $(record) Recording... (click to stop) |
+| **Promptimize** | $(sparkle) Promptimize | $(record) Recording... (click to stop) |
+| **Settings** | $(gear) Settings | Available during recording |
+
+During processing, progress appears in **notifications** (Transcribing..., Optimizing..., Inserting...).
 
 ### Example Workflow
 
@@ -402,28 +418,44 @@ Click the microphone icon (🎤) in the status bar:
 
 ### Visual States
 
-The extension provides clear visual feedback through the status bar:
+The status bar reflects recorder states; fine-grained progress (Transcribing, Optimizing) appears in notifications.
 
-| State | Icon | Description |
-|-------|------|-------------|
-| **Idle** | 🎤 Voice | Ready to record |
-| **Recording** | 🔴 Recording... | Actively recording audio |
-| **Processing** | ⏳ Transcribing... | Sending audio to Whisper API |
-| **Transforming** | ⏳ Optimizing... | Enhancing prompt with GPT-4 |
-| **Error** | ❌ Error | Something went wrong |
+| State | Status Bar | Description |
+|-------|------------|-------------|
+| **Idle** | $(mic) Transcribe / $(sparkle) Promptimize | Ready to record |
+| **Recording** | $(record) Recording... | Actively recording (click to stop) |
+| **Processing** | $(sync~spin) Processing... | Preparing audio after stop |
+| **Error** | Error styling | Something went wrong |
+
+See [UX States](docs/ux/states.md) for the full state reference.
 
 ### Keyboard Shortcuts
 
 | Shortcut | Action |
 |----------|--------|
-| `Cmd+Alt+V` / `Ctrl+Alt+V` | Toggle recording |
-| `Cmd+Shift+P` → "Cursor Whisper: Start Recording" | Start recording |
-| `Cmd+Shift+P` → "Cursor Whisper: Stop Recording" | Stop recording |
-| `Cmd+Shift+P` → "Cursor Whisper: Configure OpenAI API Key (Whisper)" | Configure OpenAI API key for Whisper transcription |
-| `Cmd+Shift+P` → "Cursor Whisper: Configure Prompt Optimization Provider" | Select optimization provider and credentials |
-| `Cmd+Shift+P` → "Cursor Whisper: Configure OpenAI Optimization Model" | Configure OpenAI model for optimization |
-| `Cmd+Shift+P` → "Cursor Whisper: Setup Wizard" | Guided first-time or full reconfiguration |
-| `Cmd+Shift+P` → "Cursor Whisper: Test Configuration" | Test Whisper + optimization setup |
+| `Cmd+Alt+V` / `Ctrl+Alt+V` | Start Transcribe recording |
+| `Cmd+Alt+P` / `Ctrl+Alt+P` | Start Promptimize recording |
+| `Escape` | Cancel recording (while recording) |
+
+Shortcuts **start** recording only — stop by clicking the status bar. See [Keyboard Shortcuts](docs/user-guide/keyboard-shortcuts.md).
+
+### Commands (Command Palette)
+
+| Command | Purpose |
+|---------|---------|
+| `Cursor Whisper: Start Transcribe Recording` | Start raw transcription |
+| `Cursor Whisper: Stop Transcribe Recording` | Stop and process Transcribe |
+| `Cursor Whisper: Start Promptimize Recording` | Start optimized prompt |
+| `Cursor Whisper: Stop Promptimize Recording` | Stop and process Promptimize |
+| `Cursor Whisper: Cancel Recording` | Discard recording |
+| `Cursor Whisper: Open Configuration` | Configuration webview |
+| `Cursor Whisper: Configure OpenAI API Key (Whisper)` | Set Whisper API key |
+| `Cursor Whisper: Configure Prompt Optimization Provider` | Provider setup wizard |
+| `Cursor Whisper: Configure OpenAI Optimization Model` | Pick GPT model (OpenAI only) |
+| `Cursor Whisper: Test Configuration` | Test setup; opens results webview |
+| `Cursor Whisper: Setup Wizard` | Opens configuration panel |
+
+**Deprecated:** `(Deprecated) Start Recording` and `(Deprecated) Stop Recording` — use mode-specific commands instead.
 
 ---
 
@@ -511,16 +543,12 @@ See [`docs/architecture/`](docs/architecture/) for detailed structure documentat
 
 ## 🧪 Testing
 
-Automated tests are **pending** — see [`PROGRESS.md`](PROGRESS.md) and [`docs/testing/strategy.md`](docs/testing/strategy.md) for the focused test plan.
+Automated tests cover use cases, transformers, and UI components — see [`docs/testing/strategy.md`](docs/testing/strategy.md).
 
-### Run Tests (when implemented)
+### Run Tests
 
 ```bash
-# Unit tests
-pnpm test
-
-# Watch mode
-pnpm run test:watch
+source scripts/ensure-node.sh && pnpm test
 ```
 
 ### Test Strategy
@@ -534,21 +562,22 @@ See [`docs/testing/strategy.md`](docs/testing/strategy.md) for critical test pri
 
 ## 📈 Roadmap
 
-### v0.1.0 (Current - Alpha)
-- ✅ Basic audio recording
+### v0.1.0 (Current)
+- ✅ Dual recording modes (Transcribe + Promptimize)
 - ✅ Whisper transcription
-- ✅ Editor insertion
+- ✅ Prompt transformation (8 providers)
+- ✅ Configuration webview
+- ✅ Chat / editor / clipboard insertion
 - ✅ API key configuration
 
-### v0.2.0 (Next - Beta)
-- 🔄 GPT-4 prompt transformation
-- 🔄 Transformation preview
-- 🔄 Custom transformation styles
+### v0.2.0 (Next)
+- 🔄 Apply planned settings (`audioQuality`, `maxRecordingDuration`, `showNotifications`)
+- 🔄 Transformation preview before insert
+- 🔄 Transcription language in configuration webview
 
 ### v0.3.0
-- 🔄 Cursor chat integration
-- 🔄 Chat Participant API
-- 🔄 Context-aware insertion
+- 🔄 Context-aware insertion improvements
+- 🔄 Push-to-talk mode
 
 ### v0.4.0
 - 🔄 Real-time streaming transcription
@@ -556,13 +585,11 @@ See [`docs/testing/strategy.md`](docs/testing/strategy.md) for critical test pri
 - 🔄 Edit before insert
 
 ### v0.5.0
-- 🔄 Multi-language auto-detection
-- 🔄 Custom vocabulary
+- 🔄 Custom vocabulary UI
 - 🔄 Technical term correction
 
 ### v1.0.0 (Stable)
 - 🔄 Full production release
-- 🔄 Complete documentation
 - 🔄 Performance optimization
 - 🔄 Extensive testing
 
@@ -610,6 +637,8 @@ We welcome contributions! See [`docs/standards/coding-conventions.md`](docs/stan
 ---
 
 ## 🐛 Troubleshooting
+
+See the full [Troubleshooting Guide](docs/user-guide/troubleshooting.md) with decision trees.
 
 ### Microphone not working
 
@@ -671,8 +700,11 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## 🔗 Links
 
 - [Documentation](docs/)
+- [Recording Modes](docs/user-guide/recording-modes.md)
+- [Configuration Webview Guide](docs/configuration/webview-guide.md)
 - [Architecture Docs](docs/architecture/)
 - [Configuration Guide](docs/configuration/)
+- [Troubleshooting](docs/user-guide/troubleshooting.md)
 - [Project Progress](PROGRESS.md)
 
 ---

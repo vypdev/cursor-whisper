@@ -13,6 +13,7 @@ import { ChatParticipantInserter } from './infrastructure/insertion/ChatParticip
 import { EditorTextInserter } from './infrastructure/insertion/EditorTextInserter';
 import { FallbackTextInserter } from './infrastructure/insertion/FallbackTextInserter';
 import { NativeAudioRecorder } from './infrastructure/audio/NativeAudioRecorder';
+import { RecordingState } from './domain/value-objects/RecordingState';
 
 // Use Cases
 import { StartRecordingUseCase } from './application/use-cases/StartRecordingUseCase';
@@ -36,7 +37,6 @@ import { registerConfigureTransformationProviderCommand } from './presentation/c
 import { registerTestTransformationCommand } from './presentation/commands/TestTransformationCommand';
 import {
   getSetupChecklist,
-  isSetupCompleted,
   registerFirstTimeSetupCommand,
 } from './presentation/commands/FirstTimeSetupCommand';
 import { registerOpenConfigurationPanelCommand } from './presentation/commands/OpenConfigurationPanelCommand';
@@ -122,7 +122,7 @@ export function activate(context: vscode.ExtensionContext): void {
     const metadata = PROVIDER_METADATA[config.transformationProvider];
     statusBar.setTransformationProviderLabel(metadata.displayName);
 
-    const checklist = await getSetupChecklist(context, configRepository);
+    const checklist = await getSetupChecklist(configRepository);
     const openAiKey = await configRepository.getProviderApiKey(TransformationProvider.OpenAI);
 
     statusBar.setSetupState({
@@ -137,9 +137,14 @@ export function activate(context: vscode.ExtensionContext): void {
     void syncTransformationProviderLabel();
   });
 
-  // Sync status bar with recorder state
+  // Sync status bar with recorder state and keybinding context
   audioRecorder.onStateChange(state => {
     statusBar.setState(state);
+    void vscode.commands.executeCommand(
+      'setContext',
+      'cursorWhisper.isRecording',
+      state === RecordingState.RECORDING
+    );
   });
 
   // Commands
@@ -233,21 +238,6 @@ export function activate(context: vscode.ExtensionContext): void {
   // ========================================
 
   void validateConfigurationOnStartup(configRepository, transformerFactory).then(async issue => {
-    const setupCompleted = isSetupCompleted(context);
-
-    if (!setupCompleted) {
-      logger.info('First-time setup not completed');
-      const selection = await vscode.window.showInformationMessage(
-        'Welcome to Cursor Whisper. Open the configuration panel to set up Whisper transcription and optional prompt optimization.',
-        'Open Configuration',
-        'Later'
-      );
-      if (selection === 'Open Configuration') {
-        await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
-      }
-      return;
-    }
-
     if (issue) {
       logger.warn(issue.message);
       const selection = await vscode.window.showWarningMessage(

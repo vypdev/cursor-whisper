@@ -6,18 +6,25 @@ Get Cursor Whisper running in a few minutes.
 
 ## What Cursor Whisper Does
 
-Cursor Whisper has **two separate services**:
+Cursor Whisper has **two separate services** and **two recording modes**:
 
 1. **Voice-to-text (required)** — Always uses **OpenAI Whisper**. Requires an **OpenAI API key**.
-2. **Prompt optimization (optional)** — Converts transcribed speech into structured prompts. You choose the provider (OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, OpenRouter, or Cursor) and supply credentials when required.
+2. **Prompt optimization (optional)** — Converts transcribed speech into structured prompts. Choose from 8 providers.
+
+| Mode | Shortcut | Pipeline |
+|------|----------|----------|
+| **Transcribe** | `Cmd/Ctrl+Alt+V` | Record → Whisper → insert raw text |
+| **Promptimize** | `Cmd/Ctrl+Alt+P` | Record → Whisper → optimize → insert |
+
+See [Recording Modes](user-guide/recording-modes.md) for when to use each mode.
 
 ```mermaid
 graph LR
     Voice[Your Voice] --> Whisper[OpenAI Whisper<br/>Transcription]
     Whisper --> RawText[Raw Text]
-    RawText --> Choice{Optimization<br/>Enabled?}
-    Choice -->|No| Editor[Insert to Editor]
-    Choice -->|Yes| Provider[Your Chosen Provider]
+    RawText --> Choice{Mode?}
+    Choice -->|Transcribe| Editor[Insert raw text]
+    Choice -->|Promptimize| Provider[Optimization Provider]
     Provider --> OptimizedText[Optimized Prompt]
     OptimizedText --> Editor
 ```
@@ -42,40 +49,50 @@ Search for **Cursor Whisper** in the Extensions view.
 
 ## First-Time Setup
 
-On first launch, Cursor Whisper opens the **Setup Wizard**. You can also run it anytime:
+On first launch, Cursor Whisper prompts you to open the **Configuration panel**. You can also open it anytime:
 
-**Command Palette** → `Cursor Whisper: Setup Wizard`
+**Command Palette** → `Cursor Whisper: Open Configuration` or click $(gear) **Settings** in the status bar.
 
-### Wizard steps
+### Configuration panel overview
 
-1. **Welcome** — Explains transcription vs optimization
-2. **OpenAI API key** — Required for Whisper transcription
-   - Get a key: https://platform.openai.com/api-keys
-3. **Test OpenAI connection** — Verifies your key works
-4. **Enable optimization?** — Choose yes or transcription-only mode
-5. **Select provider** (if enabled) — OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, OpenRouter, or Cursor
-6. **Provider credentials** — Enter API key or endpoint when required
-7. **Select model** — Pick the model for optimization
-8. **Test optimization** — Optional validation before finishing
+The panel is a single webview (not a multi-step wizard) with these sections:
+
+1. **Transcription** — Enter OpenAI API key, test connection
+2. **Prompt Optimization** — Enable/disable, choose provider, enter credentials, pick model
+3. **System Prompt** — Customize transformation style (optional)
+4. **Provider Comparison** — Compare all 8 providers
+5. **Save & Close** — Validates and completes setup
+
+Full details: [Configuration Webview Guide](configuration/webview-guide.md)
 
 ### Minimum configuration (transcription only)
 
-If you only need voice-to-text:
-
-1. Run the setup wizard
-2. Enter your OpenAI API key
-3. Choose **No, transcription only**
+1. Open the configuration panel
+2. Enter your OpenAI API key → **Test** (optional)
+3. Leave **Enable prompt optimization** unchecked
+4. Click **Save & Close**
 
 ---
 
 ## First Recording
 
+### Transcribe (raw text)
+
 1. Open an editor or Cursor chat input
 2. Press `Cmd+Alt+V` (macOS) or `Ctrl+Alt+V` (Windows/Linux)
 3. Speak clearly
-4. Press the shortcut again or click the status bar to stop
-5. Wait for transcription (and optimization if enabled)
-6. Text appears in your editor or chat
+4. Click **Recording...** in the status bar to stop
+5. Raw transcription appears in your editor or chat
+
+### Promptimize (optimized prompt)
+
+1. Ensure optimization is enabled in the configuration panel
+2. Press `Cmd+Alt+P` (macOS) or `Ctrl+Alt+P` (Windows/Linux)
+3. Speak clearly
+4. Click **Recording...** in the status bar to stop
+5. Optimized prompt appears after Whisper + transformation
+
+**Note:** Keyboard shortcuts start recording only. Stop via the status bar or stop commands.
 
 ---
 
@@ -83,42 +100,60 @@ If you only need voice-to-text:
 
 | Command | Purpose |
 |---------|---------|
-| `Cursor Whisper: Setup Wizard` | Guided first-time or full reconfiguration |
-| `Cursor Whisper: Configure OpenAI API Key (Whisper)` | Set or update OpenAI key for transcription |
-| `Cursor Whisper: Configure Prompt Optimization Provider` | Choose provider and credentials |
-| `Cursor Whisper: Configure OpenAI Optimization Model` | Pick GPT model when using OpenAI for optimization |
-| `Cursor Whisper: Test Configuration` | Verify Whisper + optimization |
+| `Cursor Whisper: Open Configuration` | Configuration webview (primary) |
+| `Cursor Whisper: Setup Wizard` | Same as Open Configuration |
+| `Cursor Whisper: Configure OpenAI API Key (Whisper)` | Set or update OpenAI key |
+| `Cursor Whisper: Configure Prompt Optimization Provider` | Command Palette provider wizard |
+| `Cursor Whisper: Configure OpenAI Optimization Model` | Pick GPT model (OpenAI provider) |
+| `Cursor Whisper: Test Configuration` | Test setup; opens before/after webview |
 
 ---
 
 ## Status Bar
 
+Three items in the status bar (right side):
+
 | Indicator | Meaning |
 |-----------|---------|
-| `Setup Whisper` | Setup incomplete — click to run wizard |
-| `Voice` | Ready to record |
-| `Recording...` | Recording in progress |
-| `Transcribing...` | Sending audio to OpenAI Whisper |
-| `Optimizing...` | Running prompt optimization |
-| Gear icon | Open setup wizard |
+| $(mic) **Transcribe** | Start/stop raw transcription mode |
+| $(sparkle) **Promptimize** | Start/stop optimized prompt mode |
+| $(gear) **Settings** / $(warning) **Setup** | Open configuration panel |
 
-Tooltip shows: `Transcription: OpenAI Whisper | Optimization: [Provider]`
+While recording, the active mode shows **$(record) Recording...** (click to stop).
+
+During processing, notifications show: Transcribing... → Optimizing... → Inserting...
+
+Tooltip when idle: `Transcription: OpenAI Whisper | Optimization: [Provider]`
+
+---
+
+## Test Configuration
+
+Run **Cursor Whisper: Test Configuration** to validate your setup. When optimization is enabled, a webview opens showing:
+
+- Original sample transcription
+- Transformed prompt from your provider
+- **Improvements** list (filler removal, conciseness, structure)
+
+See [Advanced Settings — Test Configuration](configuration/advanced-settings.md#test-configuration-output).
 
 ---
 
 ## Troubleshooting
 
+See the full [Troubleshooting Guide](user-guide/troubleshooting.md) with decision trees.
+
 ### OpenAI API key errors
 
 - Confirm the key starts with `sk-`
 - Check credits at https://platform.openai.com/account/billing
-- Run **Cursor Whisper: Test Configuration**
+- Run **Test** in the configuration panel or **Test Configuration**
 
 ### Optimization provider errors
 
 - Each provider needs its own API key (except Ollama and OpenCode)
 - OpenAI for Whisper and OpenAI for optimization can use the **same key**
-- Run **Cursor Whisper: Configure Prompt Optimization Provider**
+- Reconfigure via **Open Configuration** panel
 
 ### Microphone not working
 
@@ -139,4 +174,4 @@ Tooltip shows: `Transcription: OpenAI Whisper | Optimization: [Provider]`
 
 ---
 
-**Next:** [Configuration Guide](configuration/README.md)
+**Next:** [Configuration Guide](configuration/README.md) · [Recording Modes](user-guide/recording-modes.md)

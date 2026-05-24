@@ -263,6 +263,17 @@ sequenceDiagram
 
 ## 3. Alternative Flows
 
+### Transcribe vs Promptimize
+
+Two recording modes share the same audio capture and Whisper transcription but differ after transcription:
+
+| Mode | Start | Stop pipeline |
+|------|-------|---------------|
+| **Transcribe** | `Cmd/Ctrl+Alt+V` or status bar | Stop → Whisper → insert **raw** text |
+| **Promptimize** | `Cmd/Ctrl+Alt+P` or status bar | Stop → Whisper → transform → insert **optimized** text |
+
+See [Recording Modes](../user-guide/recording-modes.md).
+
 ### Skip Transformation (Direct Transcription)
 
 User can disable prompt transformation in settings:

@@ -125,7 +125,7 @@ Layer-specific implementation details live in `src/` with TypeScript types and J
 | `audioQuality` | Yes | Loaded only — recorder always uses 16 kHz mono |
 | `maxRecordingDuration` | Yes | Loaded only — not enforced in `NativeAudioRecorder` |
 | `showNotifications` | Yes | Loaded only — commands always show notifications |
-| `transcriptionHint` | Partial | Read-only; not writable via settings UI |
+| `transcriptionHint` | Partial | Read/write via VS Code Settings; not in webview |
 
 These options are exposed in `package.json` and documented in README for forward compatibility.
 

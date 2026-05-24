@@ -49,7 +49,7 @@ flowchart TB
 
     subgraph External["External Services"]
         OpenAI[OpenAI API]
-        OtherLLMs[Anthropic / Google / Azure / Ollama]
+        OtherLLMs[Anthropic / Google / Azure / Ollama / OpenCode / OpenRouter / Cursor]
         VSCodeAPI[VSCode API]
     end
 
@@ -125,6 +125,9 @@ graph TB
         GEMINI[GooglePromptTransformer]
         AZURE[AzureOpenAIPromptTransformer]
         OLLAMA[OllamaPromptTransformer]
+        OPENCODE[OpenCodePromptTransformer]
+        OPENROUTER[OpenRouterPromptTransformer]
+        CURSOR[CursorPromptTransformer]
         INSERT1[ChatParticipantInserter]
         INSERT2[EditorTextInserter]
         INSERT3[FallbackTextInserter]
@@ -148,11 +151,17 @@ graph TB
     FACTORY --> GEMINI
     FACTORY --> AZURE
     FACTORY --> OLLAMA
+    FACTORY --> OPENCODE
+    FACTORY --> OPENROUTER
+    FACTORY --> CURSOR
     GPT --> PORT3
     CLAUDE --> PORT3
     GEMINI --> PORT3
     AZURE --> PORT3
     OLLAMA --> PORT3
+    OPENCODE --> PORT3
+    OPENROUTER --> PORT3
+    CURSOR --> PORT3
     INSERT1 --> PORT4
     INSERT2 --> PORT4
     INSERT3 --> PORT4
@@ -202,7 +211,7 @@ sequenceDiagram
 | Bundler | Webpack 5 | Module bundling |
 | Audio | @kstonekuan/audio-capture | Native microphone capture |
 | Transcription | OpenAI Whisper | Speech-to-text |
-| Transformation | OpenAI, Anthropic, Google, Azure, Ollama | Prompt optimization |
+| Transformation | OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, OpenRouter, Cursor | Prompt optimization |
 | Testing | Jest | Unit and integration tests |
 
 Technology decisions: [ADR-0001](../adr/0001-use-typescript.md), [ADR-0013](../adr/0013-native-audio-capture.md).
