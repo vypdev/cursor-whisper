@@ -119,9 +119,7 @@ export function registerTestTransformationCommand(
             )
             .then(async selection => {
               if (selection === 'Configure Provider') {
-                await vscode.commands.executeCommand(
-                  'cursor-whisper.configureTransformationProvider'
-                );
+                await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
               } else if (selection === 'Troubleshooting') {
                 await vscode.env.openExternal(
                   vscode.Uri.parse(

@@ -18,13 +18,13 @@ export function registerStartRecordingCommand(
           'OpenAI API key is required for Whisper voice-to-text transcription.',
           { detail: 'Prompt optimization uses a separate provider you can configure later.' },
           'Configure Now',
-          'Run Setup Wizard'
+          'Open Configuration'
         );
 
         if (selection === 'Configure Now') {
           await vscode.commands.executeCommand('cursor-whisper.configureApiKey');
-        } else if (selection === 'Run Setup Wizard') {
-          await vscode.commands.executeCommand('cursor-whisper.firstTimeSetup');
+        } else if (selection === 'Open Configuration') {
+          await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
         }
       } else if (error instanceof ConfigError) {
         await vscode.window.showErrorMessage(`Configuration error: ${error.message}`);

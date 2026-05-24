@@ -35,6 +35,7 @@ import {
   isSetupCompleted,
   registerFirstTimeSetupCommand,
 } from './presentation/commands/FirstTimeSetupCommand';
+import { registerOpenConfigurationPanelCommand } from './presentation/commands/OpenConfigurationPanelCommand';
 import { RecordingStatusBarItem } from './presentation/ui/RecordingStatusBarItem';
 import { validateConfigurationOnStartup } from './application/services/ConfigurationValidationService';
 import {
@@ -185,6 +186,14 @@ export function activate(context: vscode.ExtensionContext): void {
     promptTransformer,
     logger
   );
+  const openConfigurationPanelCommand = registerOpenConfigurationPanelCommand(
+    context,
+    configRepository,
+    transformerFactory,
+    modelService,
+    promptTransformer,
+    logger
+  );
 
   context.subscriptions.push(
     startCommand,
@@ -194,7 +203,8 @@ export function activate(context: vscode.ExtensionContext): void {
     configureModelCommand,
     configureProviderCommand,
     testTransformationCommand,
-    firstTimeSetupCommand
+    firstTimeSetupCommand,
+    openConfigurationPanelCommand
   );
 
   // ========================================
@@ -207,12 +217,12 @@ export function activate(context: vscode.ExtensionContext): void {
     if (!setupCompleted) {
       logger.info('First-time setup not completed');
       const selection = await vscode.window.showInformationMessage(
-        'Welcome to Cursor Whisper. Run the setup wizard to configure Whisper transcription and optional prompt optimization.',
-        'Run Setup Wizard',
+        'Welcome to Cursor Whisper. Open the configuration panel to set up Whisper transcription and optional prompt optimization.',
+        'Open Configuration',
         'Later'
       );
-      if (selection === 'Run Setup Wizard') {
-        await vscode.commands.executeCommand('cursor-whisper.firstTimeSetup');
+      if (selection === 'Open Configuration') {
+        await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
       }
       return;
     }
@@ -222,13 +232,13 @@ export function activate(context: vscode.ExtensionContext): void {
       const selection = await vscode.window.showWarningMessage(
         issue.message,
         'Configure Now',
-        'Run Setup Wizard',
+        'Open Configuration',
         'Later'
       );
       if (selection === 'Configure Now') {
         await vscode.commands.executeCommand(issue.configureCommand);
-      } else if (selection === 'Run Setup Wizard') {
-        await vscode.commands.executeCommand('cursor-whisper.firstTimeSetup');
+      } else if (selection === 'Open Configuration') {
+        await vscode.commands.executeCommand('cursor-whisper.openConfigurationPanel');
       }
       return;
     }

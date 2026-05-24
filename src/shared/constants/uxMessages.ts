@@ -38,14 +38,14 @@ export const STATUS_BAR_SERVICES_TOOLTIP = (
   const optimizationLine = optimizationEnabled
     ? `Optimization: ${optimizationProvider}`
     : 'Optimization: disabled (raw transcription only)';
-  return `Transcription: ${WHISPER_SERVICE_NAME}\n${optimizationLine}\n\nClick to start recording (Cmd/Ctrl+Alt+V)\nRun "Cursor Whisper: Setup Wizard" to change configuration`;
+  return `Transcription: ${WHISPER_SERVICE_NAME}\n${optimizationLine}\n\nClick to start recording (Cmd/Ctrl+Alt+V)\nRun "Cursor Whisper: Open Configuration" to change settings`;
 };
 
 export const SETUP_CHECKLIST_TOOLTIP = (
   items: Array<{ label: string; complete: boolean }>
 ): string => {
   const lines = items.map(item => `${item.complete ? '✓' : '✗'} ${item.label}`);
-  return `Setup checklist:\n${lines.join('\n')}\n\nClick to run setup wizard`;
+  return `Setup checklist:\n${lines.join('\n')}\n\nClick to open configuration`;
 };
 
 export const SETUP_WIZARD_GLOBAL_STATE_KEY = 'cursor-whisper.setupCompleted';

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src {{cspSource}} https:; style-src {{cspSource}} 'unsafe-inline'; script-src 'nonce-{{nonce}}' {{cspSource}}; font-src {{cspSource}};">
+  <link rel="stylesheet" href="{{styleUri}}">
+  <script type="module" src="{{toolkitUri}}" nonce="{{nonce}}"></script>
+  <title>Cursor Whisper Configuration</title>
+</head>
+<body>
+  <div class="page">
+    <header class="page-header">
+      <h1>Cursor Whisper Configuration</h1>
+      <p>Configure voice transcription (OpenAI Whisper) and optional prompt optimization in one place.</p>
+    </header>
+
+    <div id="notification" class="notification hidden" role="status"></div>
+
+    <section class="section" aria-labelledby="whisper-heading">
+      <div class="section-header">
+        <h2 id="whisper-heading">Transcription (Required)</h2>
+        <vscode-badge id="whisperBadge" appearance="secondary">Not configured</vscode-badge>
+      </div>
+      <p class="section-description">
+        Voice-to-text always uses OpenAI Whisper. An OpenAI API key is required to record.
+      </p>
+      <div class="field-row">
+        <vscode-text-field id="openAiApiKey" type="password" placeholder="sk-...">
+          OpenAI API Key
+        </vscode-text-field>
+        <vscode-button id="testWhisperBtn" appearance="secondary">Test</vscode-button>
+      </div>
+      <div class="status-row">
+        <span id="whisperStatus" class="status-text">Enter your OpenAI API key for Whisper transcription.</span>
+      </div>
+    </section>
+
+    <vscode-divider></vscode-divider>
+
+    <section class="section" aria-labelledby="optimization-heading">
+      <div class="section-header">
+        <h2 id="optimization-heading">Prompt Optimization (Optional)</h2>
+        <vscode-badge id="optimizationBadge" appearance="secondary">Disabled</vscode-badge>
+      </div>
+      <p class="section-description">
+        Turn transcribed speech into structured, LLM-ready prompts. Uses a separate provider from Whisper.
+      </p>
+
+      <vscode-checkbox id="enableOptimization">Enable prompt optimization</vscode-checkbox>
+
+      <div id="optimizationFields" class="provider-fields hidden">
+        <div class="field-stack">
+          <vscode-dropdown id="providerSelect">
+            <span slot="label">Optimization provider</span>
+          </vscode-dropdown>
+
+          <div id="providerApiKeyRow" class="field-row hidden">
+            <vscode-text-field id="providerApiKey" type="password" placeholder="API key">
+              Provider API Key
+            </vscode-text-field>
+          </div>
+
+          <div id="azureFields" class="field-stack hidden">
+            <vscode-text-field id="azureEndpoint" placeholder="https://my-resource.openai.azure.com">
+              Azure OpenAI Endpoint
+            </vscode-text-field>
+            <vscode-text-field id="azureDeployment" placeholder="gpt-4o-deployment">
+              Azure Deployment Name
+            </vscode-text-field>
+          </div>
+
+          <div id="ollamaFields" class="field-stack hidden">
+            <vscode-text-field id="ollamaBaseUrl" placeholder="http://localhost:11434">
+              Ollama Base URL
+            </vscode-text-field>
+          </div>
+
+          <div class="field-row">
+            <vscode-dropdown id="modelSelect">
+              <span slot="label">Model</span>
+            </vscode-dropdown>
+            <vscode-button id="refreshModelsBtn" appearance="secondary">Refresh models</vscode-button>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <span id="optimizationStatus" class="status-text">Select a provider and configure credentials.</span>
+        </div>
+
+        <vscode-button id="testOptimizationBtn" appearance="secondary">Test optimization</vscode-button>
+      </div>
+    </section>
+
+    <vscode-divider></vscode-divider>
+
+    <section class="section" aria-labelledby="comparison-heading">
+      <div class="section-header">
+        <h2 id="comparison-heading">Provider Comparison</h2>
+      </div>
+      <vscode-button id="toggleComparisonBtn" class="comparison-toggle" appearance="secondary">
+        Show provider comparison
+      </vscode-button>
+      <div id="comparisonContainer" class="hidden">
+        <table class="comparison-table" id="comparisonTable">
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Cost</th>
+              <th>Speed</th>
+              <th>Privacy</th>
+              <th>Best for</th>
+            </tr>
+          </thead>
+          <tbody id="comparisonBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="footer-actions">
+      <vscode-button id="completeSetupBtn">Complete setup</vscode-button>
+      <vscode-button id="openDocsBtn" appearance="secondary">Open documentation</vscode-button>
+    </div>
+  </div>
+
+  <script nonce="{{nonce}}">
+    const vscode = acquireVsCodeApi();
+
+    console.log('[Webview] Configuration script loaded');
+
+    const elements = {
+      notification: document.getElementById('notification'),
+      whisperBadge: document.getElementById('whisperBadge'),
+      openAiApiKey: document.getElementById('openAiApiKey'),
+      testWhisperBtn: document.getElementById('testWhisperBtn'),
+      whisperStatus: document.getElementById('whisperStatus'),
+      optimizationBadge: document.getElementById('optimizationBadge'),
+      enableOptimization: document.getElementById('enableOptimization'),
+      optimizationFields: document.getElementById('optimizationFields'),
+      providerSelect: document.getElementById('providerSelect'),
+      providerApiKeyRow: document.getElementById('providerApiKeyRow'),
+      providerApiKey: document.getElementById('providerApiKey'),
+      azureFields: document.getElementById('azureFields'),
+      azureEndpoint: document.getElementById('azureEndpoint'),
+      azureDeployment: document.getElementById('azureDeployment'),
+      ollamaFields: document.getElementById('ollamaFields'),
+      ollamaBaseUrl: document.getElementById('ollamaBaseUrl'),
+      modelSelect: document.getElementById('modelSelect'),
+      refreshModelsBtn: document.getElementById('refreshModelsBtn'),
+      optimizationStatus: document.getElementById('optimizationStatus'),
+      testOptimizationBtn: document.getElementById('testOptimizationBtn'),
+      toggleComparisonBtn: document.getElementById('toggleComparisonBtn'),
+      comparisonContainer: document.getElementById('comparisonContainer'),
+      comparisonBody: document.getElementById('comparisonBody'),
+      completeSetupBtn: document.getElementById('completeSetupBtn'),
+      openDocsBtn: document.getElementById('openDocsBtn'),
+    };
+
+    let currentState = null;
+    let saveTimers = {};
+
+    function sendMessage(message) {
+      vscode.postMessage(message);
+    }
+
+    const WEB_COMPONENT_TAGS = [
+      'vscode-text-field',
+      'vscode-dropdown',
+      'vscode-checkbox',
+      'vscode-button',
+      'vscode-badge',
+      'vscode-divider',
+      'vscode-option',
+    ];
+
+    function requireElement(name) {
+      const element = elements[name];
+      if (!element) {
+        console.error('[Webview] Missing element:', name, 'Available:', Object.keys(elements));
+        throw new Error('Missing element: ' + name);
+      }
+      return element;
+    }
+
+    function describeComponent(element) {
+      if (!element) {
+        return { present: false };
+      }
+
+      return {
+        present: true,
+        tagName: element.tagName,
+        constructorName: element.constructor && element.constructor.name,
+        hasShadowRoot: Boolean(element.shadowRoot),
+        textContent: element.textContent,
+        appearance: element.getAttribute('appearance'),
+      };
+    }
+
+    function delay(ms) {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+      });
+    }
+
+    function scheduleApplyState(state) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          applyState(state);
+        });
+      });
+    }
+
+    function waitForComponentShadowDOM(element, timeoutMs) {
+      return new Promise(function (resolve) {
+        if (!element) {
+          resolve(false);
+          return;
+        }
+
+        if (element.shadowRoot) {
+          resolve(true);
+          return;
+        }
+
+        let settled = false;
+        const observer = new MutationObserver(function () {
+          if (element.shadowRoot && !settled) {
+            settled = true;
+            observer.disconnect();
+            resolve(true);
+          }
+        });
+
+        observer.observe(element, { childList: true, subtree: true });
+
+        setTimeout(function () {
+          if (!settled) {
+            settled = true;
+            observer.disconnect();
+            resolve(Boolean(element.shadowRoot));
+          }
+        }, timeoutMs || 1000);
+      });
+    }
+
+    function setBadgeText(element, text, appearance) {
+      if (!element) {
+        return;
+      }
+
+      console.log('[Webview] setBadgeText before', describeComponent(element), { text: text, appearance: appearance });
+
+      element.textContent = text;
+      element.setAttribute('appearance', appearance);
+
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          console.log('[Webview] setBadgeText after', describeComponent(element));
+        });
+      });
+    }
+
+    function setFieldValue(element, value) {
+      if (!element) {
+        return;
+      }
+      const nextValue = value || '';
+      element.value = nextValue;
+      if (nextValue) {
+        element.setAttribute('value', nextValue);
+      }
+    }
+
+    function setCheckboxValue(element, checked) {
+      if (!element) {
+        return;
+      }
+      element.checked = Boolean(checked);
+    }
+
+    function showNotification(message, type) {
+      elements.notification.textContent = message;
+      elements.notification.className = 'notification ' + (type || 'info');
+      elements.notification.classList.remove('hidden');
+      setTimeout(function () {
+        elements.notification.classList.add('hidden');
+      }, 4000);
+    }
+
+    function setStatus(element, message, ok) {
+      element.textContent = message;
+      element.className = 'status-text' + (ok === true ? ' ok' : ok === false ? ' error' : '');
+    }
+
+    function debounceSave(key, fn, delay) {
+      if (saveTimers[key]) {
+        clearTimeout(saveTimers[key]);
+      }
+      saveTimers[key] = setTimeout(fn, delay || 500);
+    }
+
+    function populateDropdown(dropdown, options, selectedValue) {
+      if (!dropdown) {
+        console.warn('[Webview] populateDropdown called without dropdown element');
+        return;
+      }
+
+      console.log('[Webview] populateDropdown before', {
+        dropdown: describeComponent(dropdown),
+        optionCount: options.length,
+        selectedValue: selectedValue,
+      });
+
+      const label = dropdown.querySelector('[slot="label"]');
+      dropdown.replaceChildren();
+      if (label) {
+        dropdown.appendChild(label);
+      }
+
+      options.forEach(function (option) {
+        const el = document.createElement('vscode-option');
+        el.value = option.value;
+        el.textContent = option.label;
+        dropdown.appendChild(el);
+      });
+
+      if (selectedValue) {
+        requestAnimationFrame(function () {
+          dropdown.value = selectedValue;
+          console.log('[Webview] populateDropdown after', {
+            dropdown: describeComponent(dropdown),
+            value: dropdown.value,
+            childElementCount: dropdown.childElementCount,
+          });
+        });
+      } else {
+        console.log('[Webview] populateDropdown after', {
+          dropdown: describeComponent(dropdown),
+          childElementCount: dropdown.childElementCount,
+        });
+      }
+    }
+
+    function renderComparison(comparison) {
+      elements.comparisonBody.innerHTML = '';
+      comparison.forEach(function (entry) {
+        const row = document.createElement('tr');
+        row.innerHTML =
+          '<td>' + entry.displayName + '</td>' +
+          '<td>' + entry.costPerTransform + '</td>' +
+          '<td>' + entry.speed + '</td>' +
+          '<td>' + entry.privacy + '</td>' +
+          '<td>' + entry.bestFor + '</td>';
+        elements.comparisonBody.appendChild(row);
+      });
+    }
+
+    function updateProviderFields(state) {
+      const provider = state.transformationProvider;
+      const providerMeta = state.providers.find(function (p) { return p.id === provider; });
+
+      elements.providerApiKeyRow.classList.toggle('hidden', !providerMeta || !providerMeta.requiresApiKey);
+      elements.azureFields.classList.toggle('hidden', provider !== 'azure');
+      elements.ollamaFields.classList.toggle('hidden', provider !== 'ollama');
+
+      if (providerMeta && providerMeta.requiresApiKey) {
+        elements.providerApiKey.setAttribute('placeholder', providerMeta.displayName + ' API key');
+      }
+    }
+
+    function applyState(state) {
+      console.log('[Webview] Applying state', {
+        whisperConfigured: state.whisperConfigured,
+        whisperApiKeyMasked: state.whisperApiKeyMasked,
+        transformationProvider: state.transformationProvider,
+        enablePromptTransformation: state.enablePromptTransformation,
+        providerConfigured: state.providerConfigured,
+      });
+
+      console.log('[Webview] Component readiness', {
+        whisperBadge: describeComponent(elements.whisperBadge),
+        optimizationBadge: describeComponent(elements.optimizationBadge),
+        openAiApiKey: describeComponent(elements.openAiApiKey),
+        providerSelect: describeComponent(elements.providerSelect),
+        enableOptimization: describeComponent(elements.enableOptimization),
+      });
+
+      try {
+        currentState = state;
+
+        if (state.whisperConfigured) {
+          setBadgeText(requireElement('whisperBadge'), 'Configured', 'primary');
+          setStatus(
+            requireElement('whisperStatus'),
+            'OpenAI API key saved. Whisper transcription is ready.',
+            true
+          );
+        } else {
+          setBadgeText(requireElement('whisperBadge'), 'Required', 'secondary');
+        }
+
+        const whisperKeyDisplay =
+          state.whisperApiKeyMasked ||
+          (state.whisperConfigured ? '(API key saved)' : '');
+        setFieldValue(requireElement('openAiApiKey'), whisperKeyDisplay);
+        setCheckboxValue(requireElement('enableOptimization'), state.enablePromptTransformation);
+        requireElement('optimizationFields').classList.toggle(
+          'hidden',
+          !state.enablePromptTransformation
+        );
+
+        populateDropdown(
+          requireElement('providerSelect'),
+          state.providers.map(function (p) {
+            return { value: p.id, label: p.displayName };
+          }),
+          state.transformationProvider
+        );
+
+        setFieldValue(requireElement('azureEndpoint'), state.azureEndpoint || '');
+        setFieldValue(requireElement('azureDeployment'), state.azureDeployment || '');
+        setFieldValue(requireElement('ollamaBaseUrl'), state.ollamaBaseUrl || 'http://localhost:11434');
+        setFieldValue(requireElement('providerApiKey'), state.providerApiKeyMasked || '');
+
+        updateProviderFields(state);
+        renderComparison(state.providerComparison);
+
+        if (!state.enablePromptTransformation) {
+          setBadgeText(requireElement('optimizationBadge'), 'Disabled', 'secondary');
+        } else if (state.providerConfigured) {
+          setBadgeText(requireElement('optimizationBadge'), 'Ready', 'primary');
+          setStatus(requireElement('optimizationStatus'), 'Optimization provider configured.', true);
+        } else {
+          setBadgeText(requireElement('optimizationBadge'), 'Configure', 'secondary');
+        }
+
+        if (state.enablePromptTransformation) {
+          sendMessage({ type: 'getModels', provider: state.transformationProvider });
+        }
+
+        console.log('[Webview] State applied successfully');
+      } catch (error) {
+        console.error('[Webview] Failed to apply state', error);
+        showNotification(
+          'Failed to render configuration: ' + (error && error.message ? error.message : 'Unknown error'),
+          'error'
+        );
+      }
+    }
+
+    function bindEventListeners() {
+      elements.openAiApiKey.addEventListener('change', function () {
+        const value = elements.openAiApiKey.value.trim();
+        if (!value || value.indexOf('...') !== -1) {
+          return;
+        }
+        debounceSave('openAiApiKey', function () {
+          sendMessage({ type: 'saveOpenAiApiKey', apiKey: value });
+        });
+      });
+
+      elements.testWhisperBtn.addEventListener('click', function () {
+        setStatus(elements.whisperStatus, 'Testing OpenAI connection...', null);
+        sendMessage({ type: 'testWhisper' });
+      });
+
+      elements.enableOptimization.addEventListener('change', function () {
+        const enabled = elements.enableOptimization.checked;
+        elements.optimizationFields.classList.toggle('hidden', !enabled);
+        sendMessage({ type: 'saveEnableOptimization', enabled: enabled });
+      });
+
+      elements.providerSelect.addEventListener('change', function () {
+        const provider = elements.providerSelect.value;
+        updateProviderFields(Object.assign({}, currentState, { transformationProvider: provider }));
+        sendMessage({ type: 'saveProvider', provider: provider });
+        sendMessage({ type: 'getModels', provider: provider });
+      });
+
+      elements.providerApiKey.addEventListener('change', function () {
+        const value = elements.providerApiKey.value.trim();
+        if (!value || value.indexOf('...') !== -1) {
+          return;
+        }
+        debounceSave('providerApiKey', function () {
+          sendMessage({
+            type: 'saveProviderApiKey',
+            provider: elements.providerSelect.value,
+            apiKey: value,
+          });
+        });
+      });
+
+      elements.azureEndpoint.addEventListener('change', function () {
+        debounceSave('azureEndpoint', function () {
+          sendMessage({
+            type: 'saveProviderSettings',
+            azureEndpoint: elements.azureEndpoint.value.trim(),
+          });
+        });
+      });
+
+      elements.azureDeployment.addEventListener('change', function () {
+        debounceSave('azureDeployment', function () {
+          sendMessage({
+            type: 'saveProviderSettings',
+            azureDeployment: elements.azureDeployment.value.trim(),
+          });
+        });
+      });
+
+      elements.ollamaBaseUrl.addEventListener('change', function () {
+        debounceSave('ollamaBaseUrl', function () {
+          sendMessage({
+            type: 'saveProviderSettings',
+            ollamaBaseUrl: elements.ollamaBaseUrl.value.trim(),
+          });
+        });
+      });
+
+      elements.modelSelect.addEventListener('change', function () {
+        sendMessage({
+          type: 'saveProviderSettings',
+          model: elements.modelSelect.value,
+        });
+      });
+
+      elements.refreshModelsBtn.addEventListener('click', function () {
+        sendMessage({ type: 'getModels', provider: elements.providerSelect.value });
+      });
+
+      elements.testOptimizationBtn.addEventListener('click', function () {
+        setStatus(elements.optimizationStatus, 'Testing prompt optimization...', null);
+        sendMessage({ type: 'testOptimization' });
+      });
+
+      elements.toggleComparisonBtn.addEventListener('click', function () {
+        const hidden = elements.comparisonContainer.classList.contains('hidden');
+        elements.comparisonContainer.classList.toggle('hidden', !hidden);
+        elements.toggleComparisonBtn.textContent = hidden
+          ? 'Hide provider comparison'
+          : 'Show provider comparison';
+      });
+
+      elements.completeSetupBtn.addEventListener('click', function () {
+        sendMessage({ type: 'completeSetup' });
+      });
+
+      elements.openDocsBtn.addEventListener('click', function () {
+        sendMessage({ type: 'openDocs' });
+      });
+
+      window.addEventListener('message', function (event) {
+        const message = event.data;
+        if (!message || !message.type) {
+          return;
+        }
+
+        console.log('[Webview] Received message:', message.type, message);
+
+        try {
+          switch (message.type) {
+            case 'loadConfig':
+              if (!message.state) {
+                console.error('[Webview] loadConfig message missing state payload');
+                showNotification('Configuration payload was empty.', 'error');
+                break;
+              }
+              scheduleApplyState(message.state);
+              break;
+            case 'configUpdated':
+              if (!message.state) {
+                console.error('[Webview] configUpdated message missing state payload');
+                break;
+              }
+              scheduleApplyState(message.state);
+              break;
+            case 'modelsLoaded':
+              populateDropdown(
+                requireElement('modelSelect'),
+                message.models.map(function (m) {
+                  return { value: m, label: m };
+                }),
+                message.selectedModel
+              );
+              if (message.error) {
+                setStatus(requireElement('optimizationStatus'), message.error, false);
+              }
+              break;
+            case 'testResult':
+              if (message.service === 'whisper') {
+                setStatus(
+                  requireElement('whisperStatus'),
+                  message.ok
+                    ? 'Whisper connection successful.'
+                    : 'Whisper test failed: ' + message.message,
+                  message.ok
+                );
+              } else {
+                setStatus(
+                  requireElement('optimizationStatus'),
+                  message.ok
+                    ? 'Optimization test successful.'
+                    : 'Optimization test failed: ' + message.message,
+                  message.ok
+                );
+              }
+              break;
+            case 'saveResult':
+              showNotification(message.message, message.ok ? 'success' : 'error');
+              break;
+            case 'notification':
+              showNotification(message.message, message.notificationKind);
+              break;
+            default:
+              console.warn('[Webview] Unhandled message type:', message.type);
+          }
+        } catch (error) {
+          console.error('[Webview] Failed to handle message', message.type, error);
+          showNotification(
+            'Failed to update configuration view: ' +
+              (error && error.message ? error.message : 'Unknown error'),
+            'error'
+          );
+        }
+      });
+    }
+
+    function waitForServiceWorker() {
+      return new Promise(function (resolve) {
+        if (!navigator.serviceWorker) {
+          console.log('[Webview] No service worker support, continuing');
+          resolve();
+          return;
+        }
+
+        let settled = false;
+        function finish(reason) {
+          if (settled) {
+            return;
+          }
+          settled = true;
+          console.log('[Webview] Service worker ready:', reason);
+          resolve();
+        }
+
+        function onControllerChange() {
+          console.log('[Webview] Service worker controller changed, ready to receive messages');
+          navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+          finish('controllerchange');
+        }
+
+        navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+
+        if (navigator.serviceWorker.controller) {
+          console.log('[Webview] Service worker controller present, waiting for controllerchange if stale');
+        } else {
+          console.log('[Webview] Waiting for service worker controllerchange...');
+        }
+
+        setTimeout(function () {
+          navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+          finish(
+            navigator.serviceWorker.controller
+              ? 'timeout-with-controller'
+              : 'timeout-no-controller'
+          );
+        }, 2000);
+      });
+    }
+
+    function notifyReady() {
+      console.log('[Webview] Sending ready message to extension');
+      sendMessage({ type: 'ready' });
+      console.log('[Webview] Ready message sent');
+    }
+
+    function upgradeWebComponents() {
+      if (typeof customElements.upgrade === 'function') {
+        customElements.upgrade(document.body);
+      }
+
+      const upgraded = WEB_COMPONENT_TAGS.map(function (tag) {
+        const element = document.querySelector(tag);
+        return {
+          tag: tag,
+          found: Boolean(element),
+          upgraded: element instanceof HTMLElement,
+          hasShadowRoot: element ? Boolean(element.shadowRoot) : false,
+        };
+      });
+
+      console.log('[Webview] Upgraded web components', upgraded);
+      return upgraded;
+    }
+
+    function waitForWebComponents(timeoutMs) {
+      const componentReady = Promise.all(
+        WEB_COMPONENT_TAGS.map(function (tag) {
+          return customElements.whenDefined(tag);
+        })
+      );
+
+      const timeout = new Promise(function (resolve) {
+        setTimeout(function () {
+          resolve('timeout');
+        }, timeoutMs);
+      });
+
+      return Promise.race([componentReady, timeout]).then(function (result) {
+        upgradeWebComponents();
+
+        const shadowTargets = [
+          elements.whisperBadge,
+          elements.optimizationBadge,
+          elements.openAiApiKey,
+          elements.providerSelect,
+          elements.enableOptimization,
+        ];
+
+        return Promise.all(
+          shadowTargets.map(function (element) {
+            return waitForComponentShadowDOM(element, 1000);
+          })
+        ).then(function (shadowResults) {
+          console.log('[Webview] Shadow DOM readiness', shadowResults);
+          return delay(75).then(function () {
+            return result;
+          });
+        });
+      });
+    }
+
+    waitForWebComponents(3000)
+      .then(function (result) {
+        if (result === 'timeout') {
+          console.warn('[Webview] Timed out waiting for VS Code web components; continuing anyway');
+        }
+
+        return waitForServiceWorker();
+      })
+      .then(function () {
+        console.log('[Webview] Service worker ready, binding event listeners and notifying extension');
+        bindEventListeners();
+        notifyReady();
+
+        setTimeout(function () {
+          if (!currentState) {
+            console.warn('[Webview] No config received after 1s, requesting again');
+            sendMessage({ type: 'requestConfig' });
+          }
+        }, 1000);
+      })
+      .catch(function (error) {
+        console.error('[Webview] Failed initialization', error);
+        bindEventListeners();
+        notifyReady();
+      });
+  </script>
+</body>
+</html>

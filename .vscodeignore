@@ -9,6 +9,7 @@ webpack.config.js
 **/*.map
 **/*.ts
 !out/**/*.js
+!out/presentation/webview/**
 node_modules/**
 !node_modules/@kstonekuan/**
 coverage/**

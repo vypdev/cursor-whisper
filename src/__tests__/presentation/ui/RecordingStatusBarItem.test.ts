@@ -30,7 +30,7 @@ describe('RecordingStatusBarItem', () => {
     statusBar.setState(RecordingState.IDLE);
 
     expect(statusBarItem.text).toBe('$(warning) Setup Whisper');
-    expect(statusBarItem.command).toBe('cursor-whisper.firstTimeSetup');
+    expect(statusBarItem.command).toBe('cursor-whisper.openConfigurationPanel');
     statusBar.dispose();
   });
 });

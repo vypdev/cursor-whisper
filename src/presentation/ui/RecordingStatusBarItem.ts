@@ -27,8 +27,8 @@ export class RecordingStatusBarItem {
       99
     );
     this.settingsStatusBarItem.text = '$(gear)';
-    this.settingsStatusBarItem.command = 'cursor-whisper.firstTimeSetup';
-    this.settingsStatusBarItem.tooltip = 'Cursor Whisper setup and configuration';
+    this.settingsStatusBarItem.command = 'cursor-whisper.openConfigurationPanel';
+    this.settingsStatusBarItem.tooltip = 'Cursor Whisper configuration';
     this.updateUI();
     this.statusBarItem.show();
     this.settingsStatusBarItem.show();
@@ -62,7 +62,7 @@ export class RecordingStatusBarItem {
   private updateUI(): void {
     this.settingsStatusBarItem.tooltip = this.setupIncomplete
       ? SETUP_CHECKLIST_TOOLTIP(this.setupChecklist)
-      : 'Open Cursor Whisper setup wizard';
+      : 'Open Cursor Whisper configuration';
 
     switch (this.currentState) {
       case RecordingState.IDLE:
@@ -71,7 +71,7 @@ export class RecordingStatusBarItem {
           : '$(mic) Voice';
         this.statusBarItem.tooltip = this.getServicesTooltip();
         this.statusBarItem.command = this.setupIncomplete
-          ? 'cursor-whisper.firstTimeSetup'
+          ? 'cursor-whisper.openConfigurationPanel'
           : 'cursor-whisper.startRecording';
         this.statusBarItem.backgroundColor = this.setupIncomplete
           ? new vscode.ThemeColor('statusBarItem.warningBackground')

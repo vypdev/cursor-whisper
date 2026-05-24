@@ -15,6 +15,7 @@ export interface ConfigurationValidationIssue {
   configureCommand:
     | 'cursor-whisper.configureApiKey'
     | 'cursor-whisper.configureTransformationProvider'
+    | 'cursor-whisper.openConfigurationPanel'
     | 'cursor-whisper.firstTimeSetup';
 }
 
@@ -45,7 +46,7 @@ export async function validateConfigurationForRecording(
   if (providerError) {
     return {
       message: providerError,
-      configureCommand: 'cursor-whisper.configureTransformationProvider',
+      configureCommand: 'cursor-whisper.openConfigurationPanel',
     };
   }
 
@@ -66,7 +67,7 @@ export async function validateConfigurationOnStartup(
   if (!openAiKey) {
     return {
       message: OPENAI_API_KEY_REQUIRED_STARTUP,
-      configureCommand: 'cursor-whisper.firstTimeSetup',
+      configureCommand: 'cursor-whisper.openConfigurationPanel',
     };
   }
 
@@ -82,7 +83,7 @@ export async function validateConfigurationOnStartup(
     if (providerError) {
       return {
         message: `Cursor Whisper: ${providerError}`,
-        configureCommand: 'cursor-whisper.configureTransformationProvider',
+        configureCommand: 'cursor-whisper.openConfigurationPanel',
       };
     }
     return undefined;
@@ -92,7 +93,7 @@ export async function validateConfigurationOnStartup(
   if (!providerApiKey) {
     return {
       message: OPTIMIZATION_PROVIDER_MISSING_KEY(metadata.displayName),
-      configureCommand: 'cursor-whisper.configureTransformationProvider',
+      configureCommand: 'cursor-whisper.openConfigurationPanel',
     };
   }
 
@@ -100,7 +101,7 @@ export async function validateConfigurationOnStartup(
   if (providerError) {
     return {
       message: `Cursor Whisper: ${providerError}`,
-      configureCommand: 'cursor-whisper.configureTransformationProvider',
+      configureCommand: 'cursor-whisper.openConfigurationPanel',
     };
   }
 

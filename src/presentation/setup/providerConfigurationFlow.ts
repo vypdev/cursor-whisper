@@ -249,8 +249,7 @@ export async function confirmOptimizationIntro(): Promise<boolean> {
   const proceed = await vscode.window.showInformationMessage(
     OPTIMIZATION_PROVIDER_INTRO,
     { modal: true, detail: OPTIMIZATION_PROVIDER_INTRO_DETAIL },
-    'Continue',
-    'Cancel'
+    'Continue'
   );
   return proceed === 'Continue';
 }

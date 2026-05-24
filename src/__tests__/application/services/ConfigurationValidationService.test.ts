@@ -89,7 +89,7 @@ describe('ConfigurationValidationService', () => {
       expect(validateProvider).toHaveBeenCalledWith(TransformationProvider.Anthropic);
       expect(issue).toEqual({
         message: 'Anthropic API key is not configured.',
-        configureCommand: 'cursor-whisper.configureTransformationProvider',
+        configureCommand: 'cursor-whisper.openConfigurationPanel',
       });
     });
   });
@@ -103,7 +103,7 @@ describe('ConfigurationValidationService', () => {
       const issue = await validateConfigurationOnStartup(configRepo, validator);
 
       expect(issue?.message).toContain('OpenAI API key is required for voice-to-text transcription');
-      expect(issue?.configureCommand).toBe('cursor-whisper.firstTimeSetup');
+      expect(issue?.configureCommand).toBe('cursor-whisper.openConfigurationPanel');
     });
 
     it('does not warn about transformation provider keys when transformation is disabled', async () => {
@@ -134,7 +134,7 @@ describe('ConfigurationValidationService', () => {
 
       expect(issue).toEqual({
         message: 'Cursor Whisper: Anthropic credentials are not configured for prompt optimization.',
-        configureCommand: 'cursor-whisper.configureTransformationProvider',
+        configureCommand: 'cursor-whisper.openConfigurationPanel',
       });
     });
 
@@ -151,7 +151,7 @@ describe('ConfigurationValidationService', () => {
       const issue = await validateConfigurationOnStartup(configRepo, validator);
 
       expect(issue?.message).toContain('Ollama server is not reachable');
-      expect(issue?.configureCommand).toBe('cursor-whisper.configureTransformationProvider');
+      expect(issue?.configureCommand).toBe('cursor-whisper.openConfigurationPanel');
     });
   });
 });
