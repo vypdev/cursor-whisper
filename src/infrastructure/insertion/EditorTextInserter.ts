@@ -21,8 +21,7 @@ export class EditorTextInserter implements ITextInserter {
 
     this.logger?.debug('EditorTextInserter: Inserting text', {
       documentLanguage: editor.document.languageId,
-      cursorPosition:
-        editor.selection.active.line + ':' + editor.selection.active.character,
+      cursorPosition: editor.selection.active.line + ':' + editor.selection.active.character,
       textLength: text.length,
     });
 

@@ -62,7 +62,7 @@ export class CursorCompatibilityChecker {
   static async showCompatibilityWarning(): Promise<void> {
     if (await this.isAgentsWindow()) {
       const selection = await vscode.window.showWarningMessage(
-        'Cursor Whisper works best in Classic Mode or Editor Window. ' +
+        'Promptimize works best in Classic Mode or Editor Window. ' +
         'The Agents Window has limited extension support.',
         'Open in Editor Window',
         'Continue Anyway'
@@ -117,7 +117,7 @@ export class CursorCompatibilityChecker {
 - **Cons**:
   - Misses primary use case (Cursor chat integration)
   - Less compelling value proposition
-  - Name "Cursor Whisper" is misleading
+  - Former name "Cursor Whisper" was misleading
   - Cursor users are target audience
 - **Why not chosen**: Cursor integration is a key differentiator
 
@@ -216,7 +216,7 @@ From README.md:
 ```markdown
 ## Compatibility
 
-Cursor Whisper works best in:
+Promptimize works best in:
 - ✅ **Cursor Classic Mode** (`cursor --classic`)
 - ✅ **Cursor Editor Window**
 - ✅ **Standard VSCode**

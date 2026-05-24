@@ -1,4 +1,4 @@
-# Cursor Whisper
+# Promptimize
 
 > **Transform your voice into optimized prompts with AI-powered speech-to-text**
 
@@ -11,11 +11,41 @@ A professional VSCode/Cursor extension that captures audio from your microphone,
 
 ---
 
+## Quick Start
+
+1. **Install** the extension (VSIX or Marketplace when available)
+2. **Run Setup Wizard** — Command Palette → `Promptimize: Setup Wizard`
+3. **Configure OpenAI API key** — Required for Whisper voice-to-text
+4. **Optionally choose optimization provider** — OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, OpenRouter, or Cursor
+5. **Press `Cmd+Alt+V`** (Transcribe) or **`Cmd+Alt+P`** (Promptimize) and speak
+
+See the full [Quick Start Guide](docs/quickstart.md) and [Recording Modes](docs/user-guide/recording-modes.md).
+
+### Two Services, Clear Roles
+
+| Service                 | Provider       | Required | Credentials               |
+| ----------------------- | -------------- | -------- | ------------------------- |
+| **Transcription**       | OpenAI Whisper | Yes      | OpenAI API key            |
+| **Prompt optimization** | Your choice    | No       | Provider-specific API key |
+
+```mermaid
+graph LR
+    Voice[Your Voice] --> Whisper[OpenAI Whisper<br/>Transcription]
+    Whisper --> RawText[Raw Text]
+    RawText --> Choice{Optimization<br/>Enabled?}
+    Choice -->|No| Editor[Insert to Editor]
+    Choice -->|Yes| Provider[Your Chosen Provider]
+    Provider --> OptimizedText[Optimized Prompt]
+    OptimizedText --> Editor
+```
+
+---
+
 ## 🎯 Vision
 
 **Eliminate the friction between thinking and coding.**
 
-Developers often have complex architectural ideas, detailed requirements, or intricate technical explanations that are tedious to type but natural to speak. Cursor Whisper bridges this gap by:
+Developers often have complex architectural ideas, detailed requirements, or intricate technical explanations that are tedious to type but natural to speak. Promptimize bridges this gap by:
 
 - **Capturing** your spoken thoughts in real-time
 - **Transcribing** them with high accuracy using OpenAI Whisper
@@ -26,7 +56,8 @@ Developers often have complex architectural ideas, detailed requirements, or int
 
 ## 🔥 The Problem We Solve
 
-### Before Cursor Whisper:
+### Before Promptimize:
+
 ```
 1. Think about complex architecture requirements
 2. Struggle to type everything out
@@ -35,7 +66,8 @@ Developers often have complex architectural ideas, detailed requirements, or int
 5. LLM misunderstands due to poor formatting
 ```
 
-### With Cursor Whisper:
+### With Promptimize:
+
 ```
 1. Press Cmd+Alt+V
 2. Speak naturally about your requirements
@@ -48,29 +80,31 @@ Developers often have complex architectural ideas, detailed requirements, or int
 
 ## ✨ Features
 
-### Current (v0.1.0-alpha)
+### Current (v0.1.0)
 
-- ✅ **One-Click Recording** - Status bar button or keyboard shortcut
-- ✅ **High-Quality Transcription** - OpenAI Whisper API integration
-- ✅ **Smart Insertion** - Automatically inserts into active editor
-- ✅ **Visual Feedback** - Clear state indicators (idle, recording, processing)
-- ✅ **Secure Configuration** - API keys stored securely in VSCode SecretStorage
-- ✅ **Cross-Platform** - Works on macOS, Windows, and Linux
+- ✅ **Two Recording Modes** — Transcribe (raw text) and Promptimize (optimized prompts)
+- ✅ **One-Click Recording** — Dual status bar buttons or keyboard shortcuts
+- ✅ **High-Quality Transcription** — OpenAI Whisper API integration
+- ✅ **Prompt Transformation** — AI-powered optimization via 8 providers
+- ✅ **Multiple AI Providers** — OpenAI, Anthropic, Google, Azure, Ollama, OpenCode, OpenRouter, and Cursor
+- ✅ **Configuration Webview** — Interactive setup panel with provider comparison and system prompt editor
+- ✅ **Smart Insertion** — Chat → editor → clipboard fallback chain
+- ✅ **Visual Feedback** — Status bar states and progress notifications
+- ✅ **Secure Configuration** — API keys stored in VSCode SecretStorage
+- ✅ **Cross-Platform** — Works on macOS, Windows, and Linux
 
 ### Coming Soon
 
-- 🔄 **Prompt Transformation** - AI-powered optimization of transcribed text
-- 🔄 **Chat Integration** - Direct insertion into Cursor chat input
-- 🔄 **Real-time Streaming** - See transcription as you speak
-- 🔄 **Multi-language Support** - Auto-detect or manually configure language
-- 🔄 **Custom Vocabulary** - Project-specific terms and acronyms
-- 🔄 **Recording History** - Review and re-use past transcriptions
+- 🔄 **Real-time Streaming** — See transcription as you speak
+- 🔄 **Custom Vocabulary UI** — Project-specific terms in configuration webview
+- 🔄 **Recording History** — Review and re-use past transcriptions
+- 🔄 **Planned settings** — `audioQuality`, `maxRecordingDuration`, `showNotifications` (defined but not yet applied)
 
 ---
 
 ## 🏗️ Architecture
 
-Cursor Whisper follows **Clean/Hexagonal Architecture** for maximum maintainability, testability, and scalability.
+Promptimize follows **Clean/Hexagonal Architecture** for maximum maintainability, testability, and scalability.
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -101,17 +135,20 @@ See [`docs/architecture/`](docs/architecture/) for detailed architecture documen
 ## 🛠️ Technology Stack
 
 ### Core
+
 - **TypeScript 5.4+** - Type-safe development
 - **VSCode Extension API 1.120+** - Extension foundation
 - **Node.js 22 LTS** - Runtime environment
 - **Webpack 5** - Bundling and optimization
 
 ### Integrations
+
 - **OpenAI API** - Whisper for transcription, GPT-4 for prompt transformation
 - **@kstonekuan/audio-capture** - Native cross-platform microphone capture
 - **VSCode SecretStorage** - Secure credential management
 
 ### Quality
+
 - **Jest** - Unit testing
 - **ESLint + Prettier** - Code quality and formatting
 - **Husky** - Git hooks for pre-commit checks
@@ -124,7 +161,7 @@ See [`docs/architecture/`](docs/architecture/) for detailed architecture documen
 
 1. Open VSCode/Cursor
 2. Go to Extensions (`Cmd+Shift+X` / `Ctrl+Shift+X`)
-3. Search for "Cursor Whisper"
+3. Search for "Promptimize"
 4. Click Install
 
 ### Manual Installation (Current)
@@ -135,40 +172,86 @@ See [`docs/architecture/`](docs/architecture/) for detailed architecture documen
 4. Click "..." menu → "Install from VSIX..."
 5. Select the downloaded file
 
+### Upgrading from Cursor Whisper
+
+The extension was renamed to **Promptimize** (`promptimize` publisher). If you previously installed `cursor-whisper`:
+
+1. Uninstall the old **Cursor Whisper** extension
+2. Install `promptimize-*.vsix` (or the new Marketplace listing when available)
+3. Re-enter API keys (SecretStorage keys changed to `promptimize.apiKey.*`)
+4. Update `settings.json`: replace `cursorWhisper.*` with `promptimize.*`
+5. Update custom keybindings that reference `cursor-whisper.*` commands
+
 ---
 
 ## ⚙️ Configuration
 
 ### First-Time Setup
 
-1. After installation, you'll be prompted to configure your OpenAI API Key
-2. Click "Configure API Key"
-3. Enter your API key (starts with `sk-`)
-4. The extension will verify the key and save it securely
+1. After installation, run **Promptimize: Setup Wizard** (opens automatically on first launch)
+2. Enter your **OpenAI API key** — required for Whisper transcription
+3. Choose whether to enable **prompt optimization** and select a provider
+4. Provide provider credentials when prompted (Anthropic, Google, Azure, etc.)
+5. Test your configuration with **Promptimize: Test Configuration**
+
+**Note:** Whisper transcription always uses OpenAI. Prompt optimization is optional and can use a different provider with its own API key.
 
 ### Manual Configuration
 
-Open Settings (`Cmd+,` / `Ctrl+,`) and search for "Cursor Whisper":
+Open Settings (`Cmd+,` / `Ctrl+,`) and search for "Promptimize":
 
 ```json
 {
-  "cursorWhisper.transcriptionLanguage": "en",
-  "cursorWhisper.enablePromptTransformation": true,
-  "cursorWhisper.audioQuality": "high",
-  "cursorWhisper.maxRecordingDuration": 120,
-  "cursorWhisper.showNotifications": true
+  "promptimize.transcriptionLanguage": "en",
+  "promptimize.enablePromptTransformation": true,
+  "promptimize.transformationProvider": "openai",
+  "promptimize.transformationModel": "gpt-4o",
+  "promptimize.audioQuality": "high",
+  "promptimize.maxRecordingDuration": 120,
+  "promptimize.showNotifications": true
 }
 ```
 
+### Transcription (Required — OpenAI Whisper)
+
+| Setting                 | Description                                                                                          |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| OpenAI API key          | Required for voice-to-text. Configure via **Setup Wizard** or **Configure OpenAI API Key (Whisper)** |
+| `transcriptionLanguage` | Language for transcription (`en`, `es`, `auto`, etc.)                                                |
+
+**Cost:** ~$0.006/minute of audio
+
+### Prompt Optimization (Optional)
+
+Prompt optimization converts transcribed speech into structured prompts. Choose a provider and supply credentials when required.
+
+| Setting                             | Description                                                                            |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| `enablePromptTransformation`        | Enable/disable optimization                                                            |
+| `transformationProvider`            | `openai`, `anthropic`, `google`, `azure`, `ollama`, `opencode`, `openrouter`, `cursor` |
+| `transformationModel`               | OpenAI model (when provider is `openai`)                                               |
+| `anthropicModel`                    | Claude model (when provider is `anthropic`)                                            |
+| `googleModel`                       | Gemini model (when provider is `google`)                                               |
+| `azureEndpoint` / `azureDeployment` | Azure OpenAI resource settings                                                         |
+| `ollamaBaseUrl` / `ollamaModel`     | Local Ollama server settings                                                           |
+| `openCodeBaseUrl` / `openCodeModel` | Local OpenCode proxy settings                                                          |
+| `openRouterModel`                   | OpenRouter model (when provider is `openrouter`)                                       |
+| `cursorModel`                       | Cursor model (when provider is `cursor`)                                               |
+
+Use **Promptimize: Configure Prompt Optimization Provider** to set up interactively. See [`docs/configuration/`](docs/configuration/) for provider setup.
+
 ### Configuration Options
 
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `transcriptionLanguage` | string | `"en"` | Language for transcription (`en`, `es`, `fr`, `de`, `auto`) |
-| `enablePromptTransformation` | boolean | `true` | Transform transcription into optimized prompts |
-| `audioQuality` | string | `"high"` | Audio recording quality (`low`, `medium`, `high`) |
-| `maxRecordingDuration` | number | `120` | Maximum recording duration in seconds |
-| `showNotifications` | boolean | `true` | Show status notifications |
+| Setting                      | Type    | Default    | Description                                                                                                              |
+| ---------------------------- | ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `transcriptionLanguage`      | string  | `"auto"`   | Language for transcription (`en`, `es`, `fr`, `de`, `auto`)                                                              |
+| `enablePromptTransformation` | boolean | `true`     | Transform transcription into optimized prompts                                                                           |
+| `transformationProvider`     | string  | `"openai"` | LLM provider for transformation (`openai`, `anthropic`, `google`, `azure`, `ollama`, `opencode`, `openrouter`, `cursor`) |
+| `transformationModel`        | string  | `"gpt-4o"` | OpenAI model for transformation                                                                                          |
+| `transcriptionHint`          | string  | `""`       | Optional Whisper vocabulary hint (Settings only)                                                                         |
+| `audioQuality`               | string  | `"high"`   | Planned — not yet applied (always 16 kHz mono)                                                                           |
+| `maxRecordingDuration`       | number  | `120`      | Planned — not yet applied                                                                                                |
+| `showNotifications`          | boolean | `true`     | Planned — not yet applied                                                                                                |
 
 ---
 
@@ -205,7 +288,7 @@ pnpm run compile
 
 1. In the Extension Development Host window:
    - Open Command Palette (`Cmd/Ctrl+Shift+P`)
-   - Type: "Cursor Whisper: Configure API Key"
+   - Type: "Promptimize: Configure API Key"
    - Paste your OpenAI API key (starts with `sk-...`)
    - The key is securely stored in your system's Keychain/Credential Manager
 
@@ -262,7 +345,7 @@ This will:
 
 1. Install all platform-specific native binaries (`darwin-arm64`, `darwin-x64`, `linux-x64-gnu`, `win32-x64-msvc`)
 2. Bundle them into the VSIX (~2.5MB total)
-3. Create `cursor-whisper-X.X.X.vsix`
+3. Create `promptimize-X.X.X.vsix`
 
 To verify all binaries are included:
 
@@ -283,50 +366,71 @@ Expected output:
 
 ## 🚀 Usage
 
+### Recording Modes
+
+Promptimize has two modes — see [Recording Modes](docs/user-guide/recording-modes.md) for full details.
+
+| Mode            | Shortcut         | Output                      |
+| --------------- | ---------------- | --------------------------- |
+| **Transcribe**  | `Cmd/Ctrl+Alt+V` | Raw Whisper transcription   |
+| **Promptimize** | `Cmd/Ctrl+Alt+P` | Optimized structured prompt |
+
 ### Quick Start
 
 1. **Open your editor or Cursor chat**
-2. **Press `Cmd+Alt+V` (macOS) or `Ctrl+Alt+V` (Windows/Linux)**
+2. **Press `Cmd+Alt+V`** (Transcribe) or **`Cmd+Alt+P`** (Promptimize)
 3. **Speak naturally about your requirements**
-4. **Press the same shortcut or click the status bar to stop**
-5. **Transcribed and optimized text appears automatically**
+4. **Click the status bar** (Recording...) to stop
+5. **Transcribed or optimized text appears automatically**
 
-### Alternative: Status Bar Button
+### Status Bar
 
-Click the microphone icon (🎤) in the status bar:
-- **Idle state**: Click to start recording
-- **Recording**: Click to stop
-- **Processing**: Wait for transcription
+Three items appear in the status bar (right side):
+
+| Item            | Idle                   | Recording                              |
+| --------------- | ---------------------- | -------------------------------------- |
+| **Transcribe**  | $(mic) Transcribe      | $(record) Recording... (click to stop) |
+| **Promptimize** | $(sparkle) Promptimize | $(record) Recording... (click to stop) |
+| **Settings**    | $(gear) Settings       | Available during recording             |
+
+During processing, progress appears in **notifications** (Transcribing..., Optimizing..., Inserting...).
 
 ### Example Workflow
 
 **Spoken Input:**
+
 > "I need to refactor the authentication service to support JWT tokens instead of sessions. We should maintain backward compatibility with existing session-based auth for 6 months. Also need unit tests for the new JWT validation logic and integration tests for the auth flow."
 
 **Optimized Output:**
+
 ```markdown
 ## Refactor Authentication Service to JWT
 
 ### Context
+
 - Current implementation: session-based authentication
 - Target implementation: JWT tokens
 
 ### Objectives
+
 1. Implement JWT token generation and validation
 2. Maintain backward compatibility with session-based auth
 3. Provide 6-month deprecation period for sessions
 
 ### Technical Requirements
+
 - JWT library integration
 - Token validation middleware
 - Session-to-JWT migration path
 
 ### Testing Requirements
+
 - Unit tests for JWT validation logic
 - Integration tests for complete auth flow
 - Backward compatibility tests for sessions
 
 ### Timeline
+
 - 6-month deprecation period for session-based auth
 ```
 
@@ -336,24 +440,44 @@ Click the microphone icon (🎤) in the status bar:
 
 ### Visual States
 
-The extension provides clear visual feedback through the status bar:
+The status bar reflects recorder states; fine-grained progress (Transcribing, Optimizing) appears in notifications.
 
-| State | Icon | Description |
-|-------|------|-------------|
-| **Idle** | 🎤 Voice | Ready to record |
-| **Recording** | 🔴 Recording... | Actively recording audio |
-| **Processing** | ⏳ Transcribing... | Sending audio to Whisper API |
-| **Transforming** | ⏳ Optimizing... | Enhancing prompt with GPT-4 |
-| **Error** | ❌ Error | Something went wrong |
+| State          | Status Bar                                 | Description                        |
+| -------------- | ------------------------------------------ | ---------------------------------- |
+| **Idle**       | $(mic) Transcribe / $(sparkle) Promptimize | Ready to record                    |
+| **Recording**  | $(record) Recording...                     | Actively recording (click to stop) |
+| **Processing** | $(sync~spin) Processing...                 | Preparing audio after stop         |
+| **Error**      | Error styling                              | Something went wrong               |
+
+See [UX States](docs/ux/states.md) for the full state reference.
 
 ### Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Cmd+Alt+V` / `Ctrl+Alt+V` | Toggle recording |
-| `Cmd+Shift+P` → "Cursor Whisper: Start Recording" | Start recording |
-| `Cmd+Shift+P` → "Cursor Whisper: Stop Recording" | Stop recording |
-| `Cmd+Shift+P` → "Cursor Whisper: Configure API Key" | Configure API key |
+| Shortcut                   | Action                             |
+| -------------------------- | ---------------------------------- |
+| `Cmd+Alt+V` / `Ctrl+Alt+V` | Start Transcribe recording         |
+| `Cmd+Alt+P` / `Ctrl+Alt+P` | Start Promptimize recording        |
+| `Escape`                   | Cancel recording (while recording) |
+
+Shortcuts **start** recording only — stop by clicking the status bar. See [Keyboard Shortcuts](docs/user-guide/keyboard-shortcuts.md).
+
+### Commands (Command Palette)
+
+| Command                                               | Purpose                           |
+| ----------------------------------------------------- | --------------------------------- |
+| `Promptimize: Start Transcribe Recording`             | Start raw transcription           |
+| `Promptimize: Stop Transcribe Recording`              | Stop and process Transcribe       |
+| `Promptimize: Start Promptimize Recording`            | Start optimized prompt            |
+| `Promptimize: Stop Promptimize Recording`             | Stop and process Promptimize      |
+| `Promptimize: Cancel Recording`                       | Discard recording                 |
+| `Promptimize: Open Configuration`                     | Configuration webview             |
+| `Promptimize: Configure OpenAI API Key (Whisper)`     | Set Whisper API key               |
+| `Promptimize: Configure Prompt Optimization Provider` | Provider setup wizard             |
+| `Promptimize: Configure OpenAI Optimization Model`    | Pick GPT model (OpenAI only)      |
+| `Promptimize: Test Configuration`                     | Test setup; opens results webview |
+| `Promptimize: Setup Wizard`                           | Opens configuration panel         |
+
+**Deprecated:** `(Deprecated) Start Recording` and `(Deprecated) Stop Recording` — use mode-specific commands instead.
 
 ---
 
@@ -370,6 +494,7 @@ The extension provides clear visual feedback through the status bar:
 ### API Key Security
 
 Your OpenAI API key is:
+
 1. Stored in VSCode's secure credential storage (SecretStorage)
 2. Never exposed in logs or error messages
 3. Never sent anywhere except OpenAI's official API
@@ -378,6 +503,7 @@ Your OpenAI API key is:
 ### Microphone Permissions
 
 The extension requests microphone access:
+
 - **macOS**: System Settings → Privacy & Security → Microphone
 - **Windows**: Settings → Privacy → Microphone
 - **Linux**: System-dependent, usually automatic
@@ -415,7 +541,7 @@ pnpm run watch
 ### Project Structure
 
 ```
-cursor-whisper/
+promptimize/
 ├── src/
 │   ├── application/     # Use cases and ports
 │   ├── domain/          # Business entities
@@ -441,16 +567,12 @@ See [`docs/architecture/`](docs/architecture/) for detailed structure documentat
 
 ## 🧪 Testing
 
-Automated tests are **pending** — see [`PROGRESS.md`](PROGRESS.md) and [`docs/testing/strategy.md`](docs/testing/strategy.md) for the focused test plan.
+Automated tests cover use cases, transformers, and UI components — see [`docs/testing/strategy.md`](docs/testing/strategy.md).
 
-### Run Tests (when implemented)
+### Run Tests
 
 ```bash
-# Unit tests
-pnpm test
-
-# Watch mode
-pnpm run test:watch
+source scripts/ensure-node.sh && pnpm test
 ```
 
 ### Test Strategy
@@ -464,39 +586,44 @@ See [`docs/testing/strategy.md`](docs/testing/strategy.md) for critical test pri
 
 ## 📈 Roadmap
 
-### v0.1.0 (Current - Alpha)
-- ✅ Basic audio recording
+### v0.1.0 (Current)
+
+- ✅ Dual recording modes (Transcribe + Promptimize)
 - ✅ Whisper transcription
-- ✅ Editor insertion
+- ✅ Prompt transformation (8 providers)
+- ✅ Configuration webview
+- ✅ Chat / editor / clipboard insertion
 - ✅ API key configuration
 
-### v0.2.0 (Next - Beta)
-- 🔄 GPT-4 prompt transformation
-- 🔄 Transformation preview
-- 🔄 Custom transformation styles
+### v0.2.0 (Next)
+
+- 🔄 Apply planned settings (`audioQuality`, `maxRecordingDuration`, `showNotifications`)
+- 🔄 Transformation preview before insert
+- 🔄 Transcription language in configuration webview
 
 ### v0.3.0
-- 🔄 Cursor chat integration
-- 🔄 Chat Participant API
-- 🔄 Context-aware insertion
+
+- 🔄 Context-aware insertion improvements
+- 🔄 Push-to-talk mode
 
 ### v0.4.0
+
 - 🔄 Real-time streaming transcription
 - 🔄 Recording history
 - 🔄 Edit before insert
 
 ### v0.5.0
-- 🔄 Multi-language auto-detection
-- 🔄 Custom vocabulary
+
+- 🔄 Custom vocabulary UI
 - 🔄 Technical term correction
 
 ### v1.0.0 (Stable)
+
 - 🔄 Full production release
-- 🔄 Complete documentation
 - 🔄 Performance optimization
 - 🔄 Extensive testing
 
-See [`docs/roadmap/`](docs/roadmap/) for detailed roadmap.
+See [`PROGRESS.md`](PROGRESS.md) for current project status.
 
 ---
 
@@ -541,17 +668,22 @@ We welcome contributions! See [`docs/standards/coding-conventions.md`](docs/stan
 
 ## 🐛 Troubleshooting
 
+See the full [Troubleshooting Guide](docs/user-guide/troubleshooting.md) with decision trees.
+
 ### Microphone not working
 
 **macOS:**
+
 1. Go to System Settings → Privacy & Security → Microphone
 2. Ensure VSCode/Cursor is enabled
 
 **Windows:**
+
 1. Go to Settings → Privacy → Microphone
 2. Ensure VSCode/Cursor has permission
 
 **Linux:**
+
 - Permissions are usually automatic
 - Check `pavucontrol` if using PulseAudio
 
@@ -570,13 +702,14 @@ We welcome contributions! See [`docs/standards/coding-conventions.md`](docs/stan
 
 ### Cursor Agents Window issues
 
-Cursor Whisper works best in:
+Promptimize works best in:
+
 - **Classic Mode** (`cursor --classic`)
 - **Editor Window**
 
 ### Debug output and privacy
 
-Transcriptions and optimized prompts are **never written to logs**. For troubleshooting, use the status bar, progress notifications, and error dialogs. Enable the **Cursor Whisper** output channel only for operational messages (timestamps, durations, error types)—not user speech content.
+Transcriptions and optimized prompts are **never written to logs**. For troubleshooting, use the status bar, progress notifications, and error dialogs. Enable the **Promptimize** output channel only for operational messages (timestamps, durations, error types)—not user speech content.
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
@@ -601,10 +734,12 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## 🔗 Links
 
 - [Documentation](docs/)
+- [Recording Modes](docs/user-guide/recording-modes.md)
+- [Configuration Webview Guide](docs/configuration/webview-guide.md)
 - [Architecture Docs](docs/architecture/)
-- [API Reference](docs/api/)
+- [Configuration Guide](docs/configuration/)
+- [Troubleshooting](docs/user-guide/troubleshooting.md)
 - [Project Progress](PROGRESS.md)
-- [Roadmap](docs/roadmap/versions.md)
 
 ---
 

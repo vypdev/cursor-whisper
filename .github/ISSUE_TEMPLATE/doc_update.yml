@@ -24,9 +24,12 @@ body:
       multiple: false
       options:
         - README.md
-        - Wiki
-        - API Documentation
-        - Inline Code Comments
+        - Quick start (docs/quickstart.md)
+        - User guide (recording, shortcuts, troubleshooting)
+        - Configuration docs
+        - Architecture / ADRs
+        - Developer docs (testing, standards, release)
+        - Inline code comments
         - Other
 
   - type: markdown

@@ -5,7 +5,7 @@ export class VSCodeOutputChannelLogger implements ILogger {
   private level: LogLevel = LogLevel.INFO;
   private outputChannel: vscode.OutputChannel;
 
-  constructor(channelName: string = 'Cursor Whisper') {
+  constructor(channelName: string = 'Promptimize') {
     this.outputChannel = vscode.window.createOutputChannel(channelName);
   }
 

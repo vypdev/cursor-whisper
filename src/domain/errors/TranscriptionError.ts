@@ -1,5 +1,9 @@
 export class TranscriptionError extends Error {
-  constructor(message: string, public readonly statusCode?: number, public readonly cause?: Error) {
+  constructor(
+    message: string,
+    public readonly statusCode?: number,
+    public readonly cause?: Error
+  ) {
     super(message);
     this.name = 'TranscriptionError';
   }

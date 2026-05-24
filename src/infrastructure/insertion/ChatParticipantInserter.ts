@@ -28,10 +28,7 @@ export class ChatParticipantInserter implements ITextInserter {
         hasCursorComposer: this.hasCursorComposer,
       });
     } catch (error) {
-      this.logger?.warn(
-        'ChatParticipantInserter: Failed to detect chat commands',
-        error as Error
-      );
+      this.logger?.warn('ChatParticipantInserter: Failed to detect chat commands', error as Error);
       this.commandsInitialized = true;
     }
   }

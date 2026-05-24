@@ -1,25 +1,26 @@
 # UX States and Transitions
 
-**Last Updated**: 2026-05-23
+**Last Updated**: 2026-05-24
 
 ---
 
 ## Recording States
 
-> **MVP implementation**: The status bar currently reflects states emitted by `NativeAudioRecorder`: `IDLE`, `RECORDING`, `PROCESSING`, `ERROR`, and `CANCELLED`. Fine-grained states (`TRANSCRIBING`, `TRANSFORMING`, `INSERTING`) are shown via the progress notification during stop/processing, not on the status bar. The table below documents the full target UX.
+The status bar reflects states emitted by `NativeAudioRecorder`: `IDLE`, `RECORDING`, `PROCESSING`, `ERROR`, and `CANCELLED`. Fine-grained states (`TRANSCRIBING`, `TRANSFORMING`, `INSERTING`, `COMPLETED`) are shown via **progress notifications** during stop/processing, not on the status bar. This is the current design, not a temporary MVP limitation.
 
 ### State Definitions
 
-| State | Description | Visual Indicator | User Actions |
-|-------|-------------|------------------|--------------|
-| **IDLE** | Ready to record | 🎤 Voice (gray) | Can start recording |
-| **RECORDING** | Actively recording | 🔴 Recording... (red, pulsing) | Can stop or cancel |
-| **PROCESSING** | Preparing audio | ⏳ Processing... (spinner) | Wait |
-| **TRANSCRIBING** | Sending to Whisper | ⏳ Transcribing... (spinner) | Wait |
-| **TRANSFORMING** | Optimizing with GPT-4 | ⏳ Optimizing... (spinner) | Wait |
-| **INSERTING** | Inserting text | ⏳ Inserting... | Wait |
-| **COMPLETED** | Successfully done | ✓ Inserted (green, brief) | Auto-returns to IDLE |
-| **ERROR** | Something failed | ❌ Error (red) | Can retry or dismiss |
+| State | Status bar | Notification | Description | User Actions |
+|-------|------------|--------------|-------------|--------------|
+| **IDLE** | $(mic) Transcribe / $(sparkle) Promptimize | — | Ready to record | Start either mode |
+| **RECORDING** | $(record) Recording... | — | Actively recording | Click status bar to stop; Escape to cancel |
+| **PROCESSING** | $(sync~spin) Processing... | May show progress | Audio captured, preparing | Wait |
+| **TRANSCRIBING** | — | "Transcribing..." | Sending to Whisper | Wait |
+| **TRANSFORMING** | — | "Optimizing..." | Running optimization (Promptimize) | Wait |
+| **INSERTING** | — | "Inserting..." | Inserting text | Wait |
+| **COMPLETED** | Returns to IDLE | Success toast | Done | — |
+| **ERROR** | Error styling | Error toast | Something failed | Retry or dismiss |
+| **CANCELLED** | Returns to IDLE | "Recording cancelled" | User cancelled | — |
 
 ### State Transition Diagram
 
@@ -27,122 +28,60 @@
 stateDiagram-v2
     [*] --> IDLE
     
-    IDLE --> RECORDING: User clicks<br/>mic button
+    IDLE --> RECORDING: Start Transcribe<br/>or Promptimize
     
-    RECORDING --> IDLE: User cancels<br/>(Escape)
-    RECORDING --> PROCESSING: User stops<br/>recording
+    RECORDING --> IDLE: Cancel (Escape)
+    RECORDING --> PROCESSING: Stop (status bar)
     
     PROCESSING --> TRANSCRIBING: Audio prepared
-    TRANSCRIBING --> TRANSFORMING: Text received
+    TRANSCRIBING --> TRANSFORMING: Text received (Promptimize)
+    TRANSCRIBING --> INSERTING: Text received (Transcribe only)
     TRANSFORMING --> INSERTING: Prompt optimized
     INSERTING --> COMPLETED: Text inserted
     
     PROCESSING --> ERROR: Error occurred
     TRANSCRIBING --> ERROR: API error
-    TRANSFORMING --> IDLE: Transform disabled<br/>or failed (fallback)
+    TRANSFORMING --> INSERTING: Transform disabled or failed (fallback to raw)
     INSERTING --> ERROR: All inserters failed
     
-    COMPLETED --> IDLE: Auto (after 2s)
+    COMPLETED --> IDLE: Auto
     ERROR --> IDLE: User dismisses
+    CANCELLED --> IDLE: Immediate
 ```
 
 ### Timing Expectations
 
 | Transition | Expected Duration | User Feedback |
 |------------|-------------------|---------------|
-| IDLE → RECORDING | <1s | Immediate visual change |
-| RECORDING → PROCESSING | <2s | Audio capture complete |
-| PROCESSING → TRANSCRIBING | <1s | Preparing upload |
-| TRANSCRIBING → TRANSFORMING | 3-8s | "Transcribing..." shown |
-| TRANSFORMING → INSERTING | 2-4s | "Optimizing..." shown |
-| INSERTING → COMPLETED | <1s | "Inserted ✓" shown |
-| COMPLETED → IDLE | 2s auto | Success message visible |
+| IDLE → RECORDING | <1s | Status bar changes immediately |
+| RECORDING → PROCESSING | <2s | Status bar shows Processing |
+| PROCESSING → TRANSCRIBING | <1s | Notification: "Transcribing..." |
+| TRANSCRIBING → TRANSFORMING | 3-8s | Notification: "Optimizing..." |
+| TRANSFORMING → INSERTING | 2-4s | Notification: "Inserting..." |
+| INSERTING → COMPLETED | <1s | Success toast |
+| COMPLETED → IDLE | Immediate | Status bar returns to idle |
 
 ---
 
 ## Visual Design
 
-### Status Bar Item
+### Status Bar Items
 
-**Idle State**:
-```
-┌────────────┐
-│ 🎤 Voice   │  ← Clickable, gray
-└────────────┘
-```
+Three items appear right-aligned:
 
-**Recording State**:
+**Idle:**
 ```
-┌──────────────────────┐
-│ 🔴 Recording... 0:15 │  ← Red background, pulsing, timer
-└──────────────────────┘
+$(mic) Transcribe    $(sparkle) Promptimize    $(gear) Settings
 ```
 
-**Processing States**:
+**Recording (Transcribe active):**
 ```
-┌─────────────────────────┐
-│ ⏳ Transcribing... 45%  │  ← Spinner, progress if available
-└─────────────────────────┘
+$(record) Recording...    $(sparkle) Promptimize (disabled)    $(gear) Settings
 ```
 
-**Success State** (brief):
+**Processing:**
 ```
-┌────────────────┐
-│ ✓ Inserted     │  ← Green, 2 seconds
-└────────────────┘
-```
-
-**Error State**:
-```
-┌────────────────┐
-│ ❌ Error       │  ← Red, clickable for details
-└────────────────┘
-```
-
-### Webview Panel (Deprecated)
-
-> **Not in production**: A dedicated webview panel with React UI was planned in [ADR-0010](../adr/0010-react-for-ui.md) but superseded by native capture ([ADR-0013](../adr/0013-native-audio-capture.md)). The MVP uses status bar feedback only.
-
-For reference, the planned webview layout was:
-
-```
-┌─────────────────────────────────┐
-│  Cursor Whisper                 │
-├─────────────────────────────────┤
-│                                 │
-│         ┌───────────┐          │
-│         │           │          │  ← Large mic button
-│         │     🎤     │          │
-│         │           │          │
-│         └───────────┘          │
-│                                 │
-│     Click to start recording    │
-│                                 │
-│  Status: Idle                   │
-│  Duration: 0:00                 │
-│                                 │
-└─────────────────────────────────┘
-```
-
-During recording:
-```
-┌─────────────────────────────────┐
-│  Cursor Whisper                 │
-├─────────────────────────────────┤
-│                                 │
-│         ┌───────────┐          │
-│         │           │          │
-│         │     🔴     │          │  ← Pulsing red
-│         │           │          │
-│         └───────────┘          │
-│                                 │
-│        ⏹️  Stop Recording        │
-│                                 │
-│  Status: Recording              │
-│  Duration: 0:23                 │
-│  ▓▓▓▓▓▓▓▓▓░░░░░░░░  (waveform) │
-│                                 │
-└─────────────────────────────────┘
+$(sync~spin) Processing...    (both modes disabled)
 ```
 
 ---
@@ -151,16 +90,17 @@ During recording:
 
 | Shortcut | Action | Context |
 |----------|--------|---------|
-| `Cmd/Ctrl + Alt + V` | Toggle recording | Global |
-| `Escape` | Cancel recording | While recording |
-| `Enter` | Stop recording | While recording |
+| `Cmd/Ctrl + Alt + V` | Start Transcribe recording | Global |
+| `Cmd/Ctrl + Alt + P` | Start Promptimize recording | Global |
+| `Escape` | Cancel recording | While `promptimize.isRecording` |
+
+**Note:** Start shortcuts do **not** stop recording. Stop by clicking the status bar **Recording...** item.
+
+See [Keyboard Shortcuts](../user-guide/keyboard-shortcuts.md) for the full command reference.
 
 ### Push-to-Talk Mode (Future)
 
-Hold `Cmd/Ctrl + Alt + V` to record, release to stop:
-- Press: Start recording
-- Hold: Keep recording
-- Release: Stop and process
+Hold `Cmd/Ctrl + Alt + V` to record, release to stop — planned for a future release.
 
 ---
 
@@ -168,43 +108,37 @@ Hold `Cmd/Ctrl + Alt + V` to record, release to stop:
 
 ### Success Notifications
 
-**Minimal** (default):
+**Default:**
 ```
-✓ Prompt inserted
-```
-
-**Detailed** (optional setting):
-```
-✓ Prompt inserted successfully
-  Original: 145 characters
-  Optimized: 98 characters
-  Improvements: 3
+✓ Transcription inserted
+✓ Optimized prompt inserted
 ```
 
 ### Error Notifications
 
-**Interactive**:
+**Interactive (transcription):**
 ```
 ❌ Transcription failed
-   OpenAI API error (429: Rate limit)
    [Retry] [Cancel]
 ```
 
-**With Instructions**:
+**With Instructions:**
 ```
 ❌ Microphone permission denied
    Please enable microphone access in System Settings
-   [Open Settings] [Learn More]
 ```
 
 ### Info Notifications
 
-**Configuration Needed**:
+**Configuration Needed:**
 ```
-ℹ️ API Key not configured
-   Cursor Whisper needs an OpenAI API key
-   [Configure Now] [Learn More]
+ℹ️ OpenAI API key required for transcription
+   [Open Configuration]
 ```
+
+### Planned: Detailed Notifications
+
+When `showNotifications` setting is implemented, optional detailed success messages may include character counts and improvement counts.
 
 ---
 
@@ -212,91 +146,31 @@ Hold `Cmd/Ctrl + Alt + V` to record, release to stop:
 
 ### Screen Reader Support
 
-All states announced clearly:
-- "Voice recording ready"
-- "Recording audio, 15 seconds"
-- "Transcribing audio, please wait"
-- "Prompt inserted successfully"
-- "Error: Transcription failed"
+States should be announced clearly via status bar text and notifications.
 
 ### Keyboard Navigation
 
-- All commands accessible via keyboard
-- No mouse-only interactions
-- Clear focus indicators
-- Logical tab order
-
-### Visual Accessibility
-
-- High contrast mode support
-- Color not sole indicator (icons + text)
-- Minimum text size 12px
-- WCAG 2.1 AA compliant
+- All commands accessible via Command Palette
+- Escape cancels active recording
+- No mouse-only interactions required for core workflow
 
 ---
 
 ## Error Messages
 
-### User-Friendly Error Messages
-
-❌ **Bad**:
-```
-Error: ECONNREFUSED 401
-```
-
-✅ **Good**:
-```
-Could not connect to OpenAI API
-Your API key may be invalid or expired.
-[Check API Key] [Help]
-```
+See [Troubleshooting](../user-guide/troubleshooting.md) for decision trees.
 
 ### Error Categories
 
-**Configuration Errors**:
-- "API key not configured"
-- "Invalid API key format"
-- "API key has expired"
+**Configuration:** API key not configured, invalid format, provider incomplete
 
-**Permission Errors**:
-- "Microphone permission denied"
-- "Please enable microphone in System Settings"
+**Permission:** Microphone permission denied
 
-**Network Errors**:
-- "Could not connect to OpenAI"
-- "Request timed out, please try again"
-- "Rate limit exceeded, please wait"
+**Network:** Connection failed, timeout, rate limit (429)
 
-**Audio Errors**:
-- "Recording failed to start"
-- "Audio file too large (max 25MB)"
-- "Audio duration too short (min 0.1s)"
+**Audio:** Recording failed, file too large (>25 MB), too short (<0.1s)
 
-**Insertion Errors**:
-- "Could not insert text automatically"
-- "Prompt copied to clipboard instead"
-
----
-
-## Performance Targets
-
-### Response Times
-
-| Action | Target | Acceptable | Poor |
-|--------|--------|------------|------|
-| Start recording | <500ms | <1s | >2s |
-| Stop recording | <1s | <2s | >3s |
-| Transcription | <8s | <15s | >30s |
-| Transformation | <4s | <8s | >15s |
-| Insertion | <500ms | <1s | >2s |
-| **Total (30s audio)** | **<15s** | **<25s** | **>45s** |
-
-### Perceived Performance
-
-- Immediate visual feedback (<100ms)
-- Progress indicators for long operations
-- Optimistic UI updates
-- Smooth animations (60fps)
+**Insertion:** All inserters failed; clipboard fallback used
 
 ---
 
@@ -304,97 +178,45 @@ Your API key may be invalid or expired.
 
 ### Very Short Recording (<1s)
 
-```
-⚠️ Recording too short (0.4s)
-   Minimum duration is 0.5 seconds
-   [Try Again]
-```
+Whisper rejects audio shorter than 0.1s. User sees transcription error with Retry option.
 
-### Very Long Recording (>120s)
+### Very Long Recording
 
-```
-⚠️ Approaching maximum duration
-   Recording will auto-stop at 2:00
-   (Current: 1:50)
-```
+`maxRecordingDuration` setting is **planned but not yet applied**. Recording continues until manually stopped.
 
 ### No Active Editor
 
 Falls back to clipboard:
 ```
-ℹ️ No active editor found
-   Prompt copied to clipboard
+ℹ️ Prompt copied to clipboard
    Paste it where you need it
 ```
 
-### Transformation Disabled
+### Transformation Disabled or Failed
 
-```
-ℹ️ Transcribed (transformation disabled)
-   Raw transcription inserted
-   Enable transformation in settings
-```
+Raw transcription is inserted. Optimization failure does not block insertion.
 
 ---
 
 ## User Preferences
 
-### Configurable Behavior
+### Configurable in VS Code Settings
 
-Users can configure:
-- Enable/disable notifications
-- Enable/disable prompt transformation
-- Maximum recording duration
-- Audio quality
-- Transcription language
-- Keyboard shortcuts
+- `enablePromptTransformation` — Enable/disable optimization
+- `transcriptionLanguage` — Whisper language
+- `transcriptionHint` — Whisper vocabulary hint
+- `transformationSystemPrompt` — Custom transformation instructions
+- `transformationProvider` and provider-specific model settings
 
-### Settings UI
+### Configurable in Configuration Webview
 
-```
-Cursor Whisper Settings
+- OpenAI API key, provider selection, model, system prompt
+- See [Configuration Webview Guide](../configuration/webview-guide.md)
 
-🎤 Recording
-  ✓ Show recording indicator
-  ✓ Show duration timer
-  Maximum duration: [120] seconds
+### Planned (not yet applied)
 
-🔤 Transcription
-  Language: [Auto-detect ▾]
-  ✓ Technical vocabulary hints
-
-✨ Transformation
-  ✓ Optimize prompts with AI
-  Style: [Technical ▾]
-  ✓ Show before/after preview
-
-📝 Insertion
-  Priority: [Chat > Editor > Clipboard]
-  ✓ Show success notifications
-
-⌨️ Shortcuts
-  Toggle recording: [Cmd+Alt+V]
-  ✓ Enable push-to-talk mode
-```
+- `audioQuality`, `maxRecordingDuration`, `showNotifications`
 
 ---
 
-## Summary
-
-**UX Principles**:
-1. ✅ **Immediate feedback**: Visual changes <100ms
-2. ✅ **Clear states**: Always know what's happening
-3. ✅ **Graceful errors**: User-friendly messages with actions
-4. ✅ **Minimal friction**: One-click recording
-5. ✅ **Smart defaults**: Works great out of the box
-6. ✅ **Accessibility**: Works for everyone
-
-**Design Philosophy**:
-- **Fast**: Optimized for speed
-- **Clear**: No ambiguity about state
-- **Forgiving**: Easy to cancel/retry
-- **Professional**: Fits VSCode aesthetic
-
----
-
-**Next**: See [Security Documentation](../security/privacy.md).
+**Next:** [Security Documentation](../security/privacy.md) · [Recording Modes](../user-guide/recording-modes.md)
