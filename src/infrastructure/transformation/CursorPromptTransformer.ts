@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import { Agent } from '@cursor/sdk';
 import { IPromptTransformer, PromptContext } from '../../application/ports/IPromptTransformer';
 import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
@@ -56,7 +57,9 @@ export class CursorPromptTransformer implements IPromptTransformer {
       const result = await Agent.prompt(fullPrompt, {
         apiKey,
         model: { id: model },
-        local: { cwd: process.cwd() },
+        local: {
+          cwd: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? process.cwd(),
+        },
       });
 
       const duration = (Date.now() - startTime) / 1000;

@@ -4,7 +4,6 @@ import { IConfigRepository } from '../../application/ports/IConfigRepository';
 import { ITransformationProviderValidator } from '../../application/ports/ITransformationProviderValidator';
 import { validateConfigurationForPromptimize } from '../../application/services/ConfigurationValidationService';
 import { PermissionError } from '../../domain/errors/PermissionError';
-import { ConfigError, MissingApiKeyError } from '../../domain/errors/ConfigError';
 import { RecordingError } from '../../domain/errors/RecordingError';
 
 export function registerStartRecordingCommand(
@@ -41,11 +40,7 @@ export function registerStartRecordingCommand(
       await useCase.execute('promptimize');
       await vscode.window.showInformationMessage('Recording started');
     } catch (error) {
-      if (error instanceof MissingApiKeyError) {
-        await vscode.commands.executeCommand('promptimize.openConfigurationPanel');
-      } else if (error instanceof ConfigError) {
-        await vscode.window.showErrorMessage(`Configuration error: ${error.message}`);
-      } else if (error instanceof PermissionError) {
+      if (error instanceof PermissionError) {
         await vscode.window.showErrorMessage(
           'Microphone permission denied. Please check system settings.',
           'OK'

@@ -1,5 +1,6 @@
 import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { IPromptTransformer } from '../../application/ports/IPromptTransformer';
+import type { PromptContext } from '../../application/ports/IPromptTransformer';
 import { ITransformationProviderValidator } from '../../application/ports/ITransformationProviderValidator';
 import { IConfigRepository } from '../../application/ports/IConfigRepository';
 import { ILogger } from '../../application/ports/ILogger';
@@ -182,7 +183,7 @@ export class ConfigurablePromptTransformer implements IPromptTransformer {
 
   async transform(
     transcription: string,
-    context?: import('../../application/ports/IPromptTransformer').PromptContext
+    context?: PromptContext
   ): Promise<TransformedPrompt> {
     const transformer = await this.factory.create();
     return transformer.transform(transcription, context);

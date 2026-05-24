@@ -3,7 +3,6 @@ import OpenAI from 'openai';
 import { IPromptTransformer, PromptContext } from '../../application/ports/IPromptTransformer';
 import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { ILogger } from '../../application/ports/ILogger';
-import { ApiKey } from '../../domain/value-objects/ApiKey';
 import {
   TransformationError,
   buildUserPrompt,
@@ -42,9 +41,8 @@ export class OpenRouterPromptTransformer implements IPromptTransformer {
       return { client: this.client, model };
     }
 
-    const apiKey = new ApiKey(apiKeyStr);
     this.client = new OpenAI({
-      apiKey: apiKey.toString(),
+      apiKey: apiKeyStr,
       baseURL: OpenRouterPromptTransformer.BASE_URL,
       defaultHeaders: {
         'HTTP-Referer': 'https://github.com/vypdev/cursor-whisper',
