@@ -24,16 +24,19 @@ export class RecordingStatusBarItem {
 
   constructor() {
     this.transcribeStatusBarItem = vscode.window.createStatusBarItem(
+      'transcribe',
       vscode.StatusBarAlignment.Right,
-      1000
+      1001
     );
     this.promptimizeStatusBarItem = vscode.window.createStatusBarItem(
+      'promptimize',
       vscode.StatusBarAlignment.Right,
-      999
+      1001
     );
     this.settingsStatusBarItem = vscode.window.createStatusBarItem(
+      'settings',
       vscode.StatusBarAlignment.Right,
-      998
+      1001
     );
     this.settingsStatusBarItem.command = 'cursor-whisper.openConfigurationPanel';
     this.updateUI();

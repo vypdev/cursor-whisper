@@ -10,8 +10,11 @@ webpack.config.js
 **/*.ts
 !out/**/*.js
 !out/presentation/webview/**
-node_modules/**
-!node_modules/@kstonekuan/**
+node_modules/**/test/**
+node_modules/**/tests/**
+node_modules/**/*.md
+node_modules/**/.*.yml
+node_modules/**/.*.yaml
 coverage/**
 **/__tests__/**
 **/*.test.ts

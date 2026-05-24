@@ -24,6 +24,24 @@ describe('RecordingStatusBarItem', () => {
     const statusBar = new RecordingStatusBarItem();
     const [transcribeItem, promptimizeItem, settingsItem] = getStatusBarItems();
 
+    expect(vscode.window.createStatusBarItem).toHaveBeenNthCalledWith(
+      1,
+      'transcribe',
+      vscode.StatusBarAlignment.Right,
+      1001
+    );
+    expect(vscode.window.createStatusBarItem).toHaveBeenNthCalledWith(
+      2,
+      'promptimize',
+      vscode.StatusBarAlignment.Right,
+      1001
+    );
+    expect(vscode.window.createStatusBarItem).toHaveBeenNthCalledWith(
+      3,
+      'settings',
+      vscode.StatusBarAlignment.Right,
+      1001
+    );
     expect(transcribeItem.text).toBe('$(mic) Transcribe');
     expect(transcribeItem.command).toBe('cursor-whisper.startTranscribeRecording');
     expect(promptimizeItem.text).toBe('$(sparkle) Promptimize');
