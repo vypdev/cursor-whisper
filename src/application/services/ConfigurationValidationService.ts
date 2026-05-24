@@ -20,6 +20,43 @@ export interface ConfigurationValidationIssue {
 }
 
 /**
+ * Validates configuration required before transcription-only recording.
+ */
+export async function validateConfigurationForTranscription(
+  configRepo: IConfigRepository
+): Promise<ConfigurationValidationIssue | undefined> {
+  const openAiKey = await configRepo.getProviderApiKey(TransformationProvider.OpenAI);
+
+  if (!openAiKey) {
+    return {
+      message: OPENAI_API_KEY_REQUIRED_RECORDING,
+      configureCommand: 'cursor-whisper.openConfigurationPanel',
+    };
+  }
+
+  return undefined;
+}
+
+/**
+ * Validates configuration required before promptimize recording (transcribe + optimize).
+ */
+export async function validateConfigurationForPromptimize(
+  configRepo: IConfigRepository,
+  providerValidator: ITransformationProviderValidator
+): Promise<ConfigurationValidationIssue | undefined> {
+  const config = await configRepo.getConfig();
+
+  if (!config.enablePromptTransformation) {
+    return {
+      message: 'Prompt optimization is disabled. Enable it in configuration to use Promptimize.',
+      configureCommand: 'cursor-whisper.openConfigurationPanel',
+    };
+  }
+
+  return validateConfigurationForRecording(configRepo, providerValidator);
+}
+
+/**
  * Validates configuration required before recording starts.
  * Whisper transcription always requires an OpenAI API key.
  * When prompt transformation is enabled, the active provider must also be configured.

@@ -1,10 +1,13 @@
 import {
   validateConfigurationForRecording,
+  validateConfigurationForTranscription,
+  validateConfigurationForPromptimize,
   validateConfigurationOnStartup,
 } from '../../../application/services/ConfigurationValidationService';
 import { IConfigRepository, Config } from '../../../application/ports/IConfigRepository';
 import { ITransformationProviderValidator } from '../../../application/ports/ITransformationProviderValidator';
 import { TransformationProvider } from '../../../domain/value-objects/TransformationProvider';
+import { OPENAI_API_KEY_REQUIRED_RECORDING } from '../../../shared/constants/uxMessages';
 
 const baseConfig: Config = {
   transformationProvider: TransformationProvider.Anthropic,
@@ -49,6 +52,50 @@ function createProviderValidator(
 }
 
 describe('ConfigurationValidationService', () => {
+  describe('validateConfigurationForTranscription', () => {
+    it('requires OpenAI key for Whisper transcription', async () => {
+      const configRepo = createConfigRepo({}, { [TransformationProvider.OpenAI]: undefined });
+
+      const issue = await validateConfigurationForTranscription(configRepo);
+
+      expect(issue).toEqual({
+        message: OPENAI_API_KEY_REQUIRED_RECORDING,
+        configureCommand: 'cursor-whisper.openConfigurationPanel',
+      });
+    });
+
+    it('passes when OpenAI key is configured', async () => {
+      const configRepo = createConfigRepo();
+
+      const issue = await validateConfigurationForTranscription(configRepo);
+
+      expect(issue).toBeUndefined();
+    });
+  });
+
+  describe('validateConfigurationForPromptimize', () => {
+    it('opens configuration when prompt optimization is disabled', async () => {
+      const configRepo = createConfigRepo({ enablePromptTransformation: false });
+      const validator = createProviderValidator(jest.fn(async () => undefined));
+
+      const issue = await validateConfigurationForPromptimize(configRepo, validator);
+
+      expect(issue).toEqual({
+        message: 'Prompt optimization is disabled. Enable it in configuration to use Promptimize.',
+        configureCommand: 'cursor-whisper.openConfigurationPanel',
+      });
+    });
+
+    it('requires OpenAI key and provider configuration when optimization is enabled', async () => {
+      const configRepo = createConfigRepo({}, { [TransformationProvider.OpenAI]: undefined });
+      const validator = createProviderValidator(jest.fn(async () => undefined));
+
+      const issue = await validateConfigurationForPromptimize(configRepo, validator);
+
+      expect(issue?.configureCommand).toBe('cursor-whisper.configureApiKey');
+    });
+  });
+
   describe('validateConfigurationForRecording', () => {
     it('requires OpenAI key for Whisper transcription', async () => {
       const configRepo = createConfigRepo({}, { [TransformationProvider.OpenAI]: undefined });

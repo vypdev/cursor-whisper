@@ -1,36 +1,104 @@
 import { RecordingStatusBarItem } from '../../../presentation/ui/RecordingStatusBarItem';
 import { RecordingState } from '../../../domain/value-objects/RecordingState';
 import * as vscode from 'vscode';
+import {
+  getRecordingSessionMode,
+  setRecordingSessionMode,
+} from '../../../shared/services/RecordingSessionMode';
+
+function getStatusBarItems(): Array<{
+  text: string;
+  command?: string;
+  tooltip?: string;
+  backgroundColor?: unknown;
+}> {
+  return (vscode.window.createStatusBarItem as jest.Mock).mock.results.map(result => result.value);
+}
 
 describe('RecordingStatusBarItem', () => {
+  beforeEach(() => {
+    setRecordingSessionMode(null);
+  });
+
+  it('creates transcribe and promptimize buttons with idle labels', () => {
+    const statusBar = new RecordingStatusBarItem();
+    const [transcribeItem, promptimizeItem, settingsItem] = getStatusBarItems();
+
+    expect(transcribeItem.text).toBe('$(mic) Transcribe');
+    expect(transcribeItem.command).toBe('cursor-whisper.startTranscribeRecording');
+    expect(promptimizeItem.text).toBe('$(sparkle) Promptimize');
+    expect(promptimizeItem.command).toBe('cursor-whisper.startPromptimizeRecording');
+    expect(settingsItem.text).toBe('$(gear)');
+    statusBar.dispose();
+  });
+
   it('uses the active provider label in the transforming tooltip', () => {
     const statusBar = new RecordingStatusBarItem();
-    const statusBarItem = (vscode.window.createStatusBarItem as jest.Mock).mock.results[0].value;
+    const promptimizeItem = getStatusBarItems()[1];
 
+    statusBar.setSetupState({
+      optimizationEnabled: true,
+      hasOpenAIKey: true,
+    });
     statusBar.setTransformationProviderLabel('Anthropic');
+    setRecordingSessionMode('promptimize');
     statusBar.setState(RecordingState.TRANSFORMING);
 
-    expect(statusBarItem.tooltip).toBe(
+    expect(promptimizeItem.tooltip).toBe(
       'Optimizing prompt with Anthropic (Whisper transcription already complete)'
     );
     statusBar.dispose();
   });
 
-  it('shows setup checklist tooltip when setup is incomplete', () => {
+  it('shows configuration tooltip when OpenAI key is missing', () => {
     const statusBar = new RecordingStatusBarItem();
-    const statusBarItem = (vscode.window.createStatusBarItem as jest.Mock).mock.results[0].value;
+    const transcribeItem = getStatusBarItems()[0];
 
     statusBar.setSetupState({
       optimizationEnabled: true,
-      setupIncomplete: true,
-      setupChecklist: [
-        { label: 'OpenAI API key configured (Whisper)', complete: false },
-      ],
+      hasOpenAIKey: false,
     });
     statusBar.setState(RecordingState.IDLE);
 
-    expect(statusBarItem.text).toBe('$(warning) Setup Whisper');
-    expect(statusBarItem.command).toBe('cursor-whisper.openConfigurationPanel');
+    expect(transcribeItem.text).toBe('$(mic) Transcribe');
+    expect(transcribeItem.command).toBe('cursor-whisper.startTranscribeRecording');
+    expect(transcribeItem.tooltip).toContain('OpenAI API key required');
+    expect(transcribeItem.backgroundColor).toEqual({
+      id: 'statusBarItem.warningBackground',
+    });
+    statusBar.dispose();
+  });
+
+  it('shows configuration tooltip when optimization is disabled', () => {
+    const statusBar = new RecordingStatusBarItem();
+    const promptimizeItem = getStatusBarItems()[1];
+
+    statusBar.setSetupState({
+      optimizationEnabled: false,
+      hasOpenAIKey: true,
+    });
+    statusBar.setState(RecordingState.IDLE);
+
+    expect(promptimizeItem.text).toBe('$(sparkle) Promptimize');
+    expect(promptimizeItem.command).toBe('cursor-whisper.startPromptimizeRecording');
+    expect(promptimizeItem.tooltip).toContain('Prompt optimization is disabled');
+    statusBar.dispose();
+  });
+
+  it('disables sibling button while a transcribe session is active', () => {
+    const statusBar = new RecordingStatusBarItem();
+    const [transcribeItem, promptimizeItem] = getStatusBarItems();
+
+    statusBar.setSetupState({
+      optimizationEnabled: true,
+      hasOpenAIKey: true,
+    });
+    setRecordingSessionMode('transcribe');
+    statusBar.setState(RecordingState.RECORDING);
+
+    expect(transcribeItem.command).toBe('cursor-whisper.stopTranscribeRecording');
+    expect(promptimizeItem.command).toBeUndefined();
+    expect(getRecordingSessionMode()).toBe('transcribe');
     statusBar.dispose();
   });
 });

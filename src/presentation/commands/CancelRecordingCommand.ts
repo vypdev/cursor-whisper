@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { CancelRecordingUseCase } from '../../application/use-cases/CancelRecordingUseCase';
 import { RecordingError } from '../../domain/errors/RecordingError';
+import { setRecordingSessionMode } from '../../shared/services/RecordingSessionMode';
 
 export function registerCancelRecordingCommand(
   _context: vscode.ExtensionContext,
@@ -9,6 +10,7 @@ export function registerCancelRecordingCommand(
   return vscode.commands.registerCommand('cursor-whisper.cancelRecording', async () => {
     try {
       useCase.execute();
+      setRecordingSessionMode(null);
       await vscode.window.showInformationMessage('Recording cancelled');
     } catch (error) {
       const message =

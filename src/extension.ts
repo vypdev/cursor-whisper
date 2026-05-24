@@ -25,6 +25,10 @@ import { InsertTextUseCase } from './application/use-cases/InsertTextUseCase';
 // Presentation
 import { registerStartRecordingCommand } from './presentation/commands/StartRecordingCommand';
 import { registerStopRecordingCommand } from './presentation/commands/StopRecordingCommand';
+import { registerStartTranscribeRecordingCommand } from './presentation/commands/StartTranscribeRecordingCommand';
+import { registerStopTranscribeRecordingCommand } from './presentation/commands/StopTranscribeRecordingCommand';
+import { registerStartPromptimizeRecordingCommand } from './presentation/commands/StartPromptimizeRecordingCommand';
+import { registerStopPromptimizeRecordingCommand } from './presentation/commands/StopPromptimizeRecordingCommand';
 import { registerCancelRecordingCommand } from './presentation/commands/CancelRecordingCommand';
 import { registerConfigureApiKeyCommand } from './presentation/commands/ConfigureApiKeyCommand';
 import { registerConfigureModelCommand } from './presentation/commands/ConfigureModelCommand';
@@ -88,12 +92,7 @@ export function activate(context: vscode.ExtensionContext): void {
   // APPLICATION LAYER (Use Cases)
   // ========================================
 
-  const startRecordingUseCase = new StartRecordingUseCase(
-    audioRecorder,
-    configRepository,
-    transformerFactory,
-    logger
-  );
+  const startRecordingUseCase = new StartRecordingUseCase(audioRecorder, logger);
 
   const stopRecordingUseCase = new StopRecordingUseCase(audioRecorder, logger);
 
@@ -125,14 +124,10 @@ export function activate(context: vscode.ExtensionContext): void {
 
     const checklist = await getSetupChecklist(context, configRepository);
     const openAiKey = await configRepository.getProviderApiKey(TransformationProvider.OpenAI);
-    const setupIncomplete =
-      !openAiKey ||
-      !isSetupCompleted(context) ||
-      checklist.some(item => !item.complete && item.label !== 'Extension installed');
 
     statusBar.setSetupState({
       optimizationEnabled: config.enablePromptTransformation,
-      setupIncomplete,
+      hasOpenAIKey: Boolean(openAiKey),
       setupChecklist: checklist,
     });
   };
@@ -148,8 +143,30 @@ export function activate(context: vscode.ExtensionContext): void {
   });
 
   // Commands
-  const startCommand = registerStartRecordingCommand(context, startRecordingUseCase);
-  const stopCommand = registerStopRecordingCommand(context, {
+  const startCommand = registerStartRecordingCommand(
+    context,
+    configRepository,
+    transformerFactory,
+    startRecordingUseCase
+  );
+  const startTranscribeCommand = registerStartTranscribeRecordingCommand(
+    context,
+    configRepository,
+    startRecordingUseCase
+  );
+  const startPromptimizeCommand = registerStartPromptimizeRecordingCommand(
+    context,
+    configRepository,
+    transformerFactory,
+    startRecordingUseCase
+  );
+  const stopCommand = registerStopRecordingCommand(context);
+  const stopTranscribeCommand = registerStopTranscribeRecordingCommand(context, {
+    stopRecordingUseCase,
+    transcribeUseCase,
+    insertUseCase,
+  });
+  const stopPromptimizeCommand = registerStopPromptimizeRecordingCommand(context, {
     stopRecordingUseCase,
     transcribeUseCase,
     transformUseCase,
@@ -197,7 +214,11 @@ export function activate(context: vscode.ExtensionContext): void {
 
   context.subscriptions.push(
     startCommand,
+    startTranscribeCommand,
+    startPromptimizeCommand,
     stopCommand,
+    stopTranscribeCommand,
+    stopPromptimizeCommand,
     cancelCommand,
     configureCommand,
     configureModelCommand,

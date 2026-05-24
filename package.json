@@ -41,11 +41,27 @@
     "commands": [
       {
         "command": "cursor-whisper.startRecording",
-        "title": "Cursor Whisper: Start Recording"
+        "title": "Cursor Whisper: (Deprecated) Start Recording"
       },
       {
         "command": "cursor-whisper.stopRecording",
-        "title": "Cursor Whisper: Stop Recording"
+        "title": "Cursor Whisper: (Deprecated) Stop Recording"
+      },
+      {
+        "command": "cursor-whisper.startTranscribeRecording",
+        "title": "Cursor Whisper: Start Transcribe Recording"
+      },
+      {
+        "command": "cursor-whisper.stopTranscribeRecording",
+        "title": "Cursor Whisper: Stop Transcribe Recording"
+      },
+      {
+        "command": "cursor-whisper.startPromptimizeRecording",
+        "title": "Cursor Whisper: Start Promptimize Recording"
+      },
+      {
+        "command": "cursor-whisper.stopPromptimizeRecording",
+        "title": "Cursor Whisper: Stop Promptimize Recording"
       },
       {
         "command": "cursor-whisper.cancelRecording",
@@ -78,9 +94,14 @@
     ],
     "keybindings": [
       {
-        "command": "cursor-whisper.startRecording",
+        "command": "cursor-whisper.startTranscribeRecording",
         "key": "ctrl+alt+v",
         "mac": "cmd+alt+v"
+      },
+      {
+        "command": "cursor-whisper.startPromptimizeRecording",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p"
       },
       {
         "command": "cursor-whisper.cancelRecording",
