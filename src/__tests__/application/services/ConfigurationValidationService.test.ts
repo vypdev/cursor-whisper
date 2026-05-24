@@ -3,6 +3,7 @@ import {
   validateConfigurationForTranscription,
   validateConfigurationForPromptimize,
   validateConfigurationOnStartup,
+  isOptimizationProviderConfigured,
 } from '../../../application/services/ConfigurationValidationService';
 import { IConfigRepository, Config } from '../../../application/ports/IConfigRepository';
 import { ITransformationProviderValidator } from '../../../application/ports/ITransformationProviderValidator';
@@ -224,6 +225,44 @@ describe('ConfigurationValidationService', () => {
         message: 'Promptimize: Cursor credentials are not configured for prompt optimization.',
         configureCommand: 'promptimize.openConfigurationPanel',
       });
+    });
+  });
+
+  describe('isOptimizationProviderConfigured', () => {
+    it('returns true when API-key provider has credentials', async () => {
+      const configRepo = createConfigRepo();
+
+      await expect(isOptimizationProviderConfigured(configRepo)).resolves.toBe(true);
+    });
+
+    it('returns false when API-key provider is missing credentials', async () => {
+      const configRepo = createConfigRepo(
+        { transformationProvider: TransformationProvider.Anthropic },
+        {
+          [TransformationProvider.OpenAI]: 'openai-key',
+          [TransformationProvider.Anthropic]: undefined,
+        }
+      );
+
+      await expect(isOptimizationProviderConfigured(configRepo)).resolves.toBe(false);
+    });
+
+    it('returns false for Ollama when base URL or model is missing', async () => {
+      const configRepo = createConfigRepo({
+        transformationProvider: TransformationProvider.Ollama,
+        ollamaBaseUrl: '',
+        ollamaModel: '',
+      });
+
+      await expect(isOptimizationProviderConfigured(configRepo)).resolves.toBe(false);
+    });
+
+    it('returns true for Ollama when base URL and model are set', async () => {
+      const configRepo = createConfigRepo({
+        transformationProvider: TransformationProvider.Ollama,
+      });
+
+      await expect(isOptimizationProviderConfigured(configRepo)).resolves.toBe(true);
     });
   });
 });

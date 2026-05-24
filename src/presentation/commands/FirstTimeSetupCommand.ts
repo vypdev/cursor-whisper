@@ -4,6 +4,7 @@ import { ILogger } from '../../application/ports/ILogger';
 import { IPromptTransformer } from '../../application/ports/IPromptTransformer';
 import { PromptTransformerFactory } from '../../infrastructure/transformation/PromptTransformerFactory';
 import { OpenAIModelService } from '../../infrastructure/openai/OpenAIModelService';
+import { isOptimizationProviderConfigured } from '../../application/services/ConfigurationValidationService';
 import {
   TransformationProvider,
   PROVIDER_METADATA,
@@ -36,12 +37,10 @@ export async function getSetupChecklist(
 
   if (config.enablePromptTransformation) {
     const providerMeta = PROVIDER_METADATA[config.transformationProvider];
-    const providerKey = providerMeta.requiresApiKey
-      ? await configRepo.getProviderApiKey(config.transformationProvider)
-      : true;
+    const providerConfigured = await isOptimizationProviderConfigured(configRepo, config);
     items.push({
       label: `Optimization provider configured (${providerMeta.displayName})`,
-      complete: Boolean(providerKey),
+      complete: providerConfigured,
     });
   } else {
     items.push({ label: 'Prompt optimization configured (disabled)', complete: true });

@@ -104,6 +104,28 @@ describe('RecordingStatusBarItem', () => {
     statusBar.dispose();
   });
 
+  it('shows warning on Promptimize when Whisper is ready but optimization provider is incomplete', () => {
+    const statusBar = new RecordingStatusBarItem();
+    const [transcribeItem, promptimizeItem] = getStatusBarItems();
+
+    statusBar.setSetupState({
+      optimizationEnabled: true,
+      hasOpenAIKey: true,
+      setupChecklist: [
+        { label: 'Extension installed', complete: true },
+        { label: 'OpenAI API key configured (Whisper)', complete: true },
+        { label: 'Optimization provider configured (Anthropic)', complete: false },
+      ],
+    });
+    statusBar.setState(RecordingState.IDLE);
+
+    expect(transcribeItem.backgroundColor).toBeUndefined();
+    expect(promptimizeItem.backgroundColor).toEqual({
+      id: 'statusBarItem.warningBackground',
+    });
+    statusBar.dispose();
+  });
+
   it('shows setup label when configuration checklist is incomplete', () => {
     const statusBar = new RecordingStatusBarItem();
     const settingsItem = getStatusBarItems()[2];

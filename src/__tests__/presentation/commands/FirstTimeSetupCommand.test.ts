@@ -92,4 +92,16 @@ describe('getSetupChecklist', () => {
 
     expect(checklist.find(item => item.label.includes('Anthropic'))?.complete).toBe(false);
   });
+
+  it('marks Ollama optimization incomplete when base URL or model is missing', async () => {
+    const configRepo = createConfigRepo({
+      transformationProvider: TransformationProvider.Ollama,
+      ollamaBaseUrl: '',
+      ollamaModel: '',
+    });
+
+    const checklist = await getSetupChecklist(configRepo);
+
+    expect(checklist.find(item => item.label.includes('Ollama'))?.complete).toBe(false);
+  });
 });

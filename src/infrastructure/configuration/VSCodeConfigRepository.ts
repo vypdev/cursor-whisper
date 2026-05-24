@@ -23,11 +23,14 @@ export class VSCodeConfigRepository implements IConfigRepository {
   ) {
     vscode.workspace.onDidChangeConfiguration(event => {
       if (event.affectsConfiguration(VSCodeConfigRepository.SECTION)) {
-        void this.getConfig().then(config => {
-          this.callbacks.forEach(callback => callback(config));
-        });
+        void this.notifyConfigChange();
       }
     });
+  }
+
+  private async notifyConfigChange(): Promise<void> {
+    const config = await this.getConfig();
+    this.callbacks.forEach(callback => callback(config));
   }
 
   async getConfig(): Promise<Config> {
@@ -135,6 +138,8 @@ export class VSCodeConfigRepository implements IConfigRepository {
         'Failed to save API key securely. Check your system keychain settings.'
       );
     }
+
+    await this.notifyConfigChange();
   }
 
   async updateConfig(partialConfig: Partial<Config>): Promise<void> {
