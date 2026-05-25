@@ -114,6 +114,9 @@ jobs:
     name: Publish (${{ matrix.target }})
     needs: release
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ contains(matrix.os, 'Windows') && 'cmd' || 'bash' }}
     strategy:
       fail-fast: false
       matrix:
@@ -148,6 +151,7 @@ jobs:
           cache: pnpm
 
       - name: Prepare multiplatform package dependencies
+        shell: bash
         run: bash scripts/prepare-package.sh
 
       - name: Publish to VS Code Marketplace
