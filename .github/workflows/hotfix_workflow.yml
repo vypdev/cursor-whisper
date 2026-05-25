@@ -151,8 +151,13 @@ jobs:
           cache: pnpm
 
       - name: Prepare multiplatform package dependencies
+        if: ${{ !contains(matrix.os, 'Windows') }}
         shell: bash
         run: bash scripts/prepare-package.sh
+
+      - name: Prepare multiplatform package dependencies
+        if: ${{ contains(matrix.os, 'Windows') }}
+        run: set CI=true&& pnpm install --force
 
       - name: Publish to VS Code Marketplace
         run: pnpm exec vsce publish --target ${{ matrix.target }} -p "${{ secrets.VSCE_PAT }}"
