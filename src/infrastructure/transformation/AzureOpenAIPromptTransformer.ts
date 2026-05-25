@@ -4,6 +4,7 @@ import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { ILogger } from '../../application/ports/ILogger';
 import {
   TransformationError,
+  buildOpenAIChatCompletionOptions,
   buildUserPrompt,
   calculateImprovements,
 } from './transformationUtils';
@@ -85,8 +86,7 @@ export class AzureOpenAIPromptTransformer implements IPromptTransformer {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
         ],
-        temperature: 0.3,
-        max_tokens: 2000,
+        ...buildOpenAIChatCompletionOptions(deployment),
       });
 
       const duration = (Date.now() - startTime) / 1000;

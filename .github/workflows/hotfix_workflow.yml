@@ -24,12 +24,19 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   prepare-version-files:
     name: Prepare files for hotfix
     runs-on: ubuntu-latest
+    outputs:
+      commit_sha: ${{ steps.commit.outputs.commit }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
 
       - name: Validate inputs
         env:
@@ -57,14 +64,37 @@ jobs:
           fi
           [[ $err -eq 0 ]] || exit 1
 
-      # Example: generic step to perform the version update or compilation (uncomment and adjust as needed)
-      # - name: Generic step
-      #   uses: whatever/action@v2 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Bump version
+        run: node scripts/bump-version.js "${{ github.event.inputs.version }}"
+
+      - name: Compile extension
+        run: pnpm run compile
+
+      - name: Prepare multiplatform package dependencies
+        run: pnpm install --force
+
+      - name: Package extension
+        run: pnpm exec vsce package
 
       - name: Commit updated package.json and dist directory
+        id: commit
         uses: EndBug/add-and-commit@v9
         with:
-          add: './build/ ./package.json'
+          add: './out/ ./promptimize-*.vsix ./package.json'
           committer_name: GitHub Actions
           committer_email: actions@github.com
           default_author: user_info
@@ -77,7 +107,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+        with:
+          ref: ${{ needs.prepare-version-files.outputs.commit_sha }}
+
       - name: Copilot - Create Tag
         uses: vypdev/copilot@v2
         if: ${{ success() }}
@@ -87,7 +119,7 @@ jobs:
           single-action-issue: '${{ github.event.inputs.issue }}'
           single-action-version: '${{ github.event.inputs.version }}'
           token: ${{ secrets.PAT }}
-  
+
       - name: Copilot - Create Release
         uses: vypdev/copilot@v2
         if: ${{ success() }}
@@ -100,9 +132,32 @@ jobs:
           single-action-changelog: '${{ github.event.inputs.changelog }}'
           token: ${{ secrets.PAT }}
 
-      # Example: generic step to perform the deployment (uncomment and adjust as needed)
-      # - name: Generic step
-      #   uses: whatever/action@v2 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare multiplatform package dependencies
+        run: pnpm install --force
+
+      - name: Package extension
+        run: pnpm exec vsce package
+
+      - name: Publish to VS Code Marketplace
+        run: pnpm exec vsce publish -p "${{ secrets.VSCE_PAT }}"
+
+      - name: Publish to Open VSX Registry
+        if: ${{ success() }}
+        run: pnpm dlx ovsx publish -p "${{ secrets.OVSX_PAT }}"
 
       - name: Copilot - Deploy success notification
         uses: vypdev/copilot@v2

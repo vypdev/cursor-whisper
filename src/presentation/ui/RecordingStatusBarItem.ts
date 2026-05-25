@@ -65,6 +65,34 @@ export class RecordingStatusBarItem {
     this.updateUI();
   }
 
+  private shouldWarnTranscribe(): boolean {
+    const whisperItem = this.setupChecklist.find(item => item.label.includes('Whisper'));
+    if (whisperItem) {
+      return !whisperItem.complete;
+    }
+
+    return !this.hasOpenAIKey;
+  }
+
+  private shouldWarnPromptimize(): boolean {
+    if (this.shouldWarnTranscribe()) {
+      return true;
+    }
+
+    if (!this.optimizationEnabled) {
+      return true;
+    }
+
+    const optimizationItem = this.setupChecklist.find(item =>
+      item.label.includes('Optimization provider')
+    );
+    if (optimizationItem) {
+      return !optimizationItem.complete;
+    }
+
+    return false;
+  }
+
   private getTranscribeIdleTooltip(): string {
     if (!this.hasOpenAIKey) {
       return 'OpenAI API key required for transcription.\n\nClick to open configuration';
@@ -128,7 +156,7 @@ export class RecordingStatusBarItem {
       item.text = '$(mic) Transcribe';
       item.tooltip = this.getTranscribeIdleTooltip();
       item.command = 'promptimize.startTranscribeRecording';
-      item.backgroundColor = !this.hasOpenAIKey
+      item.backgroundColor = this.shouldWarnTranscribe()
         ? new vscode.ThemeColor('statusBarItem.warningBackground')
         : undefined;
       return;
@@ -137,10 +165,9 @@ export class RecordingStatusBarItem {
     item.text = '$(sparkle) Promptimize';
     item.tooltip = this.getPromptimizeIdleTooltip();
     item.command = 'promptimize.startPromptimizeRecording';
-    item.backgroundColor =
-      !this.optimizationEnabled || !this.hasOpenAIKey
-        ? new vscode.ThemeColor('statusBarItem.warningBackground')
-        : undefined;
+    item.backgroundColor = this.shouldWarnPromptimize()
+      ? new vscode.ThemeColor('statusBarItem.warningBackground')
+      : undefined;
   }
 
   private applyInactiveSiblingState(

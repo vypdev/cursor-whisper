@@ -1,7 +1,7 @@
 # Build output
 out/
 dist/
-# *.vsix
+*.vsix
 
 .env
 

@@ -1,4 +1,4 @@
-import { IConfigRepository } from '../ports/IConfigRepository';
+import { Config, IConfigRepository } from '../ports/IConfigRepository';
 import { ITransformationProviderValidator } from '../ports/ITransformationProviderValidator';
 import {
   PROVIDER_METADATA,
@@ -17,6 +17,44 @@ export interface ConfigurationValidationIssue {
     | 'promptimize.configureTransformationProvider'
     | 'promptimize.openConfigurationPanel'
     | 'promptimize.firstTimeSetup';
+}
+
+/**
+ * Returns whether the active optimization provider is fully configured
+ * (API key when required, plus provider-specific settings such as Azure endpoint).
+ */
+export async function isOptimizationProviderConfigured(
+  configRepo: IConfigRepository,
+  config?: Config
+): Promise<boolean> {
+  const resolvedConfig = config ?? (await configRepo.getConfig());
+  const provider = resolvedConfig.transformationProvider;
+  const metadata = PROVIDER_METADATA[provider];
+  const providerKey = metadata.requiresApiKey
+    ? await configRepo.getProviderApiKey(provider)
+    : 'local';
+
+  let providerConfigured = true;
+  if (metadata.requiresApiKey && !providerKey) {
+    providerConfigured = false;
+  }
+  if (provider === TransformationProvider.Azure) {
+    providerConfigured =
+      providerConfigured &&
+      Boolean(resolvedConfig.azureEndpoint.trim() && resolvedConfig.azureDeployment.trim());
+  }
+  if (provider === TransformationProvider.Ollama) {
+    providerConfigured = Boolean(
+      resolvedConfig.ollamaBaseUrl.trim() && resolvedConfig.ollamaModel.trim()
+    );
+  }
+  if (provider === TransformationProvider.OpenCode) {
+    providerConfigured = Boolean(
+      resolvedConfig.openCodeBaseUrl.trim() && resolvedConfig.openCodeModel.trim()
+    );
+  }
+
+  return providerConfigured;
 }
 
 /**

@@ -18,6 +18,7 @@ import {
 import { ApiKey } from '../../domain/value-objects/ApiKey';
 import { PROVIDER_COMPARISON } from '../../shared/constants/providerComparison';
 import { ProviderPricingService } from '../../application/services/ProviderPricingService';
+import { isOptimizationProviderConfigured } from '../../application/services/ConfigurationValidationService';
 import { getNonce } from '../../shared/utils/getNonce';
 import {
   applyProviderConfiguration,
@@ -275,7 +276,7 @@ export class ConfigurationPanel {
         break;
       case 'openDocs':
         await vscode.env.openExternal(
-          vscode.Uri.parse('https://github.com/vypdev/cursor-whisper/tree/master/docs')
+          vscode.Uri.parse('https://github.com/vypdev/promptimize/tree/master/docs')
         );
         break;
     }
@@ -290,20 +291,7 @@ export class ConfigurationPanel {
       ? await this.configRepo.getProviderApiKey(provider)
       : 'local';
 
-    let providerConfigured = true;
-    if (metadata.requiresApiKey && !providerKey) {
-      providerConfigured = false;
-    }
-    if (provider === TransformationProvider.Azure) {
-      providerConfigured =
-        providerConfigured && Boolean(config.azureEndpoint.trim() && config.azureDeployment.trim());
-    }
-    if (provider === TransformationProvider.Ollama) {
-      providerConfigured = Boolean(config.ollamaBaseUrl.trim() && config.ollamaModel.trim());
-    }
-    if (provider === TransformationProvider.OpenCode) {
-      providerConfigured = Boolean(config.openCodeBaseUrl.trim() && config.openCodeModel.trim());
-    }
+    const providerConfigured = await isOptimizationProviderConfigured(this.configRepo, config);
 
     return {
       whisperConfigured: Boolean(openAiKey),

@@ -5,6 +5,7 @@ import { TransformedPrompt } from '../../application/dto/TransformedPrompt';
 import { ILogger } from '../../application/ports/ILogger';
 import {
   TransformationError,
+  buildOpenAIChatCompletionOptions,
   buildUserPrompt,
   calculateImprovements,
 } from './transformationUtils';
@@ -45,7 +46,7 @@ export class OpenRouterPromptTransformer implements IPromptTransformer {
       apiKey: apiKeyStr,
       baseURL: OpenRouterPromptTransformer.BASE_URL,
       defaultHeaders: {
-        'HTTP-Referer': 'https://github.com/vypdev/cursor-whisper',
+        'HTTP-Referer': 'https://github.com/vypdev/promptimize',
         'X-OpenRouter-Title': OpenRouterPromptTransformer.APP_TITLE,
       },
     });
@@ -91,8 +92,7 @@ export class OpenRouterPromptTransformer implements IPromptTransformer {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
         ],
-        temperature: 0.3,
-        max_tokens: 2000,
+        ...buildOpenAIChatCompletionOptions(model),
       });
 
       const duration = (Date.now() - startTime) / 1000;

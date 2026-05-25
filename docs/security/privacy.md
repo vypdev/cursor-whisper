@@ -282,7 +282,7 @@ For EU users:
 ### If Security Vulnerability Found
 
 **Responsible Disclosure**:
-1. Email: security@cursor-whisper.dev (create)
+1. Email: security@promptimize.dev (create)
 2. Include: Description, reproduction steps, impact
 3. We commit to: Response within 48 hours
 4. We commit to: Fix within 7 days for critical issues

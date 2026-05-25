@@ -35,7 +35,7 @@ graph LR
 
 ### From VSIX (current)
 
-1. Download the latest `.vsix` from [Releases](https://github.com/vypdev/cursor-whisper/releases)
+1. Download the latest `.vsix` from [Releases](https://github.com/vypdev/promptimize/releases)
 2. Open VSCode or Cursor
 3. Extensions → `...` menu → **Install from VSIX...**
 4. Select the downloaded file
@@ -170,7 +170,7 @@ See the full [Troubleshooting Guide](user-guide/troubleshooting.md) with decisio
 ### Need more help?
 
 - [Configuration guide](configuration/README.md)
-- [GitHub Issues](https://github.com/vypdev/cursor-whisper/issues)
+- [GitHub Issues](https://github.com/vypdev/promptimize/issues)
 
 ---
 
