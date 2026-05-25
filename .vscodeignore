@@ -20,3 +20,4 @@ coverage/**
 **/*.test.ts
 docs/**
 .github/**
+promptimize-*.vsix

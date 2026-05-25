@@ -2,6 +2,11 @@
   "name": "promptimize",
   "displayName": "Promptimize",
   "description": "Transform voice into optimized prompts using OpenAI Whisper and AI providers",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#1a1d3a",
+    "theme": "dark"
+  },
   "version": "0.1.0",
   "publisher": "promptimize",
   "author": {
