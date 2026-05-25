@@ -174,7 +174,7 @@ See [`docs/architecture/`](docs/architecture/) for detailed architecture documen
 
 ### Upgrading from Cursor Whisper
 
-The extension was renamed to **Promptimize** (`promptimize` publisher). If you previously installed `cursor-whisper`:
+The extension was renamed to **Promptimize** (`vypdev` publisher). If you previously installed `cursor-whisper`:
 
 1. Uninstall the old **Cursor Whisper** extension
 2. Install `promptimize-*.vsix` (or the new Marketplace listing when available)
