@@ -28,8 +28,8 @@ permissions:
   contents: write
 
 jobs:
-  publish:
-    name: Publish version
+  release:
+    name: Prepare release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -110,22 +110,61 @@ jobs:
           single-action-changelog: '${{ github.event.inputs.changelog }}'
           token: ${{ secrets.PAT }}
 
-      - name: Prepare multiplatform package dependencies
-        run: pnpm install --force
+  publish-marketplace:
+    name: Publish (${{ matrix.target }})
+    needs: release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: [self-hosted, macOS, ARM64]
+            target: darwin-arm64
+          - os: [self-hosted, macOS, X64]
+            target: darwin-x64
+          - os: [self-hosted, Linux, X64]
+            target: linux-x64
+          - os: ubuntu-24.04-arm
+            target: linux-arm64
+          - os: [self-hosted, Windows, X64]
+            target: win32-x64
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          token: ${{ secrets.PAT }}
 
-      - name: Package extension
-        run: pnpm exec vsce package
+      - name: Pull latest version bump
+        run: git pull --rebase origin "${{ github.ref_name }}"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Prepare multiplatform package dependencies
+        run: bash scripts/prepare-package.sh
 
       - name: Publish to VS Code Marketplace
-        run: pnpm exec vsce publish -p "${{ secrets.VSCE_PAT }}"
+        run: pnpm exec vsce publish --target ${{ matrix.target }} -p "${{ secrets.VSCE_PAT }}"
 
       - name: Publish to Open VSX Registry
         if: ${{ success() }}
-        run: pnpm dlx ovsx publish -p "${{ secrets.OVSX_PAT }}"
+        run: pnpm dlx ovsx publish --target ${{ matrix.target }} -p "${{ secrets.OVSX_PAT }}"
 
+  notify:
+    name: Deploy notification
+    needs: publish-marketplace
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    steps:
       - name: Copilot - Deploy success notification
         uses: vypdev/copilot@v2
-        if: ${{ success() }}
         with:
           debug: ${{ vars.DEBUG }}
           single-action: 'deployed_action'

@@ -298,9 +298,9 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "test:integration": "node ./out/test/runTest.js",
-    "package": "bash scripts/prepare-package.sh && vsce package",
+    "package": "bash scripts/prepare-package.sh && vsce package --target darwin-arm64 && vsce package --target darwin-x64 && vsce package --target linux-x64 && vsce package --target linux-arm64 && vsce package --target win32-x64",
     "package:verify": "unzip -l *.vsix | grep audio-capture",
-    "publish": "vsce publish",
+    "publish": "vsce publish --target darwin-arm64 darwin-x64 linux-x64 linux-arm64 win32-x64",
     "publish:ovsx": "ovsx publish",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\""
