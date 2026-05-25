@@ -79,24 +79,15 @@ jobs:
       - name: Bump version
         run: node scripts/bump-version.js "${{ github.event.inputs.version }}"
 
-      - name: Compile extension
-        run: pnpm run compile
-
-      - name: Prepare multiplatform package dependencies
-        run: pnpm install --force
-
-      - name: Package extension
-        run: pnpm exec vsce package
-
-      - name: Commit updated package.json and dist directory
+      - name: Commit bumped package.json
         id: commit
         uses: EndBug/add-and-commit@v9
         with:
-          add: './out/ ./promptimize-*.vsix ./package.json'
+          add: './package.json'
           committer_name: GitHub Actions
           committer_email: actions@github.com
           default_author: user_info
-          message: 'gh-action: updated compiled files and bumped version to ${{ github.event.inputs.version }} (hotfix)'
+          message: 'gh-action: bumped version to ${{ github.event.inputs.version }} (hotfix)'
 
   tag:
     name: Publish version
